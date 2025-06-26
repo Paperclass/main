@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paper Answers Entry</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .form-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+        .header {
+            background-color: #343a40;
+            color: white;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            border-radius: 5px;
+        }
+        .paper-header {
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .personal-info {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #dee2e6;
+        }
+        .form-label {
+            font-weight: 600;
+        }
+        .btn-submit {
+            background-color: #28a745;
+            border: none;
+            padding: 10px 25px;
+            font-weight: 600;
+        }
+        .btn-submit:hover {
+            background-color: #218838;
+        }
+        .timer {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #dc3545;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .medium-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .medium-btn {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #dee2e6;
+            border-radius: 5px;
+            background: white;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .medium-btn:hover {
+            border-color: #adb5bd;
+        }
+        .medium-btn.active {
+            border-color: #343a40;
+            background-color: #343a40;
+            color: white;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header text-center">
+            <h1>Paper Answers Submission</h1>
+            <p class="mb-0">Submit your answers before the time expires</p>
+        </div>
+
+        <div id="timerSection" class="timer">
+            Time remaining: <span id="timeRemaining">--:--:--</span>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="form-container">
+                    <form id="answerForm">
+                        <input type="hidden" id="paperId" value="">
+                        <input type="hidden" id="selectedMedium" value="">
+                        
+                        <!-- Paper Information Header -->
+                        <div class="paper-header">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h5 id="paperTitle">Paper Title</h5>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <span class="text-muted">Year:</span>
+                                            <span id="paperYear">----</span>
+                                        </div>
+                                        <div class="col-6">
+                                            <span class="text-muted">Paper No:</span>
+                                            <span id="paperNumber">--</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 text-md-end">
+                                    <div>
+                                        <span class="text-muted">Subject:</span>
+                                        <span id="paperSubject">--------</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-muted">Available Mediums:</span>
+                                        <span id="paperMediums">-----</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Medium Selection -->
+                        <div id="mediumSelection" style="display: none;">
+                            <h5 class="border-bottom pb-2 mb-3">Select Medium</h5>
+                            <div class="medium-selector" id="mediumOptions">
+                                <!-- Medium options will be added dynamically -->
+                            </div>
+                        </div>
+                        
+                        <!-- Personal Information Section -->
+                        <div class="personal-info">
+                            <h5 class="border-bottom pb-2 mb-3">Personal Information</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="nic" class="form-label">NIC Number*</label>
+                                    <input type="text" class="form-control" id="nic" required>
+                                    <div class="form-text">Your National Identity Card Number</div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="name" class="form-label">Full Name*</label>
+                                    <input type="text" class="form-control" id="name" required>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="district" class="form-label">District*</label>
+                                    <select class="form-select" id="district" required>
+                                        <option value="">Select District</option>
+                                        <option value="Ampara">Ampara</option>
+                                        <option value="Anuradhapura">Anuradhapura</option>
+                                        <option value="Badulla">Badulla</option>
+                                        <option value="Batticaloa">Batticaloa</option>
+                                        <option value="Colombo">Colombo</option>
+                                        <option value="Galle">Galle</option>
+                                        <option value="Gampaha">Gampaha</option>
+                                        <option value="Hambantota">Hambantota</option>
+                                        <option value="Jaffna">Jaffna</option>
+                                        <option value="Kalutara">Kalutara</option>
+                                        <option value="Kandy">Kandy</option>
+                                        <option value="Kegalle">Kegalle</option>
+                                        <option value="Kilinochchi">Kilinochchi</option>
+                                        <option value="Kurunegala">Kurunegala</option>
+                                        <option value="Mannar">Mannar</option>
+                                        <option value="Matale">Matale</option>
+                                        <option value="Matara">Matara</option>
+                                        <option value="Monaragala">Monaragala</option>
+                                        <option value="Mullaitivu">Mullaitivu</option>
+                                        <option value="Nuwara Eliya">Nuwara Eliya</option>
+                                        <option value="Polonnaruwa">Polonnaruwa</option>
+                                        <option value="Puttalam">Puttalam</option>
+                                        <option value="Ratnapura">Ratnapura</option>
+                                        <option value="Trincomalee">Trincomalee</option>
+                                        <option value="Vavuniya">Vavuniya</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="class" class="form-label">Class*</label>
+                                    <select class="form-select" id="class" required>
+                                        <option value="">Select Class</option>
+                                        <option value="Grade 10">Grade 10</option>
+                                        <option value="Grade 11">Grade 11</option>
+                                        <option value="AL Year 1">A/L Year 1</option>
+                                        <option value="AL Year 2">A/L Year 2</option>
+                                        <option value="Revision">Revision Class</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="school" class="form-label">School</label>
+                                    <input type="text" class="form-control" id="school">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="phone" class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-control" id="phone">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4" id="answerSection" style="display: none;">
+                            <h5 class="border-bottom pb-2">Answer Sheet</h5>
+                            <div id="questionsContainer">
+                                <!-- Questions will be dynamically added here -->
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-submit btn-lg" id="submitBtn" style="display: none;">Submit Answers</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+
+    <script>
+        // Firebase configuration (replace with your actual config)
+const firebaseConfig = {
+    apiKey: "AIzaSyD5SRZWB-QwMg7wmyTjcvHZqP-mEdlll_M",
+    authDomain: "paper-class-1ab19.firebaseapp.com",
+    databaseURL: "https://paper-class-1ab19-default-rtdb.firebaseio.com",
+    projectId: "paper-class-1ab19",
+    storageBucket: "paper-class-1ab19.firebasestorage.app",
+    messagingSenderId: "83634677566",
+    appId: "1:83634677566:web:fb4f7a1fd869c3e82e2e6f"
+  };
+
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Get paper ID from URL
+        function getPaperIdFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('paperId');
+        }
+
+        // Load paper details and questions
+        function loadPaperQuestions() {
+            const paperId = getPaperIdFromUrl();
+            if (!paperId) {
+                alert('Invalid paper link');
+                return;
+            }
+
+            document.getElementById('paperId').value = paperId;
+
+            // Load paper details
+            database.ref('papers/' + paperId).once('value').then(snapshot => {
+                const paper = snapshot.val();
+                if (!paper) {
+                    alert('Paper not found');
+                    return;
+                }
+
+                // Display paper header info
+                document.getElementById('paperTitle').textContent = paper.title || 'Untitled Paper';
+                document.getElementById('paperYear').textContent = paper.year || '----';
+                document.getElementById('paperNumber').textContent = paper.paperNumber || '--';
+                document.getElementById('paperSubject').textContent = paper.subject || 'Not specified';
+                
+                // Handle multiple mediums
+                let mediums = [];
+                if (paper.mediums) {
+                    // New format with multiple mediums
+                    mediums = paper.mediums;
+                    document.getElementById('paperMediums').textContent = mediums.join(', ');
+                } else if (paper.medium) {
+                    // Old format with single medium
+                    mediums = [paper.medium];
+                    document.getElementById('paperMediums').textContent = paper.medium;
+                } else {
+                    document.getElementById('paperMediums').textContent = 'Not specified';
+                }
+
+                // Show medium selection if multiple options
+                if (mediums.length > 1) {
+                    const mediumOptions = document.getElementById('mediumOptions');
+                    mediumOptions.innerHTML = '';
+                    
+                    mediums.forEach(medium => {
+                        const btn = document.createElement('button');
+                        btn.type = 'button';
+                        btn.className = 'medium-btn';
+                        btn.textContent = medium;
+                        btn.addEventListener('click', () => {
+                            document.querySelectorAll('.medium-btn').forEach(b => b.classList.remove('active'));
+                            btn.classList.add('active');
+                            document.getElementById('selectedMedium').value = medium;
+                            loadQuestionsForMedium(paperId, medium);
+                        });
+                        mediumOptions.appendChild(btn);
+                    });
+                    
+                    document.getElementById('mediumSelection').style.display = 'block';
+                } else if (mediums.length === 1) {
+                    // Only one medium, select it automatically
+                    document.getElementById('selectedMedium').value = mediums[0];
+                    loadQuestionsForMedium(paperId, mediums[0]);
+                }
+
+                // Set up countdown timer
+                setupTimer(paper.closeTime);
+            }).catch(error => {
+                console.error('Error loading paper:', error);
+                alert('Error loading paper. Please try again.');
+            });
+        }
+
+        // Load questions for selected medium
+        function loadQuestionsForMedium(paperId, medium) {
+            database.ref(`papers/${paperId}/questions`).once('value').then(snapshot => {
+                const allQuestions = snapshot.val() || {};
+                
+                // Filter questions by medium if available
+                let questions = {};
+                if (allQuestions[medium]) {
+                    // Questions organized by medium
+                    questions = allQuestions[medium];
+                } else {
+                    // Questions not organized by medium (old format)
+                    questions = allQuestions;
+                }
+
+                // Display questions
+                const questionsContainer = document.getElementById('questionsContainer');
+                questionsContainer.innerHTML = '';
+
+                for (const [qNum, question] of Object.entries(questions)) {
+                    const questionDiv = document.createElement('div');
+                    questionDiv.className = 'mb-3';
+                    questionDiv.innerHTML = `
+                        <label for="q${qNum}" class="form-label">Question ${qNum} (${question.marks} marks)</label>
+                        <input type="text" class="form-control" id="q${qNum}" required>
+                    `;
+                    questionsContainer.appendChild(questionDiv);
+                }
+
+                // Show answer section and submit button
+                document.getElementById('answerSection').style.display = 'block';
+                document.getElementById('submitBtn').style.display = 'block';
+            }).catch(error => {
+                console.error('Error loading questions:', error);
+                alert('Error loading questions. Please try again.');
+            });
+        }
+
+        // Set up countdown timer
+        function setupTimer(closeTime) {
+            const countDownDate = new Date(closeTime).getTime();
+            
+            const timer = setInterval(function() {
+                const now = new Date().getTime();
+                const distance = countDownDate - now;
+                
+                if (distance < 0) {
+                    clearInterval(timer);
+                    document.getElementById('timeRemaining').textContent = "TIME EXPIRED";
+                    document.getElementById('answerForm').querySelector('button').disabled = true;
+                    return;
+                }
+                
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                
+                document.getElementById('timeRemaining').textContent = 
+                    `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                if (distance < 600000) { // 10 minutes remaining
+                    document.getElementById('timerSection').style.color = '#dc3545';
+                }
+            }, 1000);
+        }
+
+        // Handle form submission
+        document.getElementById('answerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const paperId = document.getElementById('paperId').value;
+            const medium = document.getElementById('selectedMedium').value;
+            const nic = document.getElementById('nic').value;
+            const name = document.getElementById('name').value;
+            const district = document.getElementById('district').value;
+            const studentClass = document.getElementById('class').value;
+            const school = document.getElementById('school').value;
+            const phone = document.getElementById('phone').value;
+            
+            if (!medium) {
+                alert('Please select a medium first');
+                return;
+            }
+            
+            // Get all answers
+            const answers = {};
+            const questionsContainer = document.getElementById('questionsContainer');
+            const questionInputs = questionsContainer.querySelectorAll('input[type="text"]');
+            
+            questionInputs.forEach(input => {
+                const qNum = input.id.substring(1); // Remove 'q' prefix
+                answers[qNum] = input.value.trim().toUpperCase();
+            });
+            
+            // Check if already submitted
+            database.ref(`submissions/${paperId}/${nic}`).once('value').then(snapshot => {
+                if (snapshot.exists()) {
+                    alert('You have already submitted answers for this paper!');
+                    return;
+                }
+                
+                // Calculate score
+                return database.ref(`papers/${paperId}/questions`).once('value').then(qSnapshot => {
+                    const allQuestions = qSnapshot.val() || {};
+                    
+                    // Get questions for the selected medium
+                    let questions = {};
+                    if (allQuestions[medium]) {
+                        questions = allQuestions[medium];
+                    } else {
+                        questions = allQuestions;
+                    }
+                    
+                    let score = 0;
+                    
+                    for (const [qNum, question] of Object.entries(questions)) {
+                        if (answers[qNum] === question.answer) {
+                            score += question.marks;
+                        }
+                    }
+                    
+                    // Save submission
+                    const submission = {
+                        name,
+                        district,
+                        class: studentClass,
+                        school,
+                        phone,
+                        medium,
+                        answers,
+                        score,
+                        timestamp: firebase.database.ServerValue.TIMESTAMP
+                    };
+                    
+                    return database.ref(`submissions/${paperId}/${nic}`).set(submission);
+                });
+            }).then(() => {
+                alert('Answers submitted successfully!');
+                window.location.href = `results.html?paperId=${paperId}&nic=${nic}`;
+            }).catch(error => {
+                console.error('Submission error:', error);
+                alert('Error submitting answers. Please try again.');
+            });
+        });
+
+        // Check if user is registered and auto-fill info
+        function checkRegisteredUser() {
+            const nic = localStorage.getItem('userNIC');
+            if (nic) {
+                database.ref('users/' + nic).once('value').then(snapshot => {
+                    const user = snapshot.val();
+                    if (user) {
+                        document.getElementById('nic').value = nic;
+                        document.getElementById('name').value = user.name || '';
+                        document.getElementById('district').value = user.district || '';
+                        document.getElementById('class').value = user.class || '';
+                        document.getElementById('school').value = user.school || '';
+                        document.getElementById('phone').value = user.phone || '';
+                    }
+                });
+            }
+        }
+
+        // Initialize page
+        window.addEventListener('DOMContentLoaded', function() {
+            checkRegisteredUser();
+            loadPaperQuestions();
+        });
+    </script>
+    <script src="main.js"></script>
+</body>
+</html>
