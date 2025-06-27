@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .registration-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+        .registration-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .registration-header h2 {
+            color: #343a40;
+        }
+        .btn-register {
+            background-color: #28a745;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            font-weight: 600;
+        }
+        .btn-register:hover {
+            background-color: #218838;
+        }
+        .form-label {
+            font-weight: 600;
+        }
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        #loadingSpinner {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="registration-container">
+            <div class="registration-header">
+                <h2>Student Registration</h2>
+                <p>Create your account to save your information</p>
+            </div>
+            <form id="registrationForm">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="regNIC" class="form-label">NIC Number*</label>
+                        <input type="text" class="form-control" id="regNIC" required>
+                        <div class="form-text">Your National Identity Card Number</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="regName" class="form-label">Full Name*</label>
+                        <input type="text" class="form-control" id="regName" required>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="regDistrict" class="form-label">District*</label>
+                        <select class="form-select" id="regDistrict" required>
+                            <option value="">Select District</option>
+                            <option value="Ampara">Ampara</option>
+                            <option value="Anuradhapura">Anuradhapura</option>
+                            <option value="Badulla">Badulla</option>
+                            <option value="Batticaloa">Batticaloa</option>
+                            <option value="Colombo">Colombo</option>
+                            <option value="Galle">Galle</option>
+                            <option value="Gampaha">Gampaha</option>
+                            <option value="Hambantota">Hambantota</option>
+                            <option value="Jaffna">Jaffna</option>
+                            <option value="Kalutara">Kalutara</option>
+                            <option value="Kandy">Kandy</option>
+                            <option value="Kegalle">Kegalle</option>
+                            <option value="Kilinochchi">Kilinochchi</option>
+                            <option value="Kurunegala">Kurunegala</option>
+                            <option value="Mannar">Mannar</option>
+                            <option value="Matale">Matale</option>
+                            <option value="Matara">Matara</option>
+                            <option value="Monaragala">Monaragala</option>
+                            <option value="Mullaitivu">Mullaitivu</option>
+                            <option value="Nuwara Eliya">Nuwara Eliya</option>
+                            <option value="Polonnaruwa">Polonnaruwa</option>
+                            <option value="Puttalam">Puttalam</option>
+                            <option value="Ratnapura">Ratnapura</option>
+                            <option value="Trincomalee">Trincomalee</option>
+                            <option value="Vavuniya">Vavuniya</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="regClass" class="form-label">Class*</label>
+                        <select class="form-select" id="regClass" required>
+                            <option value="Nugegoda">Nugegoda</option>
+                                        <option value="Kandy">Kandy</option>
+                                        <option value="Kegalle">Kegalle</option>
+                                        <option value="Kurunegala">Kurunegala</option>
+                                        <option value="Gall">Gall</option>
+                                        <option value="Onlin">Onlin</option>
+                                        <option value="All Island">All Island</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="regSchool" class="form-label">School</label>
+                        <input type="text" class="form-control" id="regSchool">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="regPhone" class="form-label">Phone Number*</label>
+                        <input type="tel" class="form-control" id="regPhone" required>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="regEmail" class="form-label">Email Address*</label>
+                        <input type="email" class="form-control" id="regEmail" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="regPassword" class="form-label">Password*</label>
+                        <input type="password" class="form-control" id="regPassword" required>
+                        <div class="form-text">Minimum 6 characters</div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+    <div class="col-md-6">
+        <label for="regYear" class="form-label">Year*</label>
+        <select class="form-select" id="regYear" required>
+            <option value="">Select Year</option>
+            <option value="2023">2025</option>
+            <option value="2024">2026</option>
+            <option value="2025">2027</option>
+        </select>
+    </div>
+</div>
+
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="regTerms" required>
+                    <label class="form-check-label" for="regTerms">I agree to the terms and conditions</label>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-register" id="registerBtn">
+                        <span id="registerText">Register</span>
+                        <div id="loadingSpinner" class="spinner-border spinner-border-sm" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </button>
+                </div>
+
+
+                <div class="login-link">
+                    Already have an account? <a href="login.html">Login here</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyD5SRZWB-QwMg7wmyTjcvHZqP-mEdlll_M",
+        authDomain: "paper-class-1ab19.firebaseapp.com",
+        databaseURL: "https://paper-class-1ab19-default-rtdb.firebaseio.com",
+        projectId: "paper-class-1ab19",
+        storageBucket: "paper-class-1ab19.appspot.com",
+        messagingSenderId: "83634677566",
+        appId: "1:83634677566:web:fb4f7a1fd869c3e82e2e6f"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const database = firebase.database();
+
+    document.getElementById('registrationForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        toggleLoading(true);
+        
+        try {
+            // Get form values
+            const nic = document.getElementById('regNIC').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const password = document.getElementById('regPassword').value;
+            
+            // 1. First create auth user
+            const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+            const user = userCredential.user;
+            
+            // 2. Prepare user data
+            const userData = {
+                nic: nic,
+                name: document.getElementById('regName').value.trim(),
+                district: document.getElementById('regDistrict').value,
+                class: document.getElementById('regClass').value,
+                year: document.getElementById('regYear').value,
+                school: document.getElementById('regSchool').value.trim(),
+                phone: document.getElementById('regPhone').value.trim(),
+                email: email,
+                uid: user.uid,
+                registeredAt: firebase.database.ServerValue.TIMESTAMP
+            };
+            
+            // 3. Save to database
+            await database.ref('users/' + nic).set(userData);
+            
+            // 4. Send verification email
+            await user.sendEmailVerification();
+            
+            // 5. Redirect to login
+            alert('Registration successful! Please verify your email.');
+            window.location.href = 'login.html';
+            
+        } catch (error) {
+            console.error("Registration error:", error);
+            
+            // Clean up auth user if creation failed
+            if (auth.currentUser) {
+                await auth.currentUser.delete().catch(console.error);
+            }
+            
+            showError(getErrorMessage(error));
+        } finally {
+            toggleLoading(false);
+        }
+    });
+
+    function toggleLoading(show) {
+        document.getElementById('registerText').style.display = show ? 'none' : 'inline';
+        document.getElementById('loadingSpinner').style.display = show ? 'inline-block' : 'none';
+        document.getElementById('registerBtn').disabled = show;
+    }
+
+    function showError(message) {
+        alert(message);
+    }
+
+    function getErrorMessage(error) {
+        switch(error.code) {
+            case 'auth/email-already-in-use':
+                return 'This email is already registered.';
+            case 'auth/weak-password':
+                return 'Password must be 6+ characters.';
+            case 'auth/invalid-email':
+                return 'Invalid email address.';
+            case 'PERMISSION_DENIED':
+                return 'Registration failed. Please contact support.';
+            default:
+                return 'Registration failed: ' + error.message;
+        }
+    }
+</script>
+    <script src="main.js"></script>
+</body>
+</html>

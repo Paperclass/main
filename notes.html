@@ -1,0 +1,1993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eWings-papers - Student Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #4a6bff;
+            --primary-light: #6b8cff;
+            --primary-dark: #3a56d4;
+            --secondary-color: #f5f7ff;
+            --accent-color: #28a745;
+            --accent-light: #5cb85c;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --text-color: #2d3748;
+            --text-light: #718096;
+            --bg-color: #ffffff;
+            --card-bg: #f8f9fa;
+            --border-color: #e2e8f0;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --hover-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --border-radius: 12px;
+            --primary-rgb: 74, 107, 255;
+        }
+        
+        .dark-mode {
+            --primary-color: #6b8cff;
+            --primary-light: #8ba3ff;
+            --primary-dark: #4a6bff;
+            --secondary-color: #1a1a2e;
+            --accent-color: #38a169;
+            --accent-light: #48bb78;
+            --text-color: #f0f0f0;
+            --text-light: #a0aec0;
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --border-color: #2d3748;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            --hover-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Base Styles */
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: var(--transition);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Smooth scroll behavior */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            position: relative;
+            margin-bottom: 2rem;
+            padding-bottom: 0.75rem;
+            color: var(--primary-color);
+            font-size: 1.75rem;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            border-radius: 2px;
+        }
+
+        /* Navbar Enhancements */
+        .navbar {
+            padding: 0.75rem 0;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            background-color: var(--primary-color) !important;
+        }
+
+        .dark-mode .navbar {
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 1.75rem;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-brand img {
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .nav-link {
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            margin: 0 0.25rem;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-link.active {
+            color: white !important;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-bottom: none;
+        }
+
+        /* Banner */
+        .banner {
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: none;
+        }
+
+        .banner:hover {
+            box-shadow: var(--hover-shadow);
+            transform: translateY(-2px);
+        }
+
+        .banner img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Cards */
+        .paper-card {
+            transition: var(--transition);
+            border: none;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            background-color: var(--card-bg);
+        }
+
+        .paper-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .paper-card .card-body {
+            padding: 1.75rem;
+        }
+
+        .paper-card .card-title {
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: var(--primary-color);
+            font-size: 1.25rem;
+        }
+
+        .paper-card .card-subtitle {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        .paper-card .card-text {
+            color: var(--text-light);
+            font-size: 0.85rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .paper-card .btn-group {
+            margin-top: 1rem;
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .paper-card .btn {
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: var(--transition);
+            flex: 1;
+        }
+
+        .paper-card .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .paper-card .btn-primary:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .paper-card .btn-outline-primary {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .paper-card .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .paper-card .btn-outline-success {
+            color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+
+        .paper-card .btn-outline-success:hover {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        /* Filter Container */
+        .filter-container {
+            background-color: var(--card-bg);
+            padding: 1.25rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        .filter-container label {
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Rank Cards */
+        .rank-card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            overflow: hidden;
+            border: none;
+            transition: var(--transition);
+        }
+
+        .rank-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .rank-card .card-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            font-weight: 700;
+            padding: 1rem 1.5rem;
+            border-bottom: none;
+        }
+
+        .rank-card .card-header i {
+            margin-right: 0.5rem;
+        }
+
+        /* Tables */
+        .rank-table {
+            margin-bottom: 0;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .rank-table th {
+            background-color: rgba(var(--primary-rgb), 0.1);
+            font-weight: 700;
+            color: var(--primary-color);
+            padding: 1rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .rank-table td {
+            padding: 0.75rem 1rem;
+            vertical-align: middle;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .rank-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .user-rank {
+            background-color: rgba(40, 167, 69, 0.1) !important;
+            font-weight: 600;
+            color: var(--accent-color);
+        }
+
+        .user-rank td:first-child {
+            border-left: 3px solid var(--accent-color);
+        }
+
+        /* Stats Cards */
+        .stats-card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 1.75rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            transition: var(--transition);
+            border: none;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .stats-card .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            line-height: 1;
+        }
+
+        .stats-card .stat-label {
+            font-size: 1rem;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        /* Performance Chart */
+        .chart-container {
+            position: relative;
+            height: 350px;
+            margin-bottom: 1rem;
+        }
+
+        /* Buttons */
+        .btn {
+            border-radius: 8px;
+            font-weight: 600;
+            padding: 0.5rem 1.25rem;
+            transition: var(--transition);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline-light {
+            color: white;
+            border-color: white;
+        }
+
+        .btn-outline-light:hover {
+            background-color: white;
+            color: var(--primary-color);
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            background-color: rgba(var(--primary-rgb), 0.1);
+            border: none;
+            color: var(--primary-color);
+            padding: 0.5rem 1.25rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+
+        .theme-toggle:hover {
+            background-color: rgba(var(--primary-rgb), 0.2);
+            transform: translateY(-2px);
+        }
+
+        .theme-toggle i {
+            margin-right: 0.5rem;
+        }
+
+        /* Auth Button */
+        #authBtn {
+            min-width: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Loading Spinners */
+        .spinner-border {
+            width: 1.5rem;
+            height: 1.5rem;
+            border-width: 0.2em;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 992px) {
+            .paper-card .btn-group {
+                flex-direction: column;
+            }
+            
+            .paper-card .btn {
+                width: 100%;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar-brand {
+                font-size: 1.5rem;
+            }
+            
+            .paper-card .card-body {
+                padding: 1.5rem;
+            }
+            
+            .stats-card {
+                padding: 1.5rem;
+            }
+            
+            .stats-card .stat-value {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .section-title {
+                font-size: 1.25rem;
+            }
+            
+            .paper-card .card-body {
+                padding: 1.25rem;
+            }
+            
+            .filter-container {
+                padding: 1rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--card-bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-light);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-color);
+        }
+
+        /* Dark mode specific styles */
+        .dark-mode .form-control,
+        .dark-mode .form-select {
+            background-color: #2a2a2a;
+            color: #f0f0f0;
+            border-color: #444;
+        }
+
+        .dark-mode .form-control:focus,
+        .dark-mode .form-select:focus {
+            background-color: #333;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(var(--primary-rgb), 0.25);
+        }
+
+        .dark-mode .form-label {
+            color: #b0b0b0;
+        }
+
+        .dark-mode .text-muted {
+            color: #8a8a8a !important;
+        }
+        /* Add to your existing CSS */
+.dropdown-menu {
+    border: none;
+    box-shadow: var(--shadow);
+}
+
+.dropdown-item {
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+}
+
+.dropdown-item:hover {
+    background-color: rgba(var(--primary-rgb), 0.1);
+    color: var(--primary-color);
+}
+
+#userNameDisplay {
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    vertical-align: middle;
+}
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img src="https://via.placeholder.com/40x40?text=EW" alt="eWings Logo">
+                eWings-papers
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" id="papersTab">
+                            <i class="bi bi-file-earmark-text me-1"></i> Papers
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="ranksTab">
+                            <i class="bi bi-trophy me-1"></i> Ranks
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="statsTab">
+                            <i class="bi bi-graph-up me-1"></i> My Stats
+                        </a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <button class="theme-toggle me-3" id="themeToggle">
+                        <i class="fas fa-moon me-2"></i> Dark Mode
+                    </button>
+                    <button class="btn btn-outline-light" id="authBtn">
+                        <i class="bi bi-box-arrow-in-right me-2"></i> Login
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container py-4">
+        <!-- Banner -->
+        <div class="banner fade-in">
+            <img src="UkuwelaBuwa.png" alt="eWings-papers Banner">
+        </div>
+
+        <!-- Papers Section -->
+        <div id="papersSection" class="fade-in">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="section-title">
+                    <i class="bi bi-file-earmark-text me-2"></i> Available Papers
+                </h2>
+                <div class="filter-container">
+                    <div class="row g-2">
+                        <div class="col-md-4">
+                            <select class="form-select" id="yearFilter">
+                                <option value="">All Years</option>
+                                <option value="2025">2025</option>
+                                <option value="2026">2026</option>
+                                <option value="2027">2027</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" id="availablePapers">
+                <!-- Available papers will be loaded here -->
+                <div class="col-12 text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+
+            <h2 class="section-title mt-5">
+                <i class="bi bi-file-earmark-check me-2"></i> View Answers
+            </h2>
+            <div class="row" id="viewAnswers">
+                <!-- Papers with answers will be loaded here -->
+                <div class="col-12 text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ranks Section -->
+        <div id="ranksSection" style="display: none;" class="fade-in">
+            <h2 class="section-title">
+                <i class="bi bi-trophy me-2"></i> Paper Rankings
+            </h2>
+            
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="filter-container">
+                        <label for="rankPaperFilter" class="form-label">Select Paper</label>
+                        <select class="form-select" id="rankPaperFilter">
+                            <option value="">Select Paper</option>
+                            <!-- Papers will be loaded here -->
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="filter-container">
+                        <label for="classFilter" class="form-label">Filter by Class</label>
+                        <select class="form-select" id="classFilter">
+                            <option value="">Select Class</option>
+                            <option value="Nugegoda">Nugegoda</option>
+                            <option value="Kandy">Kandy</option>
+                            <option value="Kegalle">Kegalle</option>
+                            <option value="Kurunegala">Kurunegala</option>
+                            <option value="Gall">Gall</option>
+                            <option value="Onlin">Onlin</option>
+                            <option value="All Island">All Island</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div id="userRankInfo" class="mb-4" style="display: none;">
+                <div class="alert alert-success">
+                    <h5><i class="bi bi-trophy-fill me-2"></i> Your Rank</h5>
+                    <div id="userRankDetails"></div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="rank-card">
+                        <div class="card-header">
+                            <i class="bi bi-trophy-fill me-2"></i> Top 100 Overall
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table rank-table">
+                                <thead>
+                                    <tr>
+                                        <th>Rank</th>
+                                        <th>Name</th>
+                                        <th>Score</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="overallRankings">
+                                    <!-- Overall rankings will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="rank-card">
+                        <div class="card-header">
+                            <i class="bi bi-people-fill me-2"></i> Top 100 by Class
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table rank-table">
+                                <thead>
+                                    <tr>
+                                        <th>Rank</th>
+                                        <th>Name</th>
+                                        <th>Score</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="classRankings">
+                                    <!-- Class rankings will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- My Stats Section -->
+        <div id="statsSection" style="display: none;" class="fade-in">
+            <h2 class="section-title">
+                <i class="bi bi-graph-up me-2"></i> My Statistics
+            </h2>
+            
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="stats-card">
+                        <div class="stat-value" id="totalPapersTaken">0</div>
+                        <div class="stat-label">Papers Taken</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stats-card">
+                        <div class="stat-value" id="averageScore">0%</div>
+                        <div class="stat-label">Average Score</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stats-card">
+                        <div class="stat-value" id="bestRank">-</div>
+                        <div class="stat-label">Best Rank</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="bi bi-graph-up me-2"></i> My Performance Trend
+                    </div>
+                    <div>
+                        <select class="form-select form-select-sm w-auto" id="chartFilter">
+                            <option value="all">All Papers</option>
+                            <option value="year">My Year Papers</option>
+                            <option value="subject">By Subject</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container" style="position: relative; height: 300px;">
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                    <div class="text-center mt-3" id="chartLegend"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <i class="bi bi-list-check me-2"></i> My Submissions
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Paper</th>
+                                    <th>Year</th>
+                                    <th>Score</th>
+                                    <th>Rank</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="mySubmissions">
+                                <!-- User submissions will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+      
+    <script>
+    // Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyD5SRZWB-QwMg7wmyTjcvHZqP-mEdlll_M",
+        authDomain: "paper-class-1ab19.firebaseapp.com",
+        databaseURL: "https://paper-class-1ab19-default-rtdb.firebaseio.com",
+        projectId: "paper-class-1ab19",
+        storageBucket: "paper-class-1ab19.appspot.com",
+        messagingSenderId: "83634677566",
+        appId: "1:83634677566:web:fb4f7a1fd869c3e82e2e6f"
+    };
+
+// Initialize Firebase
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+const database = firebase.database();
+const auth = firebase.auth();
+
+// DOM elements
+const authBtn = document.getElementById('authBtn');
+const authStatusBar = document.getElementById('authStatusBar');
+const authMessage = document.getElementById('authMessage');
+const authActionBtn = document.getElementById('authActionBtn');
+const userProfile = document.createElement('div'); // Create user profile element
+
+// Create user profile dropdown HTML
+userProfile.innerHTML = `
+    <div class="dropdown">
+        <button class="btn btn-light dropdown-toggle d-flex align-items-center" type="button" 
+                id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-person-circle me-2"></i>
+            <span id="userNameDisplay"></span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+            <li><a class="dropdown-item" href="#" id="logoutBtn"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+        </ul>
+    </div>
+`;
+    
+// Tab navigation
+const sections = {
+    papers: document.getElementById('papersSection'),
+    ranks: document.getElementById('ranksSection'),
+    stats: document.getElementById('statsSection')
+};
+
+const tabs = {
+    papers: document.getElementById('papersTab'),
+    ranks: document.getElementById('ranksTab'),
+    stats: document.getElementById('statsTab')
+};
+
+// Initialize the page
+document.addEventListener('DOMContentLoaded', function() {
+    checkTheme();
+    initAuthState();
+    loadInitialContent();
+});
+
+// Initialize auth state
+function initAuthState() {
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            // User is signed in
+            database.ref('users/' + user.uid).once('value').then(snapshot => {
+                const userData = snapshot.val();
+                if (userData) {
+                    updateUserUI(userData);
+                    loadInitialContent();
+                }
+            });
+        } else {
+            // No user signed in
+            showPublicContent();
+        }
+    });
+}
+
+// Update UI when user is logged in
+function updateUserUI(userData) {
+    // Replace auth button with user profile
+    const authContainer = authBtn.parentElement;
+    authContainer.innerHTML = '';
+    authContainer.appendChild(userProfile);
+    
+    // Set user name
+    document.getElementById('userNameDisplay').textContent = userData.name || 'My Account';
+    
+    // Add logout handler
+    document.getElementById('logoutBtn').addEventListener('click', logoutUser);
+    
+    // Hide auth status bar if shown
+    authStatusBar.classList.add('d-none');
+}
+
+// Update UI for public (not logged in) view
+function showPublicContent() {
+    // Show login button
+    authBtn.innerHTML = '<i class="bi bi-box-arrow-in-right me-2"></i> Login';
+    authBtn.classList.remove('btn-light');
+    authBtn.classList.add('btn-outline-light');
+    authBtn.onclick = () => window.location.href = 'login.html';
+    
+    // Load public content
+    loadPapers();
+}
+
+// Load initial content based on auth state
+function loadInitialContent() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    
+    if (currentUser) {
+        // Show papers section by default for logged in users
+        showSection('papers');
+    } else {
+        // Show public content
+        showPublicContent();
+    }
+}
+
+function showSection(section) {
+    // Hide all sections
+    Object.values(sections).forEach(sec => {
+        sec.style.display = 'none';
+        sec.classList.remove('fade-in');
+    });
+    
+    // Deactivate all tabs
+    Object.values(tabs).forEach(tab => tab.classList.remove('active'));
+    
+    // Show selected section
+    sections[section].style.display = 'block';
+    setTimeout(() => sections[section].classList.add('fade-in'), 10);
+    
+    // Activate selected tab
+    tabs[section].classList.add('active');
+    
+    // Load content for the section
+    switch(section) {
+        case 'papers':
+            loadPapers();
+            break;
+        case 'ranks':
+            loadPapersForRankings();
+            break;
+        case 'stats':
+            if (checkAuthForStats()) {
+                loadUserStats();
+            }
+            break;
+    }
+}
+
+
+
+    // Tab navigation
+    tabs.papers.addEventListener('click', () => showSection('papers'));
+    tabs.ranks.addEventListener('click', () => showSection('ranks'));
+    tabs.stats.addEventListener('click', () => {
+        if (checkAuthForStats()) {
+            showSection('stats');
+        }
+    });
+
+    // Check if user needs to be authenticated for stats section
+    function checkAuthForStats() {
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (!currentUser) {
+            authMessage.textContent = 'Please login to view your statistics and submission history.';
+            authActionBtn.textContent = 'Login';
+            authActionBtn.className = 'btn btn-sm btn-primary';
+            authActionBtn.onclick = () => window.location.href = 'login.html';
+            authStatusBar.classList.remove('d-none');
+            return false;
+        }
+        authStatusBar.classList.add('d-none');
+        return true;
+    }
+
+    // Show section function
+    function showSection(section) {
+        Object.values(sections).forEach(sec => sec.style.display = 'none');
+        sections[section].style.display = 'block';
+        Object.values(tabs).forEach(tab => tab.classList.remove('active'));
+        tabs[section].classList.add('active');
+        
+        if (section === 'papers') loadPapers();
+        else if (section === 'ranks') loadPapersForRankings();
+        else if (section === 'stats') loadUserStats();
+    }
+
+    // Theme toggle functionality
+    document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+
+    function toggleTheme() {
+        document.body.classList.toggle('dark-mode');
+        const icon = document.querySelector('#themeToggle i');
+        if (document.body.classList.contains('dark-mode')) {
+            icon.classList.replace('fa-moon', 'fa-sun');
+            localStorage.setItem('theme', 'dark');
+            document.getElementById('themeToggle').innerHTML = '<i class="fas fa-sun me-2"></i> Light Mode';
+        } else {
+            icon.classList.replace('fa-sun', 'fa-moon');
+            localStorage.setItem('theme', 'light');
+            document.getElementById('themeToggle').innerHTML = '<i class="fas fa-moon me-2"></i> Dark Mode';
+        }
+    }
+
+    // Check for saved theme preference
+    function checkTheme() {
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('themeToggle').innerHTML = '<i class="fas fa-sun me-2"></i> Light Mode';
+        }
+    }
+    // Update auth UI based on login state
+    function updateAuthUI(user) {
+    if (user) {
+        database.ref('users/' + user.uid).once('value').then(snapshot => {
+            const userData = snapshot.val();
+            if (userData) {
+                localStorage.setItem('currentUser', JSON.stringify({
+                    uid: user.uid,
+                    nic: userData.nic,
+                    name: userData.name,
+                    email: userData.email,
+                    class: userData.class || '',
+                    registeredYear: userData.registeredYear || new Date().getFullYear().toString()
+                }));
+                
+                authBtn.innerHTML = `<i class="bi bi-person-check me-2"></i> ${userData.name || 'Account'}`;
+                authBtn.classList.remove('btn-outline-light');
+                authBtn.classList.add('btn-light');
+                authBtn.onclick = logoutUser;
+            }
+        });
+    } else {
+        // =============================================
+        // ADD THE ENHANCED LOGIN REDIRECT CODE HERE ▼
+        // =============================================
+        authBtn.innerHTML = '<i class="bi bi-box-arrow-in-right me-2"></i> Login';
+        authBtn.classList.remove('btn-light');
+        authBtn.classList.add('btn-outline-light');
+        
+        // Enhanced version with loading spinner and error handling
+        authBtn.onclick = () => {
+            // Show loading spinner
+            authBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Redirecting...';
+            authBtn.disabled = true;
+            
+            try {
+                // Include current page as return URL
+                const returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
+                setTimeout(() => {
+                    window.location.href = `login.html?returnUrl=${returnUrl}`;
+                }, 500); // Small delay to show spinner
+            } catch (error) {
+                console.error('Redirect failed:', error);
+                // Reset button state if error occurs
+                authBtn.innerHTML = '<i class="bi bi-box-arrow-in-right me-2"></i> Login';
+                authBtn.disabled = false;
+                alert('Unable to redirect to login page. Please try again.');
+            }
+        };
+    }
+}
+
+    // Logout function
+function logoutUser() {
+    if (confirm('Are you sure you want to log out?')) {
+        const originalHtml = userProfile.innerHTML;
+        userProfile.innerHTML = `
+            <div class="d-flex align-items-center">
+                <div class="spinner-border spinner-border-sm me-2"></div>
+                Logging out...
+            </div>
+        `;
+        
+        auth.signOut().then(() => {
+            localStorage.removeItem('currentUser');
+            window.location.reload(); // Refresh to show public content
+        }).catch(error => {
+            console.error('Logout error:', error);
+            userProfile.innerHTML = originalHtml;
+            alert('Error during logout. Please try again.');
+        });
+    }
+}
+
+
+    // Check if paper is currently available
+    function isPaperAvailable(paper) {
+        const now = new Date().getTime();
+        const openTime = new Date(paper.openTime).getTime();
+        const closeTime = new Date(paper.closeTime).getTime();
+        return now >= openTime && now <= closeTime;
+    }
+
+    // Check if paper is closed (answers can be viewed)
+    function isPaperClosed(paper) {
+        const now = new Date().getTime();
+        const closeTime = new Date(paper.closeTime).getTime();
+        return now > closeTime;
+    }
+
+    // Load papers for student
+    function loadPapers() {
+    const availablePapersContainer = document.getElementById('availablePapers');
+    const viewAnswersContainer = document.getElementById('viewAnswers');
+    
+    // Show loading state
+    availablePapersContainer.innerHTML = `
+        <div class="col-12 text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Loading available papers...</p>
+        </div>
+    `;
+    
+    viewAnswersContainer.innerHTML = `
+        <div class="col-12 text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Loading answer keys...</p>
+        </div>
+    `;
+    
+    // Load papers from Firebase
+    database.ref('papers').once('value').then(snapshot => {
+        const papers = snapshot.val() || {};
+        const now = new Date().getTime();
+        
+        let availablePapersHtml = '';
+        let viewAnswersHtml = '';
+        let hasAvailablePapers = false;
+        let hasViewAnswers = false;
+        
+        Object.entries(papers).forEach(([id, paper]) => {
+            const paperCard = createPaperCard(id, paper);
+            
+            if (isPaperAvailable(paper)) {
+                availablePapersHtml += paperCard;
+                hasAvailablePapers = true;
+            } else if (isPaperClosed(paper)) {
+                viewAnswersHtml += paperCard;
+                hasViewAnswers = true;
+            }
+        });
+        
+        availablePapersContainer.innerHTML = hasAvailablePapers ? availablePapersHtml : 
+            '<div class="col-12 text-center py-4"><p>No available papers at the moment. Check back later!</p></div>';
+        
+        viewAnswersContainer.innerHTML = hasViewAnswers ? viewAnswersHtml : 
+            '<div class="col-12 text-center py-4"><p>No papers with answers available yet.</p></div>';
+        
+        addPaperCardEventListeners();
+        
+    }).catch(error => {
+        console.error('Error loading papers:', error);
+        availablePapersContainer.innerHTML = `
+            <div class="col-12 text-center py-4 text-danger">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                Error loading papers. Please try again later.
+            </div>
+        `;
+        viewAnswersContainer.innerHTML = `
+            <div class="col-12 text-center py-4 text-danger">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                Error loading answer keys.
+            </div>
+        `;
+    });
+}
+
+
+    // Create paper card HTML
+    function createPaperCard(id, paper) {
+        const isAvailable = isPaperAvailable(paper);
+        const isClosed = isPaperClosed(paper);
+        
+        let buttonsHtml = '';
+        
+        if (isAvailable) {
+            buttonsHtml = `
+                <button class="btn btn-outline-primary download-paper-btn" data-id="${id}">
+                    <i class="bi bi-download me-1"></i> Download Paper
+                </button>
+                <a href="student-paper.html?paperId=${id}" class="btn btn-primary submit-answers-btn">
+                    <i class="bi bi-pencil-square me-1"></i> Submit Answers
+                </a>
+            `;
+        } else if (isClosed) {
+            buttonsHtml = `
+                <button class="btn btn-outline-primary download-paper-btn" data-id="${id}">
+                    <i class="bi bi-download me-1"></i> Download Paper
+                </button>
+                <button class="btn btn-outline-success download-answers-btn" data-id="${id}">
+                    <i class="bi bi-file-earmark-text me-1"></i> Download Answers
+                </button>
+                <button class="btn btn-primary view-ranks-btn" data-id="${id}">
+                    <i class="bi bi-trophy me-1"></i> View Ranks
+                </button>
+            `;
+        }
+        
+        return `
+            <div class="col-md-6 col-lg-4">
+                <div class="card paper-card">
+                    <div class="card-body">
+                        <h5 class="card-title">${paper.title}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">${paper.year} - ${paper.subject}</h6>
+                        <p class="card-text text-muted small">
+                            ${isAvailable ? 
+                                `Available until ${new Date(paper.closeTime).toLocaleString()}` : 
+                                `Closed on ${new Date(paper.closeTime).toLocaleString()}`}
+                        </p>
+                        <div class="btn-group w-100">
+                            ${buttonsHtml}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // Add event listeners to paper card buttons
+    function addPaperCardEventListeners() {
+        document.querySelectorAll('.download-paper-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const paperId = this.getAttribute('data-id');
+                downloadPaper(paperId);
+            });
+        });
+        
+        document.querySelectorAll('.download-answers-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const paperId = this.getAttribute('data-id');
+                downloadAnswers(paperId);
+            });
+        });
+        
+        document.querySelectorAll('.view-ranks-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const paperId = this.getAttribute('data-id');
+                showSection('ranks');
+                document.getElementById('rankPaperFilter').value = paperId;
+                loadRankings(paperId);
+            });
+        });
+    }
+
+    // Download paper PDF
+    function downloadPaper(paperId) {
+        database.ref(`papers/${paperId}/pdfUrl`).once('value').then(snapshot => {
+            const pdfUrl = snapshot.val();
+            if (pdfUrl) {
+                window.open(pdfUrl, '_blank');
+            } else {
+                alert('Paper PDF not available for download');
+            }
+        }).catch(error => {
+            console.error('Error downloading paper:', error);
+            alert('Error downloading paper. Please try again.');
+        });
+    }
+
+    // Download answer key PDF
+    function downloadAnswers(paperId) {
+        database.ref(`papers/${paperId}/answerKeyUrl`).once('value').then(snapshot => {
+            const answerKeyUrl = snapshot.val();
+            if (answerKeyUrl) {
+                window.open(answerKeyUrl, '_blank');
+            } else {
+                alert('Answer key not available for download');
+            }
+        }).catch(error => {
+            console.error('Error downloading answers:', error);
+            alert('Error downloading answers. Please try again.');
+        });
+    }
+
+    // Load papers for rankings filter
+    function loadPapersForRankings() {
+        const filter = document.getElementById('rankPaperFilter');
+        filter.innerHTML = '<option value="">Select Paper</option>';
+        
+        database.ref('papers').once('value').then(snapshot => {
+            const papers = snapshot.val() || {};
+            const now = new Date().getTime();
+            
+            Object.entries(papers).forEach(([id, paper]) => {
+                const closeTime = new Date(paper.closeTime).getTime();
+                
+                // Only show papers that have closed (for rankings)
+                if (now > closeTime) {
+                    const option = document.createElement('option');
+                    option.value = id;
+                    option.textContent = `${paper.title} (${paper.year})`;
+                    filter.appendChild(option);
+                }
+            });
+            
+            filter.addEventListener('change', () => {
+                if (filter.value) {
+                    loadRankings(filter.value);
+                } else {
+                    document.getElementById('overallRankings').innerHTML = '';
+                    document.getElementById('classRankings').innerHTML = '';
+                    document.getElementById('userRankInfo').style.display = 'none';
+                }
+            });
+            
+        }).catch(error => {
+            console.error('Error loading papers for rankings:', error);
+            filter.innerHTML = '<option value="">Error loading papers</option>';
+        });
+    }
+
+    // Load rankings for a paper
+    function loadRankings(paperId) {
+        const overallRankings = document.getElementById('overallRankings');
+        const classRankings = document.getElementById('classRankings');
+        const userRankInfo = document.getElementById('userRankInfo');
+        const classFilter = document.getElementById('classFilter');
+        
+        // Show loading state
+        overallRankings.innerHTML = '<tr><td colspan="3" class="text-center"><div class="spinner-border text-primary"></div></td></tr>';
+        classRankings.innerHTML = '<tr><td colspan="3" class="text-center"><div class="spinner-border text-primary"></div></td></tr>';
+        userRankInfo.style.display = 'none';
+        
+        // Get current user from localStorage
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        const userClass = currentUser ? currentUser.class : null;
+        
+        // Set default class filter to user's class if logged in
+        if (userClass) {
+            classFilter.value = userClass;
+        }
+        
+        Promise.all([
+            database.ref(`papers/${paperId}`).once('value'),
+            database.ref(`submissions/${paperId}`).once('value')
+        ]).then(([paperSnapshot, submissionsSnapshot]) => {
+            const paper = paperSnapshot.val();
+            const submissions = submissionsSnapshot.val() || {};
+            
+            if (!paper) {
+                throw new Error('Paper not found');
+            }
+            
+            // Convert submissions to array and sort by score
+            let submissionsArray = Object.entries(submissions).map(([nic, submission]) => ({
+                nic, ...submission
+            })).sort((a, b) => b.score - a.score);
+            
+            // Calculate ranks
+            let currentRank = 1;
+            submissionsArray.forEach((sub, index) => {
+                if (index > 0 && sub.score < submissionsArray[index - 1].score) {
+                    currentRank = index + 1;
+                }
+                sub.rank = currentRank;
+            });
+            
+            // Display overall rankings (top 100)
+            displayRankingsTable(overallRankings, submissionsArray.slice(0, 100), paper, currentUser);
+            
+            // Filter by selected class
+            const selectedClass = classFilter.value;
+            let filteredSubmissions = submissionsArray;
+            if (selectedClass) {
+                filteredSubmissions = submissionsArray.filter(sub => sub.class === selectedClass);
+            }
+            
+            // Display class rankings (top 100)
+            displayRankingsTable(classRankings, filteredSubmissions.slice(0, 100), paper, currentUser);
+            
+            // Show user's rank if logged in and submitted this paper
+            if (currentUser) {
+                const userSubmission = submissionsArray.find(sub => sub.nic === currentUser.nic);
+                if (userSubmission) {
+                    showUserRankInfo(userSubmission, paper, filteredSubmissions, selectedClass || userClass);
+                }
+            }
+            
+            // Add event listener for class filter changes
+            classFilter.addEventListener('change', () => {
+                const selectedClass = classFilter.value;
+                let filteredSubmissions = submissionsArray;
+                
+                if (selectedClass) {
+                    filteredSubmissions = submissionsArray.filter(sub => sub.class === selectedClass);
+                }
+                
+                displayRankingsTable(classRankings, filteredSubmissions.slice(0, 100), paper, currentUser);
+                
+                // Update user rank info if available
+                if (currentUser) {
+                    const userSubmission = submissionsArray.find(sub => sub.nic === currentUser.nic);
+                    if (userSubmission) {
+                        showUserRankInfo(userSubmission, paper, filteredSubmissions, selectedClass || userClass);
+                    }
+                }
+            });
+            
+        }).catch(error => {
+            console.error('Error loading rankings:', error);
+            overallRankings.innerHTML = '<tr><td colspan="3" class="text-center text-danger">Error loading rankings</td></tr>';
+            classRankings.innerHTML = '<tr><td colspan="3" class="text-center text-danger">Error loading rankings</td></tr>';
+        });
+    }
+
+    // Helper function to display rankings table
+    function displayRankingsTable(element, submissions, paper, currentUser) {
+        if (submissions.length === 0) {
+            element.innerHTML = '<tr><td colspan="3" class="text-center">No rankings available for selected class</td></tr>';
+            return;
+        }
+
+        let html = '';
+        submissions.forEach(sub => {
+            const isCurrentUser = currentUser && currentUser.nic === sub.nic;
+            const percentage = ((sub.score / paper.totalMarks) * 100).toFixed(1);
+            
+            html += `
+                <tr class="${isCurrentUser ? 'user-rank' : ''}">
+                    <td>${sub.rank}</td>
+                    <td>${sub.name}</td>
+                    <td>${sub.score}/${paper.totalMarks} (${percentage}%)</td>
+                </tr>
+            `;
+        });
+        
+        element.innerHTML = html;
+    }
+
+    // Helper function to show user rank info
+    function showUserRankInfo(userSubmission, paper, classSubmissions, classGroup) {
+        const percentage = ((userSubmission.score / paper.totalMarks) * 100).toFixed(1);
+        const classRank = classSubmissions.findIndex(sub => sub.nic === userSubmission.nic) + 1;
+        
+        document.getElementById('userRankDetails').innerHTML = `
+            <p><strong>Paper:</strong> ${paper.title} (${paper.year})</p>
+            <p><strong>Your Score:</strong> ${userSubmission.score}/${paper.totalMarks} (${percentage}%)</p>
+            <p><strong>Overall Rank:</strong> ${userSubmission.rank}</p>
+            ${classGroup ? `<p><strong>Class Rank (${classGroup}):</strong> ${classRank}</p>` : ''}
+        `;
+        document.getElementById('userRankInfo').style.display = 'block';
+    }
+
+    // Load user statistics
+    function loadUserStats() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    
+    if (!currentUser) {
+        showAuthPrompt();
+        return;
+    }
+
+    // Show loading state
+    document.getElementById('statsSection').innerHTML = `
+        <div class="text-center">
+            <div class="spinner-border text-primary"></div>
+            <p>Loading your statistics...</p>
+        </div>
+    `;
+
+    database.ref('users/' + currentUser.uid).once('value')
+        .then(userSnapshot => {
+            const userData = userSnapshot.val();
+            if (!userData) {
+                throw new Error('User data not found');
+            }
+            // Continue with loading stats...
+        })
+        .catch(error => {
+            console.error("Stats loading error:", error);
+            document.getElementById('statsSection').innerHTML = `
+                <div class="alert alert-danger text-center">
+                    <h5><i class="bi bi-exclamation-triangle"></i> Error Loading Data</h5>
+                    <p>Could not load your statistics. Please try again later.</p>
+                    <button class="btn btn-sm btn-primary" onclick="loadUserStats()">
+                        <i class="bi bi-arrow-clockwise"></i> Retry
+                    </button>
+                </div>
+            `;
+        });
+}
+
+    // Prepare data for performance chart
+    function prepareChartData(userSubmissions, allPapers, userYear) {
+        // Get all papers from the user's registered year
+        const yearPapers = Object.entries(allPapers)
+            .filter(([id, paper]) => paper.year === userYear)
+            .sort((a, b) => new Date(a[1].closeTime) - new Date(b[1].closeTime));
+        
+        const labels = [];
+        const rankData = [];
+        const scoreData = [];
+        const absentPapers = [];
+        
+        yearPapers.forEach(([paperId, paper]) => {
+            labels.push(paper.title);
+            
+            const submission = userSubmissions.find(sub => sub.paperId === paperId);
+            if (submission) {
+                rankData.push(submission.rank || 0);
+                scoreData.push(Math.round((submission.score / paper.totalMarks) * 100));
+            } else {
+                rankData.push(null);
+                scoreData.push(null);
+                absentPapers.push(paper);
+            }
+        });
+        
+        // Initialize chart
+        renderPerformanceChart(labels, rankData, scoreData, absentPapers);
+        
+        // Set up chart filter
+        document.getElementById('chartFilter').addEventListener('change', function() {
+            updateChartData(this.value, userSubmissions, allPapers, userYear);
+        });
+    }
+
+    function renderPerformanceChart(labels, rankData, scoreData, absentPapers) {
+        const ctx = document.getElementById('performanceChart').getContext('2d');
+        
+        // Destroy previous chart if exists
+        if (window.performanceChart) {
+            window.performanceChart.destroy();
+        }
+        
+        window.performanceChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Rank',
+                        data: rankData,
+                        borderColor: '#4a6bff',
+                        backgroundColor: 'rgba(74, 107, 255, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        yAxisID: 'y',
+                        pointBackgroundColor: function(context) {
+                            return context.raw === null ? '#dc3545' : '#4a6bff';
+                        },
+                        pointRadius: function(context) {
+                            return context.raw === null ? 0 : 5;
+                        }
+                    },
+                    {
+                        label: 'Score (%)',
+                        data: scoreData,
+                        borderColor: '#28a745',
+                        backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        yAxisID: 'y1',
+                        pointBackgroundColor: function(context) {
+                            return context.raw === null ? '#dc3545' : '#28a745';
+                        },
+                        pointRadius: function(context) {
+                            return context.raw === null ? 0 : 5;
+                        }
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                if (context.raw === null) return 'Absent';
+                                let label = context.dataset.label || '';
+                                if (label) label += ': ';
+                                if (context.parsed.y !== null) {
+                                    label += context.dataset.label === 'Rank' ? 
+                                        context.parsed.y + (context.parsed.y === 1 ? 'st' : 
+                                        context.parsed.y === 2 ? 'nd' : 
+                                        context.parsed.y === 3 ? 'rd' : 'th') : 
+                                        context.parsed.y + '%';
+                                }
+                                return label;
+                            }
+                        }
+                    },
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        reverse: true,
+                        title: {
+                            display: true,
+                            text: 'Rank (Lower is better)'
+                        },
+                        min: 1,
+                        ticks: {
+                            callback: function(value) {
+                                return value + (value === 1 ? 'st' : 
+                                      value === 2 ? 'nd' : 
+                                      value === 3 ? 'rd' : 'th');
+                            }
+                        }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: 'Score (%)'
+                        },
+                        min: 0,
+                        max: 100,
+                        grid: {
+                            drawOnChartArea: false
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Update chart legend with absent papers info
+        const legendContainer = document.getElementById('chartLegend');
+        if (absentPapers.length > 0) {
+            let legendHtml = '<div class="d-flex flex-wrap justify-content-center gap-3">';
+            legendHtml += '<span class="badge bg-danger me-2"><i class="bi bi-exclamation-circle me-1"></i> Absent</span>';
+            legendHtml += absentPapers.map(paper => 
+                `<span class="badge bg-light text-dark">${paper.title}</span>`
+            ).join('');
+            legendHtml += '</div>';
+            legendContainer.innerHTML = legendHtml;
+        } else {
+            legendContainer.innerHTML = '';
+        }
+    }
+
+    // Update chart data based on filter
+    function updateChartData(filter, userSubmissions, allPapers, userYear) {
+        let labels = [];
+        let rankData = [];
+        let scoreData = [];
+        let absentPapers = [];
+        
+        if (filter === 'year') {
+            // Show only user's year papers
+            const yearPapers = Object.entries(allPapers)
+                .filter(([id, paper]) => paper.year === userYear)
+                .sort((a, b) => new Date(a[1].closeTime) - new Date(b[1].closeTime));
+            
+            yearPapers.forEach(([paperId, paper]) => {
+                labels.push(paper.title);
+                
+                const submission = userSubmissions.find(sub => sub.paperId === paperId);
+                if (submission) {
+                    rankData.push(submission.rank || 0);
+                    scoreData.push(Math.round((submission.score / paper.totalMarks) * 100));
+                } else {
+                    rankData.push(null);
+                    scoreData.push(null);
+                    absentPapers.push(paper);
+                }
+            });
+        } 
+        else if (filter === 'subject') {
+            // Group by subject
+            const subjects = {};
+            
+            // Get all unique subjects from user's submissions
+            userSubmissions.forEach(sub => {
+                if (sub.subject && !subjects[sub.subject]) {
+                    subjects[sub.subject] = [];
+                }
+            });
+            
+            // Add papers for each subject
+            Object.entries(allPapers).forEach(([paperId, paper]) => {
+                if (subjects[paper.subject]) {
+                    subjects[paper.subject].push({
+                        paperId,
+                        ...paper
+                    });
+                }
+            });
+            
+            // Sort papers within each subject by date
+            Object.keys(subjects).forEach(subject => {
+                subjects[subject].sort((a, b) => new Date(a.closeTime) - new Date(b.closeTime));
+            });
+            
+            // Prepare data for chart
+            Object.entries(subjects).forEach(([subject, papers]) => {
+                papers.forEach(paper => {
+                    labels.push(`${paper.title} (${subject})`);
+                    
+                    const submission = userSubmissions.find(sub => sub.paperId === paper.paperId);
+                    if (submission) {
+                        rankData.push(submission.rank || 0);
+                        scoreData.push(Math.round((submission.score / paper.totalMarks) * 100));
+                    } else {
+                        rankData.push(null);
+                        scoreData.push(null);
+                        absentPapers.push(paper);
+                    }
+                });
+            });
+        } 
+        else {
+            // Show all papers (default)
+            const allPapersSorted = Object.entries(allPapers)
+                .sort((a, b) => new Date(a[1].closeTime) - new Date(b[1].closeTime));
+            
+            allPapersSorted.forEach(([paperId, paper]) => {
+                labels.push(`${paper.title} (${paper.year})`);
+                
+                const submission = userSubmissions.find(sub => sub.paperId === paperId);
+                if (submission) {
+                    rankData.push(submission.rank || 0);
+                    scoreData.push(Math.round((submission.score / paper.totalMarks) * 100));
+                } else {
+                    rankData.push(null);
+                    scoreData.push(null);
+                    absentPapers.push(paper);
+                }
+            });
+        }
+        
+        // Update chart
+        window.performanceChart.data.labels = labels;
+        window.performanceChart.data.datasets[0].data = rankData;
+        window.performanceChart.data.datasets[1].data = scoreData;
+        window.performanceChart.update();
+        
+        // Update legend
+        const legendContainer = document.getElementById('chartLegend');
+        if (absentPapers.length > 0) {
+            let legendHtml = '<div class="d-flex flex-wrap justify-content-center gap-3">';
+            legendHtml += '<span class="badge bg-danger me-2"><i class="bi bi-exclamation-circle me-1"></i> Absent</span>';
+            legendHtml += absentPapers.map(paper => 
+                `<span class="badge bg-light text-dark">${filter === 'subject' ? paper.subject + ' - ' + paper.title : paper.title}</span>`
+            ).join('');
+            legendHtml += '</div>';
+            legendContainer.innerHTML = legendHtml;
+        } else {
+            legendContainer.innerHTML = '';
+        }
+    }
+
+    function displaySubmissionsTable(userSubmissions, user) {
+        let submissionsHtml = '';
+        
+        if (userSubmissions.length > 0) {
+            // Sort by timestamp (newest first)
+            userSubmissions.sort((a, b) => b.timestamp - a.timestamp);
+            
+            submissionsHtml = userSubmissions.map(sub => {
+                const percentage = sub.totalPossible ? 
+                    Math.round((sub.score / sub.totalPossible) * 100) : 0;
+                
+                return `
+                    <tr>
+                        <td>${sub.paperTitle || 'Unknown Paper'}</td>
+                        <td>${sub.paperYear || '-'}</td>
+                        <td>${sub.score}/${sub.totalPossible || '?'} (${percentage}%)</td>
+                        <td>${sub.rank ? sub.rank + (sub.rank === 1 ? 'st' : 
+                                                   sub.rank === 2 ? 'nd' : 
+                                                   sub.rank === 3 ? 'rd' : 'th') : '-'}</td>
+                        <td>${new Date(sub.timestamp).toLocaleDateString()}</td>
+                        <td>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" 
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-gear"></i> Actions
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item view-submission-btn" href="#" 
+                                           data-paper="${sub.paperId}" data-nic="${user.nic}">
+                                            <i class="bi bi-eye me-2"></i> View Details
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item download-paper-btn" href="#" 
+                                           data-paper="${sub.paperId}">
+                                            <i class="bi bi-download me-2"></i> Download Paper
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item download-answers-btn" href="#" 
+                                           data-paper="${sub.paperId}">
+                                            <i class="bi bi-file-earmark-text me-2"></i> Download Answers
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item view-ranks-btn" href="#" 
+                                           data-paper="${sub.paperId}">
+                                            <i class="bi bi-trophy me-2"></i> View Rankings
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        } else {
+            submissionsHtml = `
+                <tr>
+                    <td colspan="6" class="text-center">No submissions found</td>
+                </tr>
+            `;
+        }
+        
+        document.getElementById('mySubmissions').innerHTML = submissionsHtml;
+        
+        // Add event listeners to action buttons
+        document.querySelectorAll('.view-submission-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const paperId = this.getAttribute('data-paper');
+                const nic = this.getAttribute('data-nic');
+                viewSubmissionDetails(paperId, nic);
+            });
+        });
+        
+        document.querySelectorAll('.download-paper-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const paperId = this.getAttribute('data-paper');
+                downloadPaper(paperId);
+            });
+        });
+        
+        document.querySelectorAll('.download-answers-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const paperId = this.getAttribute('data-paper');
+                downloadAnswers(paperId);
+            });
+        });
+        
+        document.querySelectorAll('.view-ranks-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const paperId = this.getAttribute('data-paper');
+                showSection('ranks');
+                document.getElementById('rankPaperFilter').value = paperId;
+                loadRankings(paperId);
+            });
+        });
+    }
+
+    // View submission details
+    function viewSubmissionDetails(paperId, nic) {
+        Promise.all([
+            database.ref(`papers/${paperId}`).once('value'),
+            database.ref(`submissions/${paperId}/${nic}`).once('value')
+        ]).then(([paperSnapshot, submissionSnapshot]) => {
+            const paper = paperSnapshot.val();
+            const submission = submissionSnapshot.val();
+            
+            if (!paper || !submission) {
+                throw new Error('Submission details not found');
+            }
+            
+            let html = `
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h5>${paper.title} (${paper.year})</h5>
+                        <p><strong>Score:</strong> ${submission.score}/${paper.totalMarks}</p>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <p><strong>Submitted:</strong> ${new Date(submission.timestamp).toLocaleString()}</p>
+                        ${submission.rank ? `<p><strong>Rank:</strong> ${submission.rank}</p>` : ''}
+                    </div>
+                </div>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Question</th>
+                            <th>Your Answer</th>
+                            <th>Correct Answer</th>
+                            <th>Result</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            for (const [qNum, question] of Object.entries(paper.questions)) {
+                const studentAnswer = submission.answers[qNum] || '-';
+                const isCorrect = studentAnswer === question.answer;
+                
+                html += `
+                    <tr>
+                        <td>${question.questionText}</td>
+                        <td>${studentAnswer}</td>
+                        <td>${question.answer}</td>
+                        <td class="${isCorrect ? 'text-success' : 'text-danger'}">
+                            ${isCorrect ? 'Correct' : 'Incorrect'}
+                        </td>
+                    </tr>
+                `;
+            }
+            
+            html += `</tbody></table>`;
+            
+            // Show in modal
+            const modal = new bootstrap.Modal(document.createElement('div'));
+            modal._element.className = 'modal fade';
+            modal._element.innerHTML = `
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Submission Details</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            ${html}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal._element);
+            modal.show();
+            
+            // Clean up after modal is closed
+            modal._element.addEventListener('hidden.bs.modal', () => {
+                document.body.removeChild(modal._element);
+            });
+            
+        }).catch(error => {
+            console.error('Error viewing submission:', error);
+            alert('Error loading submission details. Please try again.');
+        });
+    }
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', () => {
+        checkTheme();
+        
+        // Set up auth state listener
+auth.onAuthStateChanged(user => {
+    if (user) {
+        // Only proceed if we have complete user data
+        database.ref('users/' + user.uid).once('value').then(snapshot => {
+            const userData = snapshot.val();
+            if (userData) {
+                updateAuthUI(user);
+                loadInitialContent();
+            } else {
+                showError("User data not found in database");
+            }
+        }).catch(error => {
+            showError("Error loading user data");
+            console.error("Database error:", error);
+        });
+    } else {
+        // Show public content for non-logged-in users
+        loadPublicContent();
+    }
+});
+
+    });
+function showError(message) {
+    const errorElement = document.createElement('div');
+    errorElement.className = 'alert alert-danger text-center';
+    errorElement.textContent = message;
+    document.getElementById('statsSection').innerHTML = '';
+    document.getElementById('statsSection').appendChild(errorElement);
+}
+</script>
+</body>
+</html>
