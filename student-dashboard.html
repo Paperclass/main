@@ -663,6 +663,18 @@
     margin-top: 1rem;
     font-size: 1.2rem;
 }
+
+.chart-container {
+    position: relative;
+    height: 300px;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+#performanceChart {
+    width: 100% !important;
+    height: 100% !important;
+}
     </style>
 </head>
 <body>
@@ -729,7 +741,7 @@
                                 <span id="loginSpinner" class="spinner-border spinner-border-sm d-none"></span>
                                 Login
                             </button>
-                            <a href="registration.html" class="text-decoration-none">Don't have an account? Register</a>
+                            <a href="register.html" class="text-decoration-none">Don't have an account? Register</a>
                         </div>
                     </form>
                     <div id="loginError" class="alert alert-danger mt-3 d-none"></div>
@@ -865,14 +877,13 @@
                     <div class="filter-container">
                         <label for="classFilter" class="form-label">Filter by Class</label>
                         <select class="form-select" id="classFilter">
-                            <option value="">All Classes</option>
+                            <option value="">All Island</option>
                             <option value="Nugegoda">Nugegoda</option>
                             <option value="Kandy">Kandy</option>
                             <option value="Kegalle">Kegalle</option>
                             <option value="Kurunegala">Kurunegala</option>
                             <option value="Gall">Gall</option>
                             <option value="Onlin">Online</option>
-                            <option value="All Island">All Island</option>
                         </select>
                     </div>
                 </div>
@@ -929,8 +940,13 @@
             </div>
         </div>
 
-        <!-- My Stats Section -->
+        <!-- Stats Section -->
         <div id="statsSection" style="display: none;" class="fade-in">
+            <!-- Dynamic content will be inserted here -->
+        </div>
+
+        <!-- Template for stats UI (hidden) -->
+        <div id="statsUITemplate" style="display: none;">
             <h2 class="section-title">
                 <i class="bi bi-graph-up me-2"></i> My Statistics
             </h2>
@@ -948,36 +964,9 @@
                         <div class="stat-label">Average Score</div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="stats-card">
-                        <div class="stat-value" id="bestRank">-</div>
-                        <div class="stat-label">Best Rank</div>
-                    </div>
-                </div>
             </div>
 
             <div class="card mb-4">
-                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                    <div>
-                        <i class="bi bi-graph-up me-2"></i> My Performance Trend
-                    </div>
-                    <div>
-                        <select class="form-select form-select-sm w-auto" id="chartFilter">
-                            <option value="all">All Papers</option>
-                            <option value="year">My Year Papers</option>
-                            <option value="subject">By Subject</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="chart-container" style="position: relative; height: 300px;">
-                        <canvas id="performanceChart"></canvas>
-                    </div>
-                    <div class="text-center mt-3" id="chartLegend"></div>
-                </div>
-            </div>
-
-            <div class="card">
                 <div class="card-header bg-primary text-white">
                     <i class="bi bi-list-check me-2"></i> My Submissions
                 </div>
@@ -989,13 +978,10 @@
                                     <th>Paper</th>
                                     <th>Year</th>
                                     <th>Score</th>
-                                    <th>Rank</th>
                                     <th>Date</th>
-                                    <th>Actions</th>
                                 </tr>
                             </thead>
-                            <tbody id="mySubmissions">
-                            </tbody>
+                            <tbody id="mySubmissions"></tbody>
                         </table>
                     </div>
                 </div>
