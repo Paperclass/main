@@ -115,12 +115,11 @@ function setupEventListeners() {
         if (checkAuthForStats()) showSection('stats');
     });
     
-        // Login form
+    // Login form
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
         loginForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            console.log('Login form submitted');
             handleLogin();
         });
     }
@@ -131,7 +130,6 @@ function setupEventListeners() {
         authBtn.addEventListener('click', function(e) {
             e.preventDefault();
             const user = JSON.parse(localStorage.getItem('currentUser'));
-            console.log('Auth button clicked, user state:', user);
             
             if (user) {
                 logoutUser();
@@ -141,7 +139,6 @@ function setupEventListeners() {
             }
         });
     }
-
 }
 
 function initAuthState() {
@@ -154,7 +151,7 @@ function initAuthState() {
                 if (!userData) {
                     // Initialize default user data if not found
                     userData = {
-                        name: user.email.split('@')[0],
+                        name: user.displayName || user.email.split('@')[0],
                         email: user.email,
                         nic: '',
                         class: '',
@@ -183,7 +180,6 @@ function initAuthState() {
         }
     });
 }
-
 
 function showLoadingOverlay(message = 'Loading...') {
     const overlay = document.createElement('div');
@@ -337,7 +333,6 @@ function showError(element, message) {
     }, 5000);
 }
 
-
 function getAuthErrorMessage(error) {
     switch(error.code) {
         case 'auth/invalid-email': return 'Invalid email address';
@@ -444,7 +439,6 @@ function showPublicContent() {
         authBtn.classList.add('btn-outline-light');
     }
 
-    
     // Disable protected sections
     if (tabs.stats) tabs.stats.classList.add('disabled');
     if (tabs.ranks) tabs.ranks.classList.add('disabled');
@@ -526,7 +520,6 @@ function checkTheme() {
     }
 }
 
-// [Rest of your paper-related functions...]
 function loadPapers(selectedYear = '') {
     const availablePapers = document.getElementById('availablePapers');
     const viewAnswers = document.getElementById('viewAnswers');
@@ -846,165 +839,201 @@ function showUserRank(submission, paper, classSubmissions, classGroup) {
     userRankInfo.style.display = 'block';
 }
 
-function loadUserStats() {
+// Stats section functions
+async function loadUserStats() {
     const user = JSON.parse(localStorage.getItem('currentUser'));
-    if (!user) return;
-    
+    if (!user) {
+        showToast('Please login to view stats', 'warning');
+        return;
+    }
+
     const statsSection = document.getElementById('statsSection');
     if (!statsSection) return;
-    
+
+    // Show loading state
     statsSection.innerHTML = `
         <div class="text-center py-5">
-            <div class="spinner-border"></div>
+            <div class="spinner-border text-primary"></div>
+            <p class="mt-2">Loading your statistics...</p>
         </div>
     `;
-    
-    // Get all papers and submissions
-    Promise.all([
-        database.ref('papers').once('value'),
-        database.ref('submissions').once('value')
-    ]).then(([papersSnapshot, submissionsSnapshot]) => {
+
+    try {
+        // Build the stats UI directly
+        statsSection.innerHTML = `
+            <h2 class="section-title">
+                <i class="bi bi-graph-up me-2"></i> My Statistics
+            </h2>
+            
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="stats-card">
+                        <div class="stat-value" id="totalPapersTaken">0</div>
+                        <div class="stat-label">Papers Taken</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stats-card">
+                        <div class="stat-value" id="averageScore">0%</div>
+                        <div class="stat-label">Average Score</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stats-card">
+                        <div class="stat-value" id="bestRank">N/A</div>
+                        <div class="stat-label">Best Rank</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <i class="bi bi-graph-up me-2"></i> Performance Chart
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="performanceChart" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <i class="bi bi-list-check me-2"></i> My Submissions
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Paper</th>
+                                    <th>Year</th>
+                                    <th>Score</th>
+                                    <th>Date</th>
+                                    <th>Rank</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="mySubmissions"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Now load the actual data
+        const [papersSnapshot, submissionsSnapshot] = await Promise.all([
+            database.ref('papers').once('value'),
+            database.ref('submissions').once('value')
+        ]);
+
         const papers = papersSnapshot.val() || {};
         const allSubmissions = submissionsSnapshot.val() || {};
-        
-        // Filter user's submissions
         const userSubmissions = [];
+
+        // Process all submissions to find the user's submissions
         Object.entries(allSubmissions).forEach(([paperId, paperSubmissions]) => {
-            Object.entries(paperSubmissions).forEach(([nic, submission]) => {
-                if (nic === user.nic) {
-                    const paper = papers[paperId];
-                    if (paper) {
+            if (paperSubmissions && papers[paperId]) {
+                Object.entries(paperSubmissions).forEach(([nic, submission]) => {
+                    if (nic === user.nic) {
                         userSubmissions.push({
                             paperId,
-                            paperTitle: paper.title,
-                            paperYear: paper.year,
-                            paperSubject: paper.subject,
+                            paperTitle: papers[paperId].title,
+                            paperYear: papers[paperId].year,
                             score: submission.score,
-                            totalMarks: paper.totalMarks,
+                            totalMarks: papers[paperId].totalMarks,
+                            rank: submission.rank || 'N/A',
                             timestamp: submission.timestamp || 0
                         });
                     }
-                }
-            });
-        });
-        
-        // Sort by timestamp (newest first)
-        userSubmissions.sort((a, b) => b.timestamp - a.timestamp);
-        
-        // Calculate stats
-        const totalPapersTaken = userSubmissions.length;
-        const averageScore = totalPapersTaken > 0 ? 
-            (userSubmissions.reduce((sum, sub) => sum + (sub.score / sub.totalMarks), 0) / totalPapersTaken * 100).toFixed(1) : 0;
-        
-        const bestRank = calculateBestRank(user, allSubmissions, papers);
-        
-        // Update stats cards
-        const totalPapersEl = document.getElementById('totalPapersTaken');
-        const averageScoreEl = document.getElementById('averageScore');
-        const bestRankEl = document.getElementById('bestRank');
-        
-        if (totalPapersEl) totalPapersEl.textContent = totalPapersTaken;
-        if (averageScoreEl) averageScoreEl.textContent = `${averageScore}%`;
-        if (bestRankEl) bestRankEl.textContent = bestRank || '-';
-        
-        // Prepare data for chart
-        const chartData = prepareChartData(userSubmissions);
-        
-        // Render chart
-        renderPerformanceChart(chartData);
-        
-        // Render submissions table
-        renderSubmissionsTable(userSubmissions);
-        
-    }).catch(error => {
-        console.error('Error loading stats:', error);
-        statsSection.innerHTML = `
-            <div class="alert alert-danger">
-                Error loading statistics. Please try again later.
-            </div>
-        `;
-    });
-}
-
-function calculateBestRank(user, allSubmissions, papers) {
-    let bestRank = null;
-    
-    Object.entries(allSubmissions).forEach(([paperId, paperSubmissions]) => {
-        const paper = papers[paperId];
-        if (!paper) return;
-        
-        const submissionsArray = Object.entries(paperSubmissions).map(([nic, sub]) => ({ nic, ...sub }));
-        submissionsArray.sort((a, b) => b.score - a.score);
-        
-        // Calculate ranks
-        let rank = 1;
-        submissionsArray.forEach((sub, i) => {
-            if (i > 0 && sub.score < submissionsArray[i-1].score) rank = i + 1;
-            if (sub.nic === user.nic) {
-                if (!bestRank || rank < bestRank) {
-                    bestRank = rank;
-                }
+                });
             }
         });
-    });
-    
-    return bestRank;
-}
 
-function prepareChartData(submissions) {
-    const labels = [];
-    const scores = [];
-    const averages = [];
-    
-    submissions.forEach(sub => {
-        labels.push(`${sub.paperTitle} (${sub.paperYear})`);
-        scores.push((sub.score / sub.totalMarks * 100).toFixed(1));
-        averages.push(50); // Placeholder for average - you could calculate real averages if you have the data
-    });
-    
-    return {
-        labels: labels.reverse(),
-        scores: scores.reverse(),
-        averages: averages.reverse()
-    };
-}
+        // Update the UI with the collected data
+        updateStatsUI(userSubmissions);
 
-function renderPerformanceChart(chartData) {
-    const ctx = document.getElementById('performanceChart')?.getContext('2d');
-    if (!ctx) return;
-    
-    // Destroy previous chart if it exists
-    if (window.performanceChart) {
-        window.performanceChart.destroy();
+    } catch (error) {
+        console.error('Error loading stats:', error);
+        showStatsError(error.message || 'Failed to load stats data');
     }
+}
+
+// Update stats UI with data
+function updateStatsUI(submissions) {
+    if (submissions.length === 0) {
+        document.getElementById('mySubmissions').innerHTML = `
+            <tr>
+                <td colspan="6" class="text-center py-4">
+                    <div class="alert alert-info mb-0">
+                        <i class="bi bi-info-circle me-2"></i>
+                        No submissions found
+                    </div>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    // Update stats cards
+    document.getElementById('totalPapersTaken').textContent = submissions.length;
     
-    window.performanceChart = new Chart(ctx, {
+    const totalScore = submissions.reduce((sum, sub) => sum + sub.score, 0);
+    const totalPossible = submissions.reduce((sum, sub) => sum + sub.totalMarks, 0);
+    const averagePercentage = ((totalScore / totalPossible) * 100).toFixed(1);
+    document.getElementById('averageScore').textContent = `${averagePercentage}%`;
+    
+    const validRanks = submissions.filter(sub => typeof sub.rank === 'number');
+    const bestRank = validRanks.length > 0 ? Math.min(...validRanks.map(sub => sub.rank)) : 'N/A';
+    document.getElementById('bestRank').textContent = bestRank;
+
+    // Update submissions table
+    const sortedSubmissions = [...submissions].sort((a, b) => b.timestamp - a.timestamp);
+    const tableBody = document.getElementById('mySubmissions');
+    
+    tableBody.innerHTML = sortedSubmissions.map(sub => {
+        const percentage = ((sub.score / sub.totalMarks) * 100).toFixed(1);
+        const date = sub.timestamp ? new Date(sub.timestamp).toLocaleDateString() : 'N/A';
+        
+        return `
+            <tr>
+                <td>${sub.paperTitle}</td>
+                <td>${sub.paperYear}</td>
+                <td>${sub.score}/${sub.totalMarks} (${percentage}%)</td>
+                <td>${date}</td>
+                <td>${sub.rank || 'N/A'}</td>
+                <td>
+                    <a href="results.html?paperId=${sub.paperId}&nic=${sub.nic}" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-eye"></i> View
+                    </a>
+                </td>
+            </tr>
+        `;
+    }).join('');
+
+    // Initialize performance chart
+    initializePerformanceChart(sortedSubmissions);
+}
+
+// Initialize the performance chart
+function initializePerformanceChart(submissions) {
+    const ctx = document.getElementById('performanceChart');
+    if (!ctx) return;
+
+    new Chart(ctx, {
         type: 'line',
         data: {
-            labels: chartData.labels,
-            datasets: [
-                {
-                    label: 'Your Score (%)',
-                    data: chartData.scores,
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    tension: 0.3,
-                    fill: true
-                },
-                {
-                    label: 'Average Score (%)',
-                    data: chartData.averages,
-                    borderColor: 'rgba(255, 99, 132, 1)',
-                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    tension: 0.3,
-                    borderDash: [5, 5],
-                    fill: false
-                }
-            ]
+            labels: submissions.map(sub => `${sub.paperTitle} (${sub.paperYear})`),
+            datasets: [{
+                label: 'Score (%)',
+                data: submissions.map(sub => Math.round((sub.score / sub.totalMarks) * 100)),
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                tension: 0.3
+            }]
         },
         options: {
             responsive: true,
-            maintainAspectRatio: false,
             scales: {
                 y: {
                     beginAtZero: true,
@@ -1013,22 +1042,220 @@ function renderPerformanceChart(chartData) {
                         display: true,
                         text: 'Score (%)'
                     }
+                }
+            }
+        }
+    });
+}
+
+function showStatsError(message) {
+    const statsSection = document.getElementById('statsSection');
+    if (!statsSection) return;
+    
+    statsSection.innerHTML = `
+        <div class="alert alert-danger">
+            <h4><i class="bi bi-exclamation-triangle me-2"></i> Error Loading Stats</h4>
+            <p>${message}</p>
+            <button onclick="loadUserStats()" class="btn btn-sm btn-primary mt-2">
+                <i class="bi bi-arrow-repeat me-1"></i> Try Again
+            </button>
+        </div>
+    `;
+}
+function loadStatsData(user) {
+    const timeout = setTimeout(() => {
+        showStatsError('Request timed out. Please try again.');
+    }, 10000);
+
+    Promise.all([
+        database.ref('papers').once('value'),
+        database.ref('submissions').once('value')
+    ]).then(([papersSnapshot, submissionsSnapshot]) => {
+        clearTimeout(timeout);
+        
+        const papers = papersSnapshot.val() || {};
+        const allSubmissions = submissionsSnapshot.val() || {};
+        const userSubmissions = [];
+
+        // Process all submissions to find the user's submissions
+        Object.entries(allSubmissions).forEach(([paperId, paperSubmissions]) => {
+            if (paperSubmissions && papers[paperId]) {
+                Object.entries(paperSubmissions).forEach(([nic, submission]) => {
+                    if (nic === user.nic) {
+                        userSubmissions.push({
+                            paperId,
+                            paperTitle: papers[paperId].title,
+                            paperYear: papers[paperId].year,
+                            score: submission.score,
+                            totalMarks: papers[paperId].totalMarks,
+                            timestamp: submission.timestamp || 0
+                        });
+                    }
+                });
+            }
+        });
+
+        // Update the UI with the collected data
+        updateStatsUI(userSubmissions);
+    }).catch(error => {
+        clearTimeout(timeout);
+        showStatsError(error.message || 'Failed to load data');
+        console.error('Stats loading error:', error);
+    });
+}
+
+
+function updateStatsUI(submissions) {
+    const statsSection = document.getElementById('statsSection');
+    if (!statsSection) return;
+
+    // Handle empty state
+    if (submissions.length === 0) {
+        statsSection.innerHTML = `
+            <div class="alert alert-info">
+                <h4><i class="bi bi-info-circle me-2"></i> No Statistics Available</h4>
+                <p>You haven't submitted any papers yet.</p>
+            </div>
+        `;
+        return;
+    }
+
+    // Calculate basic statistics
+    const totalPapers = submissions.length;
+    const totalScore = submissions.reduce((sum, sub) => sum + sub.score, 0);
+    const totalPossible = submissions.reduce((sum, sub) => sum + sub.totalMarks, 0);
+    const averagePercentage = ((totalScore / totalPossible) * 100).toFixed(1);
+
+    // Update the stats cards
+    document.getElementById('totalPapersTaken').textContent = totalPapers;
+    document.getElementById('averageScore').textContent = `${averagePercentage}%`;
+
+    // Initialize the chart
+    initializePerformanceChart(submissions);
+
+    // Render the submissions table
+    renderSubmissionsTable(submissions);
+}
+
+function initializePerformanceChart(submissions) {
+    const ctx = document.createElement('canvas');
+    ctx.id = 'performanceChart';
+    ctx.height = 300;
+    
+    const chartContainer = document.querySelector('#statsSection .row');
+    if (!chartContainer) return;
+    
+    // Create a card for the chart
+    const chartCard = document.createElement('div');
+    chartCard.className = 'col-md-12 mb-4';
+    chartCard.innerHTML = `
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <i class="bi bi-graph-up me-2"></i> Performance Overview
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <!-- Chart will be rendered here -->
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Insert after the stats cards
+    chartContainer.appendChild(chartCard);
+    
+    // Get the container for the chart
+    const container = chartCard.querySelector('.chart-container');
+    container.appendChild(ctx);
+    
+    // Prepare data for the chart
+    const sortedSubmissions = [...submissions].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+    
+    const labels = sortedSubmissions.map(sub => 
+        `${sub.paperTitle} (${sub.paperYear})`
+    );
+    
+    const scores = sortedSubmissions.map(sub => 
+        Math.round((sub.score / sub.totalMarks) * 100)
+    );
+    
+    const ranks = sortedSubmissions.map(sub => {
+        if (typeof sub.rank === 'number') return sub.rank;
+        return null; // For 'N/A' ranks
+    });
+
+    // Create the chart
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Score (%)',
+                    data: scores,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    tension: 0.3,
+                    yAxisID: 'y'
                 },
-                x: {
+                {
+                    label: 'Rank',
+                    data: ranks,
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    tension: 0.3,
+                    yAxisID: 'y1',
+                    hidden: ranks.every(r => r === null) // Hide if no rank data
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    type: 'linear',
+                    display: true,
+                    position: 'left',
                     title: {
                         display: true,
-                        text: 'Papers'
+                        text: 'Score (%)'
+                    },
+                    min: 0,
+                    max: 100
+                },
+                y1: {
+                    type: 'linear',
+                    display: true,
+                    position: 'right',
+                    title: {
+                        display: true,
+                        text: 'Rank'
+                    },
+                    min: 1,
+                    reverse: true,
+                    grid: {
+                        drawOnChartArea: false
                     }
                 }
             },
             plugins: {
-                legend: {
-                    position: 'top',
-                },
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            return `${context.dataset.label}: ${context.raw}%`;
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.datasetIndex === 0) {
+                                // Score tooltip
+                                const submission = sortedSubmissions[context.dataIndex];
+                                label += `${submission.score}/${submission.totalMarks} (${context.raw}%)`;
+                            } else {
+                                // Rank tooltip
+                                label += context.raw || 'N/A';
+                            }
+                            return label;
                         }
                     }
                 }
@@ -1037,50 +1264,73 @@ function renderPerformanceChart(chartData) {
     });
 }
 
+function showStatsError(message) {
+    const statsSection = document.getElementById('statsSection');
+    if (!statsSection) return;
+    
+    statsSection.innerHTML = `
+        <div class="alert alert-danger">
+            <h4>Error Loading Stats</h4>
+            <p>${message}</p>
+            <button onclick="loadUserStats()" class="btn btn-sm btn-primary mt-2">
+                Retry
+            </button>
+        </div>
+    `;
+}
+
 function renderSubmissionsTable(submissions) {
     const tableBody = document.getElementById('mySubmissions');
     if (!tableBody) return;
-    
-    if (submissions.length === 0) {
-        tableBody.innerHTML = `
-            <tr>
-                <td colspan="6" class="text-center py-4">No submissions found</td>
-            </tr>
-        `;
-        return;
-    }
-    
+
+    // Sort submissions by timestamp (newest first)
+    const sortedSubmissions = [...submissions].sort((a, b) => b.timestamp - a.timestamp);
+
     let html = '';
-    submissions.forEach(sub => {
+    sortedSubmissions.forEach(sub => {
         const percentage = ((sub.score / sub.totalMarks) * 100).toFixed(1);
         const date = sub.timestamp ? new Date(sub.timestamp).toLocaleDateString() : 'N/A';
-        
+
         html += `
             <tr>
                 <td>${sub.paperTitle}</td>
                 <td>${sub.paperYear}</td>
                 <td>${sub.score}/${sub.totalMarks} (${percentage}%)</td>
-                <td>-</td>
                 <td>${date}</td>
+                <td>${sub.rank || 'N/A'}</td>
                 <td>
-                    <button class="btn btn-sm btn-outline-primary view-paper-btn" data-id="${sub.paperId}">
+                    <a href="results.html?paperId=${sub.paperId}&nic=${sub.nic}" class="btn btn-sm btn-outline-primary">
                         <i class="bi bi-eye"></i> View
-                    </button>
+                    </a>
                 </td>
             </tr>
         `;
     });
+
+    tableBody.innerHTML = html || `
+        <tr>
+            <td colspan="6" class="text-center py-4">
+                <div class="alert alert-info mb-0">
+                    <i class="bi bi-info-circle me-2"></i>
+                    No submissions found
+                </div>
+            </td>
+        </tr>
+    `;
+}
+
+
+function showStatsError(message) {
+    const statsSection = document.getElementById('statsSection');
+    if (!statsSection) return;
     
-    tableBody.innerHTML = html;
-    
-    // Add event listeners to view buttons
-    document.querySelectorAll('.view-paper-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const paperId = this.getAttribute('data-id');
-            showSection('ranks');
-            const rankFilter = document.getElementById('rankPaperFilter');
-            if (rankFilter) rankFilter.value = paperId;
-            loadRankings(paperId);
-        });
-    });
+    statsSection.innerHTML = `
+        <div class="alert alert-danger">
+            <h4><i class="bi bi-exclamation-triangle me-2"></i> Error Loading Stats</h4>
+            <p>${message}</p>
+            <button onclick="loadUserStats()" class="btn btn-sm btn-primary mt-2">
+                <i class="bi bi-arrow-repeat me-1"></i> Try Again
+            </button>
+        </div>
+    `;
 }
