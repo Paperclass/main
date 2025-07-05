@@ -3,625 +3,1416 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Introducing eWings Papers | Your Digital Paper Platform</title>
+    <title>eWings Papers - Online Exam Platform</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.11.4/dist/gsap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.11.4/dist/ScrollTrigger.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #4361ee;
-            --secondary: #3a0ca3;
-            --accent: #f72585;
+            --primary-light: #4f7bff;
+            --secondary: #3f37c9;
+            --accent: #4cc9f0;
+            --accent-light: #6df1ff;
             --light: #f8f9fa;
             --dark: #212529;
-            --dark-blue: #0f172a;
+            --success: #4bb543;
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+            --gradient-accent: linear-gradient(135deg, var(--accent), var(--accent-light));
         }
         
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
         }
         
         body {
-            background: linear-gradient(135deg, var(--dark-blue), #1e293b);
-            color: var(--light);
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
             overflow-x: hidden;
-        }
-        
-        .scroll-container {
-            position: relative;
-            overflow-y: auto;
-            scroll-snap-type: y proximity;
-        }
-        
-        section {
-            min-height: 100vh;
-            width: 100%;
-            scroll-snap-align: start;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            padding: 80px 0;
-        }
-        
-        .container {
-            width: 90%;
-            max-width: 1200px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 2;
-        }
-        
-        /* Hero Section */
-        .hero {
-            flex-direction: column;
-            text-align: center;
-            padding-top: 100px;
-        }
-        
-        .hero h1 {
-            font-size: 4.5rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(to right, #fff, var(--accent));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            opacity: 0;
-            transform: translateY(50px);
-            line-height: 1.1;
-        }
-        
-        .hero p {
-            font-size: 1.4rem;
-            max-width: 800px;
-            margin: 0 auto 3rem;
-            opacity: 0;
-            transform: translateY(50px);
-            color: rgba(255, 255, 255, 0.8);
             line-height: 1.6;
         }
         
-        .hero-buttons {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            opacity: 0;
-            transform: translateY(50px);
+        h1, h2, h3 {
+            font-family: 'Montserrat', sans-serif;
+            line-height: 1.2;
         }
         
-        .btn {
-            padding: 15px 30px;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-            border: none;
+        /* 3D Paper Plane Animation - Enhanced */
+        .paper-plane-container {
+            position: absolute;
+            top: 100px;
+            right: 10%;
+            width: 300px;
+            height: 300px;
+            perspective: 1000px;
+            z-index: 10;
+            filter: drop-shadow(0 10px 20px rgba(67, 97, 238, 0.3));
+        }
+        
+        .paper-plane {
+            width: 100%;
+            height: 100%;
             position: relative;
-            overflow: hidden;
+            transform-style: preserve-3d;
+            animation: float 6s ease-in-out infinite, rotate 20s linear infinite;
         }
         
-        .btn-primary {
-            background: linear-gradient(45deg, var(--accent), #b5179e);
-            color: white;
-        }
-        
-        .btn-secondary {
-            background: transparent;
-            color: white;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-        }
-        
-        .btn:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
-        }
-        
-        .btn-primary:hover {
-            background: linear-gradient(45deg, #ff0a78, #d0008f);
-        }
-        
-        .btn-secondary:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-        }
-        
-        /* Floating Papers Animation */
-        .floating-papers {
+        .paper-plane .wing {
             position: absolute;
             width: 100%;
             height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path fill="%234361ee" d="M50 0 L100 50 L50 100 L0 50 Z"/></svg>') center/contain no-repeat;
+            transform: rotateY(0deg) translateZ(50px);
+            opacity: 0.9;
+        }
+        
+        .paper-plane .wing:nth-child(2) {
+            transform: rotateY(90deg) translateZ(50px);
+        }
+        
+        .paper-plane .wing:nth-child(3) {
+            transform: rotateY(180deg) translateZ(50px);
+        }
+        
+        .paper-plane .wing:nth-child(4) {
+            transform: rotateY(270deg) translateZ(50px);
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotateX(0) rotateY(0);
+            }
+            50% {
+                transform: translateY(-20px) rotateX(5deg) rotateY(5deg);
+            }
+        }
+        
+        @keyframes rotate {
+            0% {
+                transform: rotateZ(0deg);
+            }
+            100% {
+                transform: rotateZ(360deg);
+            }
+        }
+        
+        /* Floating Particles Background */
+        .particles {
+            position: absolute;
             top: 0;
             left: 0;
-            pointer-events: none;
-            z-index: 1;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
         }
         
-        /* Platform Intro Section */
-        .platform-intro {
-            background: rgba(15, 23, 42, 0.6);
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: float-particle linear infinite;
         }
         
-        .intro-content {
+        @keyframes float-particle {
+            0% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(100px);
+                opacity: 0;
+            }
+        }
+        
+        /* Header - Enhanced */
+        header {
+            background: var(--gradient);
+            color: white;
+            padding: 2rem 5%;
+            position: relative;
+            overflow: hidden;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            text-align: center;
+            justify-content: center;
+            clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
         }
         
-        .intro-content h2 {
-            font-size: 3.5rem;
+        .header-content {
+            position: relative;
+            z-index: 10;
+        }
+        
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 1000;
+        }
+        
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 80%;
+            max-width: 300px;
+            height: 100vh;
+            background: white;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+            transition: right 0.3s ease;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .mobile-menu.active {
+            right: 0;
+        }
+        
+        .mobile-menu .close-btn {
+            align-self: flex-end;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--dark);
             margin-bottom: 2rem;
-            background: linear-gradient(to right, #fff, var(--accent));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            opacity: 0;
-            transform: translateY(50px);
+            cursor: pointer;
         }
         
-        .intro-content p {
+        .mobile-menu .nav-links {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .mobile-menu .nav-links li {
+            margin: 1rem 0;
+        }
+        
+        .mobile-menu .nav-links a {
+            color: var(--dark);
             font-size: 1.2rem;
-            max-width: 800px;
-            margin-bottom: 3rem;
-            color: rgba(255, 255, 255, 0.8);
-            opacity: 0;
-            transform: translateY(50px);
-            line-height: 1.8;
         }
         
-        .intro-grid {
+        .mobile-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 998;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        .mobile-menu-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        /* Logo - Enhanced */
+        .logo {
+            font-size: 2rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .logo i {
+            margin-right: 10px;
+            color: var(--accent);
+            font-size: 1.8rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .logo:hover i {
+            transform: rotate(45deg);
+        }
+        
+        /* Navigation - Enhanced */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            margin-bottom: 3rem;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-left: 2rem;
+            position: relative;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            display: inline-block;
+            padding: 0.5rem 0;
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background-color: var(--accent);
+            transition: width 0.3s ease;
+            border-radius: 3px;
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        /* Hero Section - Enhanced */
+        .hero {
+            position: relative;
+            z-index: 2;
+            max-width: 600px;
+            margin-top: 2rem;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        /* Buttons - Enhanced */
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gradient-accent);
+            color: var(--dark);
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(135deg, var(--accent-light), var(--accent));
+        }
+        
+        .cta-button i {
+            margin-left: 8px;
+            transition: transform 0.3s ease;
+        }
+        
+        .cta-button:hover i {
+            transform: translateX(5px);
+        }
+        
+        .dashboard-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: transparent;
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 0 2px white;
+            margin-left: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+        
+        .dashboard-button:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 0 3px white;
+        }
+        
+        /* Features Section - Enhanced */
+        .features {
+            padding: 8rem 5%;
+            position: relative;
+            background-color: white;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 4rem;
+            position: relative;
+        }
+        
+        .section-title h2 {
+            font-size: 2.8rem;
+            color: var(--primary);
+            display: inline-block;
+            position: relative;
+        }
+        
+        .section-title h2::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 5px;
+            background: var(--gradient-accent);
+            margin: 1.5rem auto;
+            border-radius: 5px;
+        }
+        
+        .section-title p {
+            max-width: 700px;
+            margin: 0 auto;
+            color: #666;
+            font-size: 1.1rem;
+        }
+        
+        .features-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            width: 100%;
-            margin-top: 50px;
+            gap: 2.5rem;
         }
         
-        .intro-card {
-            background: rgba(255, 255, 255, 0.05);
+        .feature-card {
+            background-color: white;
             border-radius: 20px;
-            padding: 30px;
-            transition: all 0.4s ease;
-            transform: translateY(50px);
-            opacity: 0;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: center;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.05);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            border: 1px solid rgba(0, 0, 0, 0.03);
         }
         
-        .intro-card:hover {
-            transform: translateY(-10px);
-            background: rgba(255, 255, 255, 0.1);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        .feature-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
         }
         
-        .intro-card i {
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: var(--gradient);
+            transition: height 0.3s ease;
+        }
+        
+        .feature-card:hover::before {
+            height: 10px;
+        }
+        
+        .feature-icon {
             font-size: 3rem;
-            margin-bottom: 20px;
-            color: var(--accent);
-            background: linear-gradient(to right, var(--accent), #b5179e);
+            margin-bottom: 1.5rem;
+            background: var(--gradient);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
+            display: inline-block;
         }
         
-        .intro-card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 15px;
-            color: white;
+        .feature-card h3 {
+            font-size: 1.6rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
         }
         
-        .intro-card p {
-            color: rgba(255, 255, 255, 0.7);
+        .feature-card p {
+            color: #666;
+            line-height: 1.7;
             font-size: 1rem;
-            margin-bottom: 0;
-            opacity: 1;
-            transform: none;
         }
         
-        /* Video Demo Section */
-        .video-demo {
+        /* How It Works Section - Enhanced */
+        .how-it-works {
+            padding: 8rem 5%;
+            background-color: #f5f7ff;
+            position: relative;
+            clip-path: polygon(0 5%, 100% 0, 100% 95%, 0 100%);
+            margin-top: -5%;
+            margin-bottom: -5%;
+            z-index: 2;
+        }
+        
+        .steps {
+            display: flex;
             flex-direction: column;
-            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .step {
+            display: flex;
+            margin-bottom: 4rem;
+            position: relative;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.6s ease;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+        
+        .step.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .step-number {
+            width: 80px;
+            height: 80px;
+            background: var(--gradient);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-right: 2rem;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 10px 20px rgba(67, 97, 238, 0.3);
+            align-self: center;
+            margin-left: 2rem;
+        }
+        
+        .step-content {
+            padding: 2.5rem 2rem 2.5rem 0;
+            flex-grow: 1;
+        }
+        
+        .step-content h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        
+        .step-content p {
+            color: #666;
+            margin-bottom: 1.5rem;
+            font-size: 1.05rem;
         }
         
         .video-container {
-            width: 100%;
-            max-width: 900px;
-            margin: 0 auto;
-            border-radius: 20px;
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 */
+            height: 0;
+            margin-top: 1.5rem;
+            border-radius: 15px;
             overflow: hidden;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-            transform: translateY(50px);
-            opacity: 0;
-            aspect-ratio: 16/9;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
         
         .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
             border: none;
         }
         
-        /* CTA Section */
-        .cta {
-            flex-direction: column;
+        /* Stats Section - Enhanced */
+        .stats {
+            padding: 8rem 5%;
+            background: var(--gradient);
+            color: white;
             text-align: center;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            position: relative;
+            overflow: hidden;
+            clip-path: polygon(0 5%, 100% 0, 100% 100%, 0 100%);
+            margin-top: -5%;
         }
         
-        .cta h2 {
-            font-size: 3rem;
-            margin-bottom: 2rem;
+        .stats::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" opacity="0.05"><circle cx="50" cy="50" r="40" fill="white"/></svg>');
+            background-size: 100px;
+            animation: bgMove 50s linear infinite;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
+            margin-top: 4rem;
+            position: relative;
+        }
+        
+        .stat-item {
+            padding: 2.5rem 2rem;
+            position: relative;
             opacity: 0;
             transform: translateY(50px);
+            transition: all 0.6s ease;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
-        .cta p {
+        .stat-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .stat-item h3 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, white, var(--accent-light));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .stat-item p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        /* CTA Section - Enhanced */
+        .cta-section {
+            padding: 8rem 5%;
+            text-align: center;
+            background-color: white;
+            position: relative;
+        }
+        
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" opacity="0.02"><path fill="%234361ee" d="M50 0 L100 50 L50 100 L0 50 Z"/></svg>');
+            background-size: 100px;
+            animation: bgMove 50s linear infinite;
+        }
+        
+        .cta-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 4rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.03);
+        }
+        
+        .cta-section h2 {
+            font-size: 2.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+        }
+        
+        .cta-section p {
+            max-width: 600px;
+            margin: 0 auto 2.5rem;
+            font-size: 1.2rem;
+            color: #666;
+        }
+        
+        /* Footer - Enhanced */
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 5rem 5% 3rem;
+            text-align: center;
+            position: relative;
+            clip-path: polygon(0 5%, 100% 0, 100% 100%, 0 100%);
+            margin-top: -5%;
+        }
+        
+        .footer-content {
+            position: relative;
+            z-index: 2;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            text-align: left;
+        }
+        
+        .footer-column h3 {
             font-size: 1.3rem;
-            max-width: 700px;
-            margin: 0 auto 3rem;
-            opacity: 0;
-            transform: translateY(50px);
+            margin-bottom: 1.5rem;
+            color: var(--accent);
         }
         
-        /* Responsive Design */
-        @media (max-width: 992px) {
-            .hero h1 {
-                font-size: 3.5rem;
+        .footer-logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .footer-logo i {
+            color: var(--accent);
+            margin-right: 10px;
+        }
+        
+        .footer-about p {
+            opacity: 0.8;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+        
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+        
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            opacity: 0.8;
+            font-size: 0.95rem;
+            display: inline-block;
+            padding: 0.3rem 0;
+        }
+        
+        .footer-links a:hover {
+            color: var(--accent);
+            opacity: 1;
+            transform: translateX(5px);
+        }
+        
+        .contact-info {
+            list-style: none;
+        }
+        
+        .contact-info li {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: flex-start;
+            opacity: 0.8;
+            font-size: 0.95rem;
+        }
+        
+        .contact-info i {
+            margin-right: 10px;
+            color: var(--accent);
+        }
+        
+        .social-links {
+            display: flex;
+            margin-top: 1.5rem;
+        }
+        
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            margin-right: 1rem;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+        }
+        
+        .social-links a:hover {
+            background: var(--gradient-accent);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .copyright {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+        
+        /* Floating Action Button for Mobile */
+        .fab {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-accent);
+            color: var(--dark);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            z-index: 100;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            transform: scale(0);
+            opacity: 0;
+        }
+        
+        .fab.visible {
+            transform: scale(1);
+            opacity: 1;
+        }
+        
+        .fab:hover {
+            transform: scale(1.1) translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fade-in {
+            animation: fadeIn 1s ease forwards;
+        }
+        
+        /* Responsive - Enhanced Mobile UI */
+        @media (max-width: 1024px) {
+            .paper-plane-container {
+                width: 250px;
+                height: 250px;
+                right: 5%;
             }
             
-            .intro-content h2 {
-                font-size: 2.8rem;
+            .hero h1 {
+                font-size: 3rem;
             }
         }
         
         @media (max-width: 768px) {
+            .paper-plane-container {
+                display: none;
+            }
+            
+            header {
+                clip-path: polygon(0 0, 100% 0, 100% 95%, 0 100%);
+                padding: 1.5rem 5%;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .hero {
+                text-align: center;
+                margin: 0 auto;
+                padding-top: 2rem;
+            }
+            
             .hero h1 {
-                font-size: 2.8rem;
+                font-size: 2.5rem;
             }
             
             .hero p {
-                font-size: 1.2rem;
+                font-size: 1.1rem;
             }
             
-            .hero-buttons {
+            .button-group {
+                display: flex;
                 flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .cta-button, .dashboard-button {
+                margin: 0;
+                width: 100%;
+                max-width: 300px;
+                margin: 0 auto;
+            }
+            
+            .dashboard-button {
+                margin-top: 1rem;
+            }
+            
+            .section-title h2 {
+                font-size: 2.2rem;
+            }
+            
+            .features, .how-it-works, .stats, .cta-section {
+                padding: 5rem 5%;
+            }
+            
+            .how-it-works {
+                clip-path: polygon(0 2%, 100% 0, 100% 98%, 0 100%);
+            }
+            
+            .step {
+                flex-direction: column;
+            }
+            
+            .step-number {
+                margin: -40px auto 1.5rem;
+            }
+            
+            .step-content {
+                padding: 2rem;
+                text-align: center;
+            }
+            
+            .stats {
+                clip-path: polygon(0 2%, 100% 0, 100% 100%, 0 100%);
+            }
+            
+            .stat-item {
+                padding: 2rem;
+            }
+            
+            .stat-item h3 {
+                font-size: 2.8rem;
+            }
+            
+            .cta-content {
+                padding: 2.5rem 1.5rem;
+            }
+            
+            .cta-section h2 {
+                font-size: 2.2rem;
+            }
+            
+            footer {
+                clip-path: polygon(0 2%, 100% 0, 100% 100%, 0 100%);
+                text-align: center;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .footer-links {
                 align-items: center;
             }
             
-            .intro-content h2 {
-                font-size: 2.2rem;
+            .contact-info {
+                align-items: center;
+                justify-content: center;
             }
             
-            .cta h2 {
-                font-size: 2.2rem;
+            .social-links {
+                justify-content: center;
             }
         }
         
-        @media (max-width: 576px) {
+        @media (max-width: 480px) {
             .hero h1 {
-                font-size: 2.2rem;
+                font-size: 2rem;
             }
             
-            .btn {
-                padding: 12px 25px;
-                font-size: 1rem;
+            .section-title h2 {
+                font-size: 1.8rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .feature-card {
+                padding: 2rem 1.5rem;
+            }
+            
+            .cta-section h2 {
+                font-size: 1.8rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="scroll-container">
-        <!-- Hero Section -->
-        <section class="hero">
-            <div class="floating-papers" id="paper-animation"></div>
-            <div class="container">
-                <h1>Welcome to eWings Papers</h1>
-                <p>Your new digital platform for an immersive paper class experience. Designed exclusively for our students to enhance learning and creativity.</p>
-                <div class="hero-buttons">
-                    <button class="btn btn-primary">Go to Student Dashboard</button>
-                    <button class="btn btn-secondary">Watch Platform Tour</button>
+    <!-- Floating Particles Background -->
+    <div class="particles" id="particles"></div>
+    
+    <!-- Header with 3D Paper Plane -->
+    <header>
+        <div class="header-content">
+            <nav>
+                <a href="#" class="logo">
+                   
+                    <span>eWings Papers</span>
+                </a>
+                
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <ul class="nav-links">
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#how-it-works">How It Works</a></li>
+                    <li><a href="#dashboard">Dashboard</a></li>
+                </ul>
+            </nav>
+            
+            <div class="paper-plane-container">
+                <div class="paper-plane">
+                    <div class="wing"></div>
+                    <div class="wing"></div>
+                    <div class="wing"></div>
+                    <div class="wing"></div>
                 </div>
             </div>
-        </section>
+            
+            <div class="hero">
+                <h1 class="fade-in">Revolutionize Your Exam Preparation</h1>
+                <p class="fade-in">eWings Papers brings you an interactive online platform to practice, analyze, and excel in your exams with real-time feedback and comprehensive analytics.</p>
+                <div class="fade-in button-group">
+                    <a href="student-dashboard.html" class="cta-button">Access Dashboard <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Mobile Menu -->
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+    <div class="mobile-menu" id="mobileMenu">
+        <button class="close-btn" id="closeMenuBtn">
+            <i class="fas fa-times"></i>
+        </button>
+        <ul class="nav-links">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#how-it-works">How It Works</a></li>
+            <li><a href="#dashboard">Dashboard</a></li>
+            <li><a href="#" class="cta-button" style="margin-top: 1rem;">Try Demo</a></li>
+        </ul>
+    </div>
+    
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="section-title">
+            <h2>Powerful Features</h2>
+            <p>Everything you need to excel in your exams, all in one place</p>
+        </div>
         
-        <!-- Platform Introduction -->
-        <section class="platform-intro">
-            <div class="container">
-                <div class="intro-content">
-                    <h2>Why eWings Papers?</h2>
-                    <p>We've created a revolutionary platform that transforms how you interact with digital paper. Here's what makes it special for our class:</p>
-                    
-                    <div class="intro-grid">
-                        <div class="intro-card">
-                            <i class="fas fa-cube"></i>
-                            <h3>3D Paper Interaction</h3>
-                            <p>Experience your assignments and notes in a realistic 3D space with natural flipping and stacking gestures.</p>
-                        </div>
-                        
-                        <div class="intro-card">
-                            <i class="fas fa-layer-group"></i>
-                            <h3>Smart Organization</h3>
-                            <p>Automatically organized by class, subject, and due date. Never lose track of your work again.</p>
-                        </div>
-                        
-                        <div class="intro-card">
-                            <i class="fas fa-users"></i>
-                            <h3>Seamless Collaboration</h3>
-                            <p>Work together with classmates on group projects in real-time with shared annotation tools.</p>
-                        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-laptop-code"></i>
+                </div>
+                <h3>Online Paper Attempt</h3>
+                <p>Attempt full-length papers online with our intuitive interface that mimics real exam conditions, complete with timer and question navigation.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Real-time Analytics</h3>
+                <p>Get instant performance analysis with detailed breakdowns of your strengths and weaknesses across different topics and question types.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <h3>Ranking System</h3>
+                <p>See how you stack up against other students with our comprehensive ranking system that tracks your progress over time.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <h3>Solution Library</h3>
+                <p>Access detailed solutions and explanations for every question to understand your mistakes and learn the correct approach.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-bell"></i>
+                </div>
+                <h3>Personalized Alerts</h3>
+                <p>Receive customized notifications about weak areas that need attention and recommendations for improvement.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <h3>Mobile Friendly</h3>
+                <p>Practice anytime, anywhere with our fully responsive platform that works seamlessly across all devices.</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="how-it-works">
+        <div class="section-title">
+            <h2>How To Use eWings Papers</h2>
+            <p>Get started in just a few simple steps</p>
+        </div>
+        
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>Select Your Paper</h3>
+                    <p>Choose from our extensive library of past papers and mock exams categorized by subject, year, and difficulty level.</p>
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/example1" allowfullscreen></iframe>
                     </div>
                 </div>
             </div>
-        </section>
-        
-        <!-- Video Demo Section -->
-        <section class="video-demo">
-            <div class="container">
-                <h2 style="opacity: 0; transform: translateY(50px); margin-bottom: 2rem;">See It In Action</h2>
-                <p style="opacity: 0; transform: translateY(50px); margin-bottom: 3rem; max-width: 700px; margin-left: auto; margin-right: auto;">Watch this quick demo to see how eWings Papers will transform your paper class experience.</p>
-                
-                <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/YOUR_DEMO_VIDEO_ID" allowfullscreen></iframe>
+            
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>Attempt Questions</h3>
+                    <p>Answer questions in our exam-like interface with features like flagging, skipping, and reviewing marked questions.</p>
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/example2" allowfullscreen></iframe>
+                    </div>
                 </div>
             </div>
-        </section>
-        
-        <!-- CTA Section -->
-        <section class="cta">
-            <div class="container">
-                <h2>Ready to Get Started?</h2>
-                <p>Access your personalized dashboard and begin your journey with eWings Papers today.</p>
-                <button class="btn btn-primary" style="opacity: 0; transform: translateY(50px);">Enter Platform</button>
+            
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>Submit & Analyze</h3>
+                    <p>Submit your paper to receive instant results with detailed analytics on your performance across different metrics.</p>
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/example3" allowfullscreen></iframe>
+                    </div>
+                </div>
             </div>
-        </section>
-    </div>
-
+            
+            <div class="step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h3>Track Progress</h3>
+                    <p>Monitor your improvement over time with our progress tracking system and compare your rankings with peers.</p>
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/example4" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    
+    <!-- CTA Section -->
+    <section id="dashboard" class="cta-section">
+        <div class="cta-content">
+            <h2>Ready to Transform Your Exam Preparation?</h2>
+            <p>Join thousands of students who are already using eWings Papers to boost their performance and achieve their academic goals.</p>
+            <a href="student-dashboard.html" class="cta-button">Access Dashboard Now <i class="fas fa-arrow-right"></i></a>
+            <p style="margin-top: 1.5rem; font-size: 0.9rem; color: #999;">No login required for demo access</p>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-column">
+                <a href="#" class="footer-logo">
+                    eWings Papers
+                </a>
+                <div class="footer-about">
+                    <p>Revolutionizing exam preparation through innovative technology and data-driven insights to help students excel.</p>
+                </div>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#how-it-works">How It Works</a></li>
+                    <li><a href="#dashboard">Dashboard</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Resources</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Tutorials</a></li>
+                    <li><a href="#">Webinars</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Contact Us</h3>
+                <ul class="contact-info">
+                    <li>
+                        <i class="fas fa-envelope"></i>
+                        <span>support@ewingspapers.com</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-phone-alt"></i>
+                        <span>+94 (070) 491 1163</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>123 Education St, Colombo</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            &copy; 2025 eWings Papers. All rights reserved.
+        </div>
+    </footer>
+    
+    <!-- Floating Action Button -->
+    <a href="#dashboard" class="fab" id="floatingActionBtn">
+        <i class="fas fa-rocket"></i>
+    </a>
+    
     <script>
-        // Initialize Three.js scene for floating papers
-        const paperScene = new THREE.Scene();
-        const paperCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const paperRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-        paperRenderer.setSize(window.innerWidth, window.innerHeight);
-        document.getElementById('paper-animation').appendChild(paperRenderer.domElement);
-        
-        // Add lighting
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-        paperScene.add(ambientLight);
-        
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-        directionalLight.position.set(1, 1, 1);
-        paperScene.add(directionalLight);
-        
-        // Create floating papers
-        const papers = [];
-        const paperGeometry = new THREE.PlaneGeometry(1, 1.414); // A4 aspect ratio
-        
-        for (let i = 0; i < 25; i++) {
-            const paperMaterial = new THREE.MeshStandardMaterial({ 
-                color: i % 2 === 0 ? 0xf8f4e6 : 0xffffff,
-                roughness: 0.7,
-                metalness: 0,
-                side: THREE.DoubleSide,
-                transparent: true,
-                opacity: 0.9
+        // Enhanced JavaScript for better interactivity
+        document.addEventListener('DOMContentLoaded', function() {
+            // Create floating particles
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = window.innerWidth < 768 ? 20 : 50;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Random size between 2px and 6px
+                const size = Math.random() * 4 + 2;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                // Random position
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                
+                // Random animation duration between 10s and 20s
+                const duration = Math.random() * 10 + 10;
+                particle.style.animationDuration = `${duration}s`;
+                
+                // Random delay
+                particle.style.animationDelay = `${Math.random() * 5}s`;
+                
+                particlesContainer.appendChild(particle);
+            }
+            
+            // Mobile menu toggle
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const closeMenuBtn = document.getElementById('closeMenuBtn');
+            const mobileMenu = document.getElementById('mobileMenu');
+            const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
+            
+            mobileMenuBtn.addEventListener('click', function() {
+                mobileMenu.classList.add('active');
+                mobileMenuOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
             });
             
-            const paper = new THREE.Mesh(paperGeometry, paperMaterial);
-            paper.position.x = (Math.random() - 0.5) * 30;
-            paper.position.y = (Math.random() - 0.5) * 20;
-            paper.position.z = (Math.random() - 0.5) * 30;
-            paper.rotation.x = Math.random() * Math.PI;
-            paper.rotation.y = Math.random() * Math.PI;
-            paper.rotation.z = Math.random() * Math.PI;
-            paper.scale.set(0.8 + Math.random() * 0.5, 0.8 + Math.random() * 0.5, 1);
+            closeMenuBtn.addEventListener('click', function() {
+                mobileMenu.classList.remove('active');
+                mobileMenuOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            });
             
-            paper.userData = {
-                speedX: (Math.random() - 0.5) * 0.02,
-                speedY: (Math.random() - 0.5) * 0.02,
-                speedZ: (Math.random() - 0.5) * 0.02,
-                rotX: (Math.random() - 0.5) * 0.01,
-                rotY: (Math.random() - 0.5) * 0.01,
-                rotZ: (Math.random() - 0.5) * 0.01
+            mobileMenuOverlay.addEventListener('click', function() {
+                mobileMenu.classList.remove('active');
+                mobileMenuOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+            
+            // Scroll animations
+            const animateOnScroll = (elements, className) => {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add(className);
+                        }
+                    });
+                }, { threshold: 0.1 });
+                
+                elements.forEach(element => observer.observe(element));
             };
             
-            papers.push(paper);
-            paperScene.add(paper);
-        }
-        
-        paperCamera.position.z = 40;
-        
-        // Animation loop for floating papers
-        function animatePapers() {
-            requestAnimationFrame(animatePapers);
+            animateOnScroll(document.querySelectorAll('.step'), 'visible');
+            animateOnScroll(document.querySelectorAll('.stat-item'), 'visible');
             
-            papers.forEach(paper => {
-                paper.position.x += paper.userData.speedX;
-                paper.position.y += paper.userData.speedY;
-                paper.position.z += paper.userData.speedZ;
+            // Count up animation for stats
+            const countElements = document.querySelectorAll('.count');
+            const speed = 200;
+            
+            function animateCount(element) {
+                const target = parseInt(element.textContent);
+                const count = +element.textContent;
+                const increment = target / speed;
                 
-                paper.rotation.x += paper.userData.rotX;
-                paper.rotation.y += paper.userData.rotY;
-                paper.rotation.z += paper.userData.rotZ;
-                
-                // Bounce off imaginary walls
-                if (Math.abs(paper.position.x) > 25) paper.userData.speedX *= -1;
-                if (Math.abs(paper.position.y) > 15) paper.userData.speedY *= -1;
-                if (Math.abs(paper.position.z) > 25) paper.userData.speedZ *= -1;
+                if (count < target) {
+                    element.textContent = Math.ceil(count + increment);
+                    setTimeout(() => animateCount(element), 1);
+                } else {
+                    element.textContent = target + (element.textContent.includes('%') ? '%' : '+');
+                }
+            }
+            
+            const statsObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        countElements.forEach(animateCount);
+                        statsObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.5 });
+            
+            statsObserver.observe(document.querySelector('.stats'));
+            
+            // Smooth scrolling for navigation
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        // Close mobile menu if open
+                        mobileMenu.classList.remove('active');
+                        mobileMenuOverlay.classList.remove('active');
+                        document.body.style.overflow = '';
+                        
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                });
             });
             
-            // Slowly rotate camera for dynamic view
-            paperCamera.position.x = Math.sin(Date.now() * 0.0003) * 30;
-            paperCamera.position.z = Math.cos(Date.now() * 0.0003) * 30;
-            paperCamera.lookAt(0, 0, 0);
+            // Show/hide floating action button
+            const floatingActionBtn = document.getElementById('floatingActionBtn');
             
-            paperRenderer.render(paperScene, paperCamera);
-        }
-        
-        animatePapers();
-        
-        // Handle window resize
-        window.addEventListener('resize', () => {
-            paperCamera.aspect = window.innerWidth / window.innerHeight;
-            paperCamera.updateProjectionMatrix();
-            paperRenderer.setSize(window.innerWidth, window.innerHeight);
-        });
-        
-        // GSAP Animations
-        gsap.registerPlugin(ScrollTrigger);
-        
-        // Hero section animations
-        gsap.to('.hero h1', {
-            opacity: 1,
-            y: 0,
-            duration: 1.2,
-            ease: 'elastic.out(1, 0.5)'
-        });
-        
-        gsap.to('.hero p', {
-            opacity: 1,
-            y: 0,
-            duration: 1,
-            delay: 0.3,
-            ease: 'power3.out'
-        });
-        
-        gsap.to('.hero-buttons', {
-            opacity: 1,
-            y: 0,
-            duration: 1,
-            delay: 0.6,
-            ease: 'power3.out'
-        });
-        
-        // Intro section animations
-        gsap.to('.intro-content h2', {
-            scrollTrigger: {
-                trigger: '.intro-content',
-                start: 'top 80%',
-                toggleActions: 'play none none none'
-            },
-            opacity: 1,
-            y: 0,
-            duration: 1,
-            ease: 'back.out(1.7)'
-        });
-        
-        gsap.to('.intro-content p', {
-            scrollTrigger: {
-                trigger: '.intro-content',
-                start: 'top 80%',
-                toggleActions: 'play none none none'
-            },
-            opacity: 1,
-            y: 0,
-            duration: 1,
-            delay: 0.3,
-            ease: 'power3.out'
-        });
-        
-        // Intro card animations
-        document.querySelectorAll('.intro-card').forEach((card, index) => {
-            gsap.to(card, {
-                scrollTrigger: {
-                    trigger: card,
-                    start: 'top 80%',
-                    toggleActions: 'play none none none'
-                },
-                opacity: 1,
-                y: 0,
-                duration: 0.8,
-                delay: index * 0.1,
-                ease: 'back.out(1.2)'
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 300) {
+                    floatingActionBtn.classList.add('visible');
+                } else {
+                    floatingActionBtn.classList.remove('visible');
+                }
             });
-        });
-        
-        // Video demo animations
-        gsap.to('.video-demo h2', {
-            scrollTrigger: {
-                trigger: '.video-demo',
-                start: 'top 80%',
-                toggleActions: 'play none none none'
-            },
-            opacity: 1,
-            y: 0,
-            duration: 1,
-            ease: 'power3.out'
-        });
-        
-        gsap.to('.video-demo p', {
-            scrollTrigger: {
-                trigger: '.video-demo',
-                start: 'top 80%',
-                toggleActions: 'play none none none'
-            },
-            opacity: 1,
-            y: 0,
-            duration: 1,
-            delay: 0.3,
-            ease: 'power3.out'
-        });
-        
-        gsap.to('.video-container', {
-            scrollTrigger: {
-                trigger: '.video-container',
-                start: 'top 80%',
-                toggleActions: 'play none none none'
-            },
-            opacity: 1,
-            y: 0,
-            duration: 1,
-            delay: 0.6,
-            ease: 'power3.out'
-        });
-        
-        // CTA section animations
-        gsap.to('.cta h2', {
-            scrollTrigger: {
-                trigger: '.cta',
-                start: 'top 80%',
-                toggleActions: 'play none none none'
-            },
-            opacity: 1,
-            y: 0,
-            duration: 1,
-            ease: 'elastic.out(1, 0.5)'
-        });
-        
-        gsap.to('.cta p', {
-            scrollTrigger: {
-                trigger: '.cta',
-                start: 'top 80%',
-                toggleActions: 'play none none none'
-            },
-            opacity: 1,
-            y: 0,
-            duration: 1,
-            delay: 0.3,
-            ease: 'power3.out'
-        });
-        
-        gsap.to('.cta .btn', {
-            scrollTrigger: {
-                trigger: '.cta',
-                start: 'top 80%',
-                toggleActions: 'play none none none'
-            },
-            opacity: 1,
-            y: 0,
-            duration: 1,
-            delay: 0.6,
-            ease: 'power3.out'
+            
+            // Add ripple effect to buttons
+            const buttons = document.querySelectorAll('.cta-button, .dashboard-button');
+            
+            buttons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    const x = e.clientX - e.target.getBoundingClientRect().left;
+                    const y = e.clientY - e.target.getBoundingClientRect().top;
+                    
+                    const ripple = document.createElement('span');
+                    ripple.classList.add('ripple');
+                    ripple.style.left = `${x}px`;
+                    ripple.style.top = `${y}px`;
+                    
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 1000);
+                });
+            });
+            
+            // Add hover effect to feature cards on mobile
+            if (window.innerWidth < 768) {
+                const featureCards = document.querySelectorAll('.feature-card');
+                
+                featureCards.forEach(card => {
+                    card.addEventListener('touchstart', function() {
+                        this.classList.add('hover-effect');
+                    });
+                    
+                    card.addEventListener('touchend', function() {
+                        this.classList.remove('hover-effect');
+                    });
+                });
+            }
         });
     </script>
 </body>
