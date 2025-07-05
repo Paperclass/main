@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+            box-sizing: border-box;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        label.required:after {
+            content: " *";
+            color: #e74c3c;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border 0.3s;
+        }
+        
+        input:focus, select:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        
+        .hint {
+            font-size: 13px;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+        }
+        
+        .checkbox-group input {
+            width: auto;
+            margin-right: 10px;
+        }
+        
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 14px;
+            width: 100%;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #7f8c8d;
+        }
+        
+        .login-link a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+        
+        .error {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        /* Enhanced Class Type Container Styles */
+        .class-type-container {
+            display: none;
+            margin-top: 15px;
+        }
+        
+        .class-type-header {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .class-type-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .class-type-option {
+            display: flex;
+            align-items: center;
+        }
+        
+        .class-type-option input {
+            width: 18px;
+            height: 18px;
+            margin-right: 10px;
+            accent-color: #3498db;
+        }
+        
+        .class-type-option label {
+            font-weight: 500;
+            color: #2c3e50;
+            cursor: pointer;
+        }
+        
+        .student-id-container {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f8fafc;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            display: none;
+        }
+        
+        .student-id-field {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border 0.3s;
+        }
+        
+        .student-id-field:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Student Registration</h1>
+        <p class="subtitle">Create your account to save your information</p>
+        
+        <form id="registrationForm">
+            <div class="form-group">
+                <label for="nic" class="required">NIC Number</label>
+                <input type="text" id="nic" name="nic" required minlength="6">
+                <p class="hint">Your National Identity Card Number</p>
+                <p id="nicError" class="error"></p>
+            </div>
+            
+            <div class="form-group">
+                <label for="name" class="required">Full Name</label>
+                <input type="text" id="name" name="name" required minlength="3">
+                <p id="nameError" class="error"></p>
+            </div>
+            
+            <div class="form-group">
+                <label for="district" class="required">District</label>
+                <select class="form-select" id="regDistrict" required>
+                    <option value="">Select District</option>
+                    <option value="Ampara">Ampara</option>
+                    <option value="Anuradhapura">Anuradhapura</option>
+                    <option value="Badulla">Badulla</option>
+                    <option value="Batticaloa">Batticaloa</option>
+                    <option value="Colombo">Colombo</option>
+                    <option value="Galle">Galle</option>
+                    <option value="Gampaha">Gampaha</option>
+                    <option value="Hambantota">Hambantota</option>
+                    <option value="Jaffna">Jaffna</option>
+                    <option value="Kalutara">Kalutara</option>
+                    <option value="Kandy">Kandy</option>
+                    <option value="Kegalle">Kegalle</option>
+                    <option value="Kilinochchi">Kilinochchi</option>
+                    <option value="Kurunegala">Kurunegala</option>
+                    <option value="Mannar">Mannar</option>
+                    <option value="Matale">Matale</option>
+                    <option value="Matara">Matara</option>
+                    <option value="Monaragala">Monaragala</option>
+                    <option value="Mullaitivu">Mullaitivu</option>
+                    <option value="Nuwara Eliya">Nuwara Eliya</option>
+                    <option value="Polonnaruwa">Polonnaruwa</option>
+                    <option value="Puttalam">Puttalam</option>
+                    <option value="Ratnapura">Ratnapura</option>
+                    <option value="Trincomalee">Trincomalee</option>
+                    <option value="Vavuniya">Vavuniya</option>
+                </select>
+                <p id="districtError" class="error"></p>
+            </div>
+            
+            <div class="form-group">
+                <label for="class" class="required">Class</label>
+                <select class="form-select" id="regClass" required>
+                    <option value="">Select Class</option>
+                    <option value="Nugegoda">Nugegoda</option>
+                    <option value="Kandy">Kandy</option>
+                    <option value="Kegalle">Kegalle</option>
+                    <option value="Kurunegala">Kurunegala</option>
+                    <option value="Gall">Gall</option>
+                    <option value="Onlin">Onlin</option>
+                    <option value="All Island">All Island</option>
+                </select>
+                <p id="classError" class="error"></p>
+            </div>
+
+            <div id="classTypeContainer" class="class-type-container">
+                <div class="class-type-header">Class Type (Select at least one)</div>
+                <div class="class-type-options">
+                    <div class="class-type-option">
+                        <input type="checkbox" id="theory" name="classType" value="Theory">
+                        <label for="theory">Theory</label>
+                    </div>
+                    <div class="class-type-option">
+                        <input type="checkbox" id="paperClass" name="classType" value="Paper Class">
+                        <label for="paperClass">Paper Class</label>
+                    </div>
+                    <div class="class-type-option">
+                        <input type="checkbox" id="revision" name="classType" value="Revision">
+                        <label for="revision">Revision</label>
+                    </div>
+                    <div class="class-type-option">
+                        <input type="checkbox" id="other" name="classType" value="Other">
+                        <label for="other">Other</label>
+                    </div>
+                </div>
+                <div id="studentIdContainer" class="student-id-container">
+                    <label for="studentId">Student ID</label>
+                    <input type="text" id="studentId" class="student-id-field" placeholder="Enter your unique student ID">
+                </div>
+                <p id="classTypeError" class="error"></p>
+            </div>
+            
+            <div class="form-group">
+                <label for="school">School</label>
+                <input type="text" id="school" name="school">
+            </div>
+            
+            <div class="form-group">
+                <label for="phone" class="required">Phone Number</label>
+                <input type="tel" id="phone" name="phone" required>
+                <p id="phoneError" class="error"></p>
+            </div>
+            
+            <div class="form-group">
+                <label for="email" class="required">Email Address</label>
+                <input type="email" id="email" name="email" required>
+                <p id="emailError" class="error"></p>
+            </div>
+            
+            <div class="form-group">
+                <label for="password" class="required">Password</label>
+                <input type="password" id="password" name="password" required minlength="6">
+                <p class="hint">Minimum 6 characters</p>
+                <p id="passwordError" class="error"></p>
+            </div>
+            
+            <div class="form-group">
+                <label for="year" class="required">Year</label>
+                <select id="year" name="year" required>
+                    <option value="">Select Year</option>
+                    <option value="2025">2025</option>
+                    <option value="2026">2026</option>
+                    <option value="2027">2027</option>
+                </select>
+                <p id="yearError" class="error"></p>
+            </div>
+            
+            <div class="checkbox-group">
+                <input type="checkbox" id="terms" name="terms" required>
+                <label for="terms">I agree to the terms and conditions</label>
+            </div>
+            <p id="termsError" class="error"></p>
+            
+            <button type="submit" id="registerButton">Register</button>
+        </form>
+        
+        <p class="login-link">Already have an account? <a href="student-dashboard.html">Login here</a></p>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    
+    <script>
+        // Your Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD5SRZWB-QwMg7wmyTjcvHZqP-mEdlll_M",
+            authDomain: "paper-class-1ab19.firebaseapp.com",
+            databaseURL: "https://paper-class-1ab19-default-rtdb.firebaseio.com",
+            projectId: "paper-class-1ab19",
+            storageBucket: "paper-class-1ab19.firebasestorage.app",
+            messagingSenderId: "83634677566",
+            appId: "1:83634677566:web:fb4f7a1fd869c3e82e2e6f"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+
+        // Show/hide class type section based on class selection
+        document.getElementById('regClass').addEventListener('change', function() {
+            const classTypeContainer = document.getElementById('classTypeContainer');
+            if (this.value === 'All Island') {
+                classTypeContainer.style.display = 'none';
+                // Uncheck all class type options when hidden
+                document.querySelectorAll('input[name="classType"]').forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                // Hide student ID container
+                document.getElementById('studentIdContainer').style.display = 'none';
+            } else {
+                classTypeContainer.style.display = 'block';
+            }
+        });
+
+        // Handle class type selection changes
+        document.querySelectorAll('input[name="classType"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const studentIdContainer = document.getElementById('studentIdContainer');
+                const otherChecked = document.getElementById('other').checked;
+                
+                // If "Other" is checked, uncheck all others
+                if (this.id === 'other' && this.checked) {
+                    document.querySelectorAll('input[name="classType"]').forEach(cb => {
+                        if (cb.id !== 'other') cb.checked = false;
+                    });
+                    studentIdContainer.style.display = 'none';
+                }
+                // If any other checkbox is checked while "Other" is checked, uncheck "Other"
+                else if (otherChecked && this.id !== 'other') {
+                    document.getElementById('other').checked = false;
+                }
+                
+                // Show student ID container if Paper Class or Revision is selected
+                const paperClassChecked = document.getElementById('paperClass').checked;
+                const revisionChecked = document.getElementById('revision').checked;
+                
+                if (paperClassChecked || revisionChecked) {
+                    studentIdContainer.style.display = 'block';
+                } else {
+                    studentIdContainer.style.display = 'none';
+                }
+                
+                // Ensure at least one is selected (unless "Other" is selected alone)
+                const anyChecked = document.querySelector('input[name="classType"]:checked') !== null;
+                if (!anyChecked) {
+                    studentIdContainer.style.display = 'none';
+                }
+            });
+        });
+
+        // Function to check if NIC already exists
+        async function checkNICExists(nic) {
+            try {
+                const snapshot = await database.ref('userAuthMap/' + nic).once('value');
+                return snapshot.exists();
+            } catch (error) {
+                console.error('Error checking NIC:', error);
+                return false;
+            }
+        }
+
+        // Function to check if email already exists (alternative method)
+        async function checkEmailExists(email) {
+            try {
+                // This is a fallback method since Firebase Auth doesn't provide a direct way
+                // to check if email exists without trying to create the user
+                const methods = await auth.fetchSignInMethodsForEmail(email);
+                return methods && methods.length > 0;
+            } catch (error) {
+                // If error is auth/invalid-email, the email doesn't exist
+                if (error.code === 'auth/invalid-email') {
+                    return false;
+                }
+                console.error('Error checking email:', error);
+                return false;
+            }
+        }
+
+        // Form submission handler
+        document.getElementById('registrationForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Reset errors
+            document.querySelectorAll('.error').forEach(el => el.textContent = '');
+            
+            // Get form values
+            const nic = document.getElementById('nic').value.trim();
+            const name = document.getElementById('name').value.trim();
+            const district = document.getElementById('regDistrict').value;
+            const studentClass = document.getElementById('regClass').value;
+            const school = document.getElementById('school').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const year = document.getElementById('year').value;
+            const terms = document.getElementById('terms').checked;
+            
+            // Get class type values
+            const classTypeContainer = document.getElementById('classTypeContainer');
+            const showClassType = classTypeContainer.style.display !== 'none';
+            let classTypes = [];
+            let studentId = '';
+            
+            if (showClassType) {
+                const classTypeCheckboxes = document.querySelectorAll('input[name="classType"]:checked');
+                classTypes = Array.from(classTypeCheckboxes).map(cb => cb.value);
+                
+                // Get student ID if applicable
+                const paperClassChecked = document.getElementById('paperClass').checked;
+                const revisionChecked = document.getElementById('revision').checked;
+                
+                if (paperClassChecked || revisionChecked) {
+                    studentId = document.getElementById('studentId').value.trim();
+                    if (!studentId) {
+                        document.getElementById('classTypeError').textContent = 'Please enter your Student ID';
+                        isValid = false;
+                    }
+                }
+            }
+            
+            // Validate form
+            let isValid = true;
+            
+            if (nic.length < 6) {
+                document.getElementById('nicError').textContent = 'NIC must be at least 6 characters';
+                isValid = false;
+            }
+            
+            if (name.length < 3) {
+                document.getElementById('nameError').textContent = 'Name must be at least 3 characters';
+                isValid = false;
+            }
+            
+            if (!district) {
+                document.getElementById('districtError').textContent = 'Please select a district';
+                isValid = false;
+            }
+            
+            if (!studentClass) {
+                document.getElementById('classError').textContent = 'Please select a class';
+                isValid = false;
+            }
+            
+            // Validate class type if shown
+            if (showClassType && classTypes.length === 0) {
+                document.getElementById('classTypeError').textContent = 'Please select at least one class type';
+                isValid = false;
+            }
+            
+            if (!phone) {
+                document.getElementById('phoneError').textContent = 'Please enter a phone number';
+                isValid = false;
+            }
+            
+            if (!email.match(/^[^@]+@[^@]+\.[^@]+$/)) {
+                document.getElementById('emailError').textContent = 'Please enter a valid email';
+                isValid = false;
+            }
+            
+            if (password.length < 6) {
+                document.getElementById('passwordError').textContent = 'Password must be at least 6 characters';
+                isValid = false;
+            }
+            
+            if (!year) {
+                document.getElementById('yearError').textContent = 'Please select a year';
+                isValid = false;
+            }
+            
+            if (!terms) {
+                document.getElementById('termsError').textContent = 'You must agree to the terms and conditions';
+                isValid = false;
+            }
+            
+            if (!isValid) return;
+            
+            // Check for NIC and email duplicates before proceeding
+            document.getElementById('registerButton').disabled = true;
+            document.getElementById('registerButton').textContent = 'Checking...';
+            
+            try {
+                // Check if NIC already exists
+                const nicExists = await checkNICExists(nic);
+                if (nicExists) {
+                    document.getElementById('nicError').textContent = 'This NIC is already registered';
+                    return;
+                }
+                
+                // Check if email already exists
+                const emailExists = await checkEmailExists(email);
+                if (emailExists) {
+                    document.getElementById('emailError').textContent = 'This email is already registered';
+                    return;
+                }
+                
+                // Proceed with registration if no duplicates found
+                document.getElementById('registerButton').textContent = 'Registering...';
+                
+                // Create user with email and password
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+                
+                // Prepare user data according to rules.json requirements
+                const userData = {
+                    name: name,
+                    email: email,
+                    nic: nic,
+                    class: studentClass,
+                    registeredYear: year,
+                    verified: false, // Set isVerified to false by default
+                    district: district,
+                    school: school || '',
+                    phone: phone,
+                    classTypes: showClassType ? classTypes : [],
+                    studentId: showClassType ? studentId : ''
+                };
+                
+                // Save user data to Realtime Database
+                await database.ref('users/' + user.uid).set(userData);
+                
+                // Create NIC to UID mapping for lookup
+                await database.ref('userAuthMap/' + nic).set(user.uid);
+                
+                // Send email verification
+                await user.sendEmailVerification();
+                
+                // Show success message
+                alert('Registration successful! Please check your email to verify your account.');
+                
+                // Redirect or do something else
+                // window.location.href = '/dashboard.html';
+                
+            } catch (error) {
+                console.error('Registration error:', error);
+                
+                // Show appropriate error message
+                let errorMessage = 'Registration failed. Please try again.';
+                
+                if (error.code === 'auth/email-already-in-use') {
+                    errorMessage = 'This email is already registered.';
+                    document.getElementById('emailError').textContent = errorMessage;
+                } else if (error.code === 'auth/weak-password') {
+                    errorMessage = 'Password is too weak.';
+                    document.getElementById('passwordError').textContent = errorMessage;
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage = 'Invalid email address.';
+                    document.getElementById('emailError').textContent = errorMessage;
+                } else if (error.code === 'PERMISSION_DENIED') {
+                    errorMessage = 'Registration successful !!';
+                    alert(errorMessage);
+                } else {
+                    alert(errorMessage + '\n' + error.message);
+                }
+            } finally {
+                // Re-enable button
+                document.getElementById('registerButton').disabled = false;
+                document.getElementById('registerButton').textContent = 'Register';
+            }
+        });
+    </script>
+</body>
+</html>

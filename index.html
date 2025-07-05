@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introducing eWings Papers | Your Digital Paper Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.11.4/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.11.4/dist/ScrollTrigger.min.js"></script>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #f72585;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --dark-blue: #0f172a;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--dark-blue), #1e293b);
+            color: var(--light);
+            overflow-x: hidden;
+        }
+        
+        .scroll-container {
+            position: relative;
+            overflow-y: auto;
+            scroll-snap-type: y proximity;
+        }
+        
+        section {
+            min-height: 100vh;
+            width: 100%;
+            scroll-snap-align: start;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            padding: 80px 0;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        
+        /* Hero Section */
+        .hero {
+            flex-direction: column;
+            text-align: center;
+            padding-top: 100px;
+        }
+        
+        .hero h1 {
+            font-size: 4.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to right, #fff, var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            opacity: 0;
+            transform: translateY(50px);
+            line-height: 1.1;
+        }
+        
+        .hero p {
+            font-size: 1.4rem;
+            max-width: 800px;
+            margin: 0 auto 3rem;
+            opacity: 0;
+            transform: translateY(50px);
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            opacity: 0;
+            transform: translateY(50px);
+        }
+        
+        .btn {
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, var(--accent), #b5179e);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(45deg, #ff0a78, #d0008f);
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        
+        /* Floating Papers Animation */
+        .floating-papers {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        /* Platform Intro Section */
+        .platform-intro {
+            background: rgba(15, 23, 42, 0.6);
+        }
+        
+        .intro-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .intro-content h2 {
+            font-size: 3.5rem;
+            margin-bottom: 2rem;
+            background: linear-gradient(to right, #fff, var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            opacity: 0;
+            transform: translateY(50px);
+        }
+        
+        .intro-content p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin-bottom: 3rem;
+            color: rgba(255, 255, 255, 0.8);
+            opacity: 0;
+            transform: translateY(50px);
+            line-height: 1.8;
+        }
+        
+        .intro-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            width: 100%;
+            margin-top: 50px;
+        }
+        
+        .intro-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            transition: all 0.4s ease;
+            transform: translateY(50px);
+            opacity: 0;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+        
+        .intro-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        
+        .intro-card i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: var(--accent);
+            background: linear-gradient(to right, var(--accent), #b5179e);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .intro-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: white;
+        }
+        
+        .intro-card p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1rem;
+            margin-bottom: 0;
+            opacity: 1;
+            transform: none;
+        }
+        
+        /* Video Demo Section */
+        .video-demo {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .video-container {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            transform: translateY(50px);
+            opacity: 0;
+            aspect-ratio: 16/9;
+        }
+        
+        .video-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        /* CTA Section */
+        .cta {
+            flex-direction: column;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+        
+        .cta h2 {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            opacity: 0;
+            transform: translateY(50px);
+        }
+        
+        .cta p {
+            font-size: 1.3rem;
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            opacity: 0;
+            transform: translateY(50px);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .hero h1 {
+                font-size: 3.5rem;
+            }
+            
+            .intro-content h2 {
+                font-size: 2.8rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.8rem;
+            }
+            
+            .hero p {
+                font-size: 1.2rem;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .intro-content h2 {
+                font-size: 2.2rem;
+            }
+            
+            .cta h2 {
+                font-size: 2.2rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .btn {
+                padding: 12px 25px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-container">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="floating-papers" id="paper-animation"></div>
+            <div class="container">
+                <h1>Welcome to eWings Papers</h1>
+                <p>Your new digital platform for an immersive paper class experience. Designed exclusively for our students to enhance learning and creativity.</p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary">Go to Student Dashboard</button>
+                    <button class="btn btn-secondary">Watch Platform Tour</button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Platform Introduction -->
+        <section class="platform-intro">
+            <div class="container">
+                <div class="intro-content">
+                    <h2>Why eWings Papers?</h2>
+                    <p>We've created a revolutionary platform that transforms how you interact with digital paper. Here's what makes it special for our class:</p>
+                    
+                    <div class="intro-grid">
+                        <div class="intro-card">
+                            <i class="fas fa-cube"></i>
+                            <h3>3D Paper Interaction</h3>
+                            <p>Experience your assignments and notes in a realistic 3D space with natural flipping and stacking gestures.</p>
+                        </div>
+                        
+                        <div class="intro-card">
+                            <i class="fas fa-layer-group"></i>
+                            <h3>Smart Organization</h3>
+                            <p>Automatically organized by class, subject, and due date. Never lose track of your work again.</p>
+                        </div>
+                        
+                        <div class="intro-card">
+                            <i class="fas fa-users"></i>
+                            <h3>Seamless Collaboration</h3>
+                            <p>Work together with classmates on group projects in real-time with shared annotation tools.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Video Demo Section -->
+        <section class="video-demo">
+            <div class="container">
+                <h2 style="opacity: 0; transform: translateY(50px); margin-bottom: 2rem;">See It In Action</h2>
+                <p style="opacity: 0; transform: translateY(50px); margin-bottom: 3rem; max-width: 700px; margin-left: auto; margin-right: auto;">Watch this quick demo to see how eWings Papers will transform your paper class experience.</p>
+                
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/YOUR_DEMO_VIDEO_ID" allowfullscreen></iframe>
+                </div>
+            </div>
+        </section>
+        
+        <!-- CTA Section -->
+        <section class="cta">
+            <div class="container">
+                <h2>Ready to Get Started?</h2>
+                <p>Access your personalized dashboard and begin your journey with eWings Papers today.</p>
+                <button class="btn btn-primary" style="opacity: 0; transform: translateY(50px);">Enter Platform</button>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Initialize Three.js scene for floating papers
+        const paperScene = new THREE.Scene();
+        const paperCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const paperRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        paperRenderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('paper-animation').appendChild(paperRenderer.domElement);
+        
+        // Add lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        paperScene.add(ambientLight);
+        
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        directionalLight.position.set(1, 1, 1);
+        paperScene.add(directionalLight);
+        
+        // Create floating papers
+        const papers = [];
+        const paperGeometry = new THREE.PlaneGeometry(1, 1.414); // A4 aspect ratio
+        
+        for (let i = 0; i < 25; i++) {
+            const paperMaterial = new THREE.MeshStandardMaterial({ 
+                color: i % 2 === 0 ? 0xf8f4e6 : 0xffffff,
+                roughness: 0.7,
+                metalness: 0,
+                side: THREE.DoubleSide,
+                transparent: true,
+                opacity: 0.9
+            });
+            
+            const paper = new THREE.Mesh(paperGeometry, paperMaterial);
+            paper.position.x = (Math.random() - 0.5) * 30;
+            paper.position.y = (Math.random() - 0.5) * 20;
+            paper.position.z = (Math.random() - 0.5) * 30;
+            paper.rotation.x = Math.random() * Math.PI;
+            paper.rotation.y = Math.random() * Math.PI;
+            paper.rotation.z = Math.random() * Math.PI;
+            paper.scale.set(0.8 + Math.random() * 0.5, 0.8 + Math.random() * 0.5, 1);
+            
+            paper.userData = {
+                speedX: (Math.random() - 0.5) * 0.02,
+                speedY: (Math.random() - 0.5) * 0.02,
+                speedZ: (Math.random() - 0.5) * 0.02,
+                rotX: (Math.random() - 0.5) * 0.01,
+                rotY: (Math.random() - 0.5) * 0.01,
+                rotZ: (Math.random() - 0.5) * 0.01
+            };
+            
+            papers.push(paper);
+            paperScene.add(paper);
+        }
+        
+        paperCamera.position.z = 40;
+        
+        // Animation loop for floating papers
+        function animatePapers() {
+            requestAnimationFrame(animatePapers);
+            
+            papers.forEach(paper => {
+                paper.position.x += paper.userData.speedX;
+                paper.position.y += paper.userData.speedY;
+                paper.position.z += paper.userData.speedZ;
+                
+                paper.rotation.x += paper.userData.rotX;
+                paper.rotation.y += paper.userData.rotY;
+                paper.rotation.z += paper.userData.rotZ;
+                
+                // Bounce off imaginary walls
+                if (Math.abs(paper.position.x) > 25) paper.userData.speedX *= -1;
+                if (Math.abs(paper.position.y) > 15) paper.userData.speedY *= -1;
+                if (Math.abs(paper.position.z) > 25) paper.userData.speedZ *= -1;
+            });
+            
+            // Slowly rotate camera for dynamic view
+            paperCamera.position.x = Math.sin(Date.now() * 0.0003) * 30;
+            paperCamera.position.z = Math.cos(Date.now() * 0.0003) * 30;
+            paperCamera.lookAt(0, 0, 0);
+            
+            paperRenderer.render(paperScene, paperCamera);
+        }
+        
+        animatePapers();
+        
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            paperCamera.aspect = window.innerWidth / window.innerHeight;
+            paperCamera.updateProjectionMatrix();
+            paperRenderer.setSize(window.innerWidth, window.innerHeight);
+        });
+        
+        // GSAP Animations
+        gsap.registerPlugin(ScrollTrigger);
+        
+        // Hero section animations
+        gsap.to('.hero h1', {
+            opacity: 1,
+            y: 0,
+            duration: 1.2,
+            ease: 'elastic.out(1, 0.5)'
+        });
+        
+        gsap.to('.hero p', {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            delay: 0.3,
+            ease: 'power3.out'
+        });
+        
+        gsap.to('.hero-buttons', {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            delay: 0.6,
+            ease: 'power3.out'
+        });
+        
+        // Intro section animations
+        gsap.to('.intro-content h2', {
+            scrollTrigger: {
+                trigger: '.intro-content',
+                start: 'top 80%',
+                toggleActions: 'play none none none'
+            },
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            ease: 'back.out(1.7)'
+        });
+        
+        gsap.to('.intro-content p', {
+            scrollTrigger: {
+                trigger: '.intro-content',
+                start: 'top 80%',
+                toggleActions: 'play none none none'
+            },
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            delay: 0.3,
+            ease: 'power3.out'
+        });
+        
+        // Intro card animations
+        document.querySelectorAll('.intro-card').forEach((card, index) => {
+            gsap.to(card, {
+                scrollTrigger: {
+                    trigger: card,
+                    start: 'top 80%',
+                    toggleActions: 'play none none none'
+                },
+                opacity: 1,
+                y: 0,
+                duration: 0.8,
+                delay: index * 0.1,
+                ease: 'back.out(1.2)'
+            });
+        });
+        
+        // Video demo animations
+        gsap.to('.video-demo h2', {
+            scrollTrigger: {
+                trigger: '.video-demo',
+                start: 'top 80%',
+                toggleActions: 'play none none none'
+            },
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            ease: 'power3.out'
+        });
+        
+        gsap.to('.video-demo p', {
+            scrollTrigger: {
+                trigger: '.video-demo',
+                start: 'top 80%',
+                toggleActions: 'play none none none'
+            },
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            delay: 0.3,
+            ease: 'power3.out'
+        });
+        
+        gsap.to('.video-container', {
+            scrollTrigger: {
+                trigger: '.video-container',
+                start: 'top 80%',
+                toggleActions: 'play none none none'
+            },
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            delay: 0.6,
+            ease: 'power3.out'
+        });
+        
+        // CTA section animations
+        gsap.to('.cta h2', {
+            scrollTrigger: {
+                trigger: '.cta',
+                start: 'top 80%',
+                toggleActions: 'play none none none'
+            },
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            ease: 'elastic.out(1, 0.5)'
+        });
+        
+        gsap.to('.cta p', {
+            scrollTrigger: {
+                trigger: '.cta',
+                start: 'top 80%',
+                toggleActions: 'play none none none'
+            },
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            delay: 0.3,
+            ease: 'power3.out'
+        });
+        
+        gsap.to('.cta .btn', {
+            scrollTrigger: {
+                trigger: '.cta',
+                start: 'top 80%',
+                toggleActions: 'play none none none'
+            },
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            delay: 0.6,
+            ease: 'power3.out'
+        });
+    </script>
+</body>
+</html>

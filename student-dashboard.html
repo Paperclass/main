@@ -1,0 +1,4532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eWings-papers - Student Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #4e73df;
+            --primary-light: #7e9eff;
+            --primary-dark: #3a56d4;
+            --secondary-color: #f8f9fc;
+            --accent-color: #1cc88a;
+            --accent-light: #3ecca8;
+            --warning-color: #f6c23e;
+            --danger-color: #e74a3b;
+            --text-color: #2d3748;
+            --text-light: #858796;
+            --bg-color: #ffffff;
+            --card-bg: #f8f9fa;
+            --border-color: #e3e6f0;
+            --shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            --hover-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            --transition: all 0.3s ease;
+            --border-radius: 0.35rem;
+            --sidebar-width: 14rem;
+        }
+        
+        .dark-mode {
+            --primary-color: #4e73df;
+            --primary-light: #7e9eff;
+            --primary-dark: #3a56d4;
+            --secondary-color: #1a1a2e;
+            --accent-color: #1cc88a;
+            --accent-light: #3ecca8;
+            --text-color: #f8f9fc;
+            --text-light: #b7b9cc;
+            --bg-color: #121212;
+            --card-bg: #1e1e2d;
+            --border-color: #2d3748;
+            --shadow: 0 0.15rem 1.75rem 0 rgba(0, 0, 0, 0.3);
+            --hover-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.4);
+        }
+
+        body {
+            font-family: 'Nunito', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: var(--transition);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            min-height: 100vh;
+            background: linear-gradient(180deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+            color: white;
+            overflow-y: auto;
+        }
+
+        .sidebar-brand {
+            height: 4.375rem;
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: 800;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            letter-spacing: 0.05rem;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-brand img {
+            height: 2.5rem;
+            margin-right: 0.5rem;
+        }
+
+        .sidebar-divider {
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            margin: 1rem 0;
+        }
+
+        .sidebar-heading {
+            text-align: left;
+            padding: 0 1rem;
+            font-weight: 800;
+            font-size: 0.65rem;
+            color: rgba(255, 255, 255, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 0.13rem;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            height: 3rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-link.active {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-left: 3px solid var(--accent-color);
+        }
+
+        .nav-link i {
+            font-size: 1.1rem;
+            margin-right: 0.5rem;
+            min-width: 1.5rem;
+            text-align: center;
+        }
+
+        .sidebar-user {
+            padding: 1.5rem 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .sidebar-user .user-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .sidebar-user .user-email {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Main Content */
+        #content {
+            width: calc(100% - var(--sidebar-width));
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            transition: all 0.3s;
+        }
+
+        /* Top Navigation */
+        .topbar {
+            height: 4.375rem;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+            background-color: var(--bg-color);
+            z-index: 100;
+        }
+
+        .topbar .navbar-search {
+            width: 25rem;
+        }
+
+        .topbar .navbar-search input {
+            font-size: 0.85rem;
+            height: auto;
+        }
+
+        .topbar .topbar-divider {
+            width: 0;
+            border-right: 1px solid #e3e6f0;
+            height: calc(4.375rem - 2rem);
+            margin: auto 1rem;
+        }
+
+        .topbar .nav-item .nav-link {
+            height: 4.375rem;
+            display: flex;
+            align-items: center;
+            padding: 0 0.75rem;
+            color: #d1d3e2;
+        }
+
+        .topbar .nav-item .nav-link:hover {
+            color: #b7b9cc;
+        }
+
+        .topbar .nav-item .nav-link .badge-counter {
+            position: absolute;
+            transform: scale(0.7);
+            transform-origin: top right;
+            right: 0.25rem;
+            margin-top: -0.25rem;
+        }
+
+        .topbar .nav-item .nav-link .img-profile {
+            height: 2rem;
+            width: 2rem;
+        }
+
+        /* Cards */
+        .card {
+            border: none;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            margin-bottom: 1.5rem;
+            background-color: var(--card-bg);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 700;
+            border-bottom: none;
+            border-radius: var(--border-radius) var(--border-radius) 0 0 !important;
+        }
+
+        .dark-mode .card-header {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* Stats Cards */
+        .stat-card {
+            border-left: 0.25rem solid var(--primary-color);
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        .stat-card.primary {
+            border-left-color: var(--primary-color);
+        }
+
+        .stat-card.success {
+            border-left-color: var(--accent-color);
+        }
+
+        .stat-card.info {
+            border-left-color: #36b9cc;
+        }
+
+        .stat-card.warning {
+            border-left-color: var(--warning-color);
+        }
+
+        .stat-card .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .stat-card.success .stat-value {
+            color: var(--accent-color);
+        }
+
+        .stat-card.info .stat-value {
+            color: #36b9cc;
+        }
+
+        .stat-card.warning .stat-value {
+            color: var(--warning-color);
+        }
+
+        .stat-card .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.05rem;
+        }
+
+        .stat-card .stat-icon {
+            font-size: 1.5rem;
+            color: #dddfeb;
+        }
+
+        .dark-mode .stat-card .stat-icon {
+            color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Tables */
+.table {
+    color: var(--text-color);
+    background-color: var(--card-bg);
+    border-color: var(--border-color);
+}
+
+.table thead th {
+    border-bottom: 2px solid var(--border-color);
+    font-weight: 700;
+    color: var(--primary-color);
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05rem;
+    background-color: var(--card-bg);
+}
+
+.table td, .table th {
+    padding: 1rem;
+    vertical-align: middle;
+    border-top: 1px solid var(--border-color);
+    background-color: var(--card-bg);
+}
+
+        .user-rank {
+            background-color: rgba(28, 200, 138, 0.1) !important;
+            font-weight: 600;
+        }
+
+        /* Buttons */
+        .btn {
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            padding: 0.5rem 1.25rem;
+            transition: var(--transition);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+
+        .btn-success:hover {
+            background-color: var(--accent-light);
+            border-color: var(--accent-light);
+            transform: translateY(-2px);
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            background-color: transparent;
+            border: none;
+            color: var(--text-color);
+            padding: 0.5rem;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-toggle:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .theme-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Loading Spinners */
+        .spinner-border {
+            width: 1.5rem;
+            height: 1.5rem;
+            border-width: 0.2em;
+        }
+
+        /* Login Modal */
+        #loginModal .modal-content {
+            border: none;
+            box-shadow: var(--shadow);
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        #loginModal .modal-header {
+            border-bottom-color: var(--border-color);
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        #loginModal .btn-close {
+            filter: invert(1);
+        }
+
+        /* Profile Modal */
+        #profileModal .modal-header {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+                position: fixed;
+                z-index: 1040;
+            }
+            
+            .sidebar.toggled {
+                transform: translateX(0);
+            }
+            
+            #content {
+                width: 100%;
+                margin-left: 0;
+            }
+            
+            #content.toggled {
+                margin-left: var(--sidebar-width);
+            }
+            
+            .topbar .navbar-search {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stat-card .stat-value {
+                font-size: 1.25rem;
+            }
+            
+            .card-header {
+                font-size: 1rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--card-bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-light);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-color);
+        }
+
+        /* Dark mode specific styles */
+        .dark-mode .form-control,
+        .dark-mode .form-select {
+            background-color: #2a2a2a;
+            color: #f0f0f0;
+            border-color: #444;
+        }
+
+        .dark-mode .form-control:focus,
+        .dark-mode .form-select:focus {
+            background-color: #333;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(78, 115, 223, 0.25);
+        }
+
+        /* Sidebar toggle button */
+        #sidebarToggle {
+            color: var(--text-color);
+            background: transparent;
+            border: none;
+            font-size: 1.25rem;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        #sidebarToggle:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode #sidebarToggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Welcome banner */
+        .welcome-banner {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .welcome-banner h2 {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-banner p {
+            opacity: 0.9;
+            margin-bottom: 0;
+        }
+
+        /* Paper cards */
+        .paper-card {
+            transition: var(--transition);
+            border: none;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            background-color: var(--card-bg);
+        }
+
+        .paper-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .paper-card .card-body {
+            padding: 1.5rem;
+        }
+
+        .paper-card .card-title {
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: var(--primary-color);
+            font-size: 1.25rem;
+        }
+
+        .paper-card .card-subtitle {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        .paper-card .card-text {
+            color: var(--text-light);
+            font-size: 0.85rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .paper-card .btn-group {
+            margin-top: 1rem;
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .paper-card .btn {
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: var(--transition);
+            flex: 1;
+        }
+
+        /* Performance chart */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        /* Mobile menu button */
+        .mobile-menu-btn {
+            display: none;
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            z-index: 1050;
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            font-size: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .mobile-menu-btn:hover {
+            background-color: var(--primary-dark);
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 992px) {
+            .mobile-menu-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+
+        /* Loading overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: white;
+        }
+
+        .loading-overlay .spinner-border {
+            width: 3rem;
+            height: 3rem;
+            border-width: 0.5em;
+        }
+
+        .loading-overlay p {
+            margin-top: 1rem;
+            font-size: 1.2rem;
+        }
+
+/* Dashboard specific styles */
+.dashboard-card {
+    transition: var(--transition);
+    border: none;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 1.5rem;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--hover-shadow);
+}
+
+.dashboard-card .card-body {
+    padding: 1.5rem;
+}
+
+.dashboard-card .card-title {
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    color: var(--primary-color);
+}
+
+/* Answer analysis styles */
+.answer-list {
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 0.5rem;
+    border-radius: var(--border-radius);
+    background-color: var(--card-bg);
+}
+
+.correct-answers .answer-item {
+    background-color: rgba(28, 200, 138, 0.1);
+    border-left: 3px solid var(--accent-color);
+}
+
+.incorrect-answers .answer-item {
+    background-color: rgba(231, 74, 59, 0.1);
+    border-left: 3px solid var(--danger-color);
+}
+
+.answer-item {
+    margin-bottom: 0.5rem;
+    padding: 0.75rem;
+    border-radius: 4px;
+    transition: var(--transition);
+}
+
+.answer-item:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.dark-mode .answer-item:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Submission modal styles */
+#submissionDetailsModal .modal-content {
+    border: none;
+    box-shadow: var(--shadow);
+    background-color: var(--card-bg);
+    color: var(--text-color);
+}
+
+#submissionDetailsModal .modal-header {
+    border-bottom-color: var(--border-color);
+}
+
+#submissionDetailsModal .card {
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+}
+
+#submissionDetailsModal .progress {
+    background-color: var(--border-color);
+}
+
+/* Table hover effect */
+.table-hover tbody tr:hover {
+    background-color: rgba(78, 115, 223, 0.05);
+}
+
+.dark-mode .table-hover tbody tr:hover {
+    background-color: rgba(78, 115, 223, 0.1);
+}
+
+/* Specific styles for dark mode tables */
+.dark-mode .table {
+    color: var(--text-color);
+}
+
+.dark-mode .table thead th {
+    color: var(--primary-light);
+}
+
+.dark-mode .table td, 
+.dark-mode .table th {
+    border-color: var(--border-color);
+}
+
+/* Add to your existing styles */
+@media (max-width: 768px) {
+    #profileModal .modal-dialog {
+        margin: 0.5rem auto;
+    }
+    
+    #profileModal .modal-content {
+        border-radius: 0;
+    }
+    
+    #profileModal .modal-body {
+        padding: 1rem;
+    }
+    
+    #profileModal .form-control,
+    #profileModal .form-select {
+        font-size: 0.9rem;
+    }
+    
+    #profileModal .btn {
+        padding: 0.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .sidebar-user {
+        padding: 1rem 0.5rem;
+    }
+    
+    .sidebar-user .user-name {
+        font-size: 1rem;
+    }
+    
+    .sidebar-user .user-email {
+        font-size: 0.8rem;
+    }
+}
+
+.answer-list {
+        max-height: 300px;
+        overflow-y: auto;
+        padding: 0.5rem;
+        border-radius: var(--border-radius);
+        background-color: var(--card-bg);
+    }
+    
+    .correct-answers .answer-item {
+        background-color: rgba(28, 200, 138, 0.1);
+        border-left: 3px solid var(--accent-color);
+    }
+    
+    .incorrect-answers .answer-item {
+        background-color: rgba(231, 74, 59, 0.1);
+        border-left: 3px solid var(--danger-color);
+    }
+    
+    .answer-item {
+        margin-bottom: 0.5rem;
+        padding: 0.75rem;
+        border-radius: 4px;
+        transition: var(--transition);
+        cursor: pointer;
+    }
+    
+    .answer-item:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+    
+    .dark-mode .answer-item:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+    
+    .answer-details {
+        display: none;
+        padding: 0.5rem;
+        background-color: rgba(0, 0, 0, 0.03);
+        border-radius: 4px;
+        margin-top: 0.5rem;
+    }
+    
+    .dark-mode .answer-details {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+    
+    .answer-item.expanded .answer-details {
+        display: block;
+    }
+
+/* Year filter styles */
+.filter-container .form-select {
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    box-shadow: none;
+    padding: 0.5rem 1rem;
+    height: calc(1.5em + 1rem + 2px);
+    font-size: 0.9rem;
+    
+}
+
+#yearFilter{
+    width: 150px;
+}
+
+.filter-container .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(78, 115, 223, 0.25);
+}
+
+/* Dark mode adjustments */
+.dark-mode .filter-container .form-select {
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    border-color: var(--border-color);
+}
+
+@media (max-width: 992px) {
+    /* Fix modal positioning on mobile */
+    #profileModal .modal-dialog {
+        margin: 1rem auto;
+        max-width: 95%;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+    }
+    
+    /* Make modal full height on mobile */
+    #profileModal .modal-content {
+        min-height: 90vh;
+        overflow-y: auto;
+    }
+    
+    /* Adjust modal header for mobile */
+    #profileModal .modal-header {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+    
+    /* Stack form columns on mobile */
+    #profileModal .row {
+        flex-direction: column;
+    }
+    
+    /* Add padding to form elements */
+    #profileModal .modal-body {
+        padding: 1rem;
+    }
+    
+    /* Make form inputs full width */
+    #profileModal .form-control,
+    #profileModal .form-select {
+        width: 100%;
+    }
+    
+    /* Adjust button positioning */
+    #profileModal .modal-footer {
+        position: sticky;
+        bottom: 0;
+        background: var(--card-bg);
+        padding: 1rem;
+        border-top: 1px solid var(--border-color);
+    }
+    
+    /* Fix z-index issues with sidebar */
+    #profileModal {
+        z-index: 1060 !important; /* Higher than sidebar */
+    }
+    
+    /* Hide sidebar when modal is open */
+    body.modal-open #sidebar {
+        transform: translateX(-100%);
+    }
+    
+    /* Dark mode adjustments */
+    .dark-mode #profileModal .modal-content {
+        background-color: var(--card-bg);
+    }
+    
+    .dark-mode #profileModal .modal-header {
+        background-color: var(--primary-color);
+    }
+}
+
+/* Additional mobile-specific improvements */
+@media (max-width: 576px) {
+    #profileModal .modal-dialog {
+        margin: 0.5rem auto;
+    }
+    
+    #profileModal .card-body {
+        padding: 1rem;
+    }
+    
+    #profileModal .btn-group {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    #profileModal .btn {
+        width: 100%;
+    }
+    
+    /* Make password change form more compact */
+    #passwordChangeModal .btn {
+        width: auto;
+    }
+}
+
+#profileModal .modal-dialog {
+  /* For mobile */
+  @media (max-width: 992px) {
+    margin: 0 auto;
+    width: 90vw;
+    max-width: none;
+    min-height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: auto;
+  }
+}
+
+#profileModal .modal-content {
+  /* For mobile */
+  @media (max-width: 992px) {
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 0.5rem;
+  }
+}
+
+.modal {
+  z-index: 1060;
+}
+
+.modal-backdrop {
+  z-index: 1050;
+}
+
+@media (max-width: 992px) {
+  body.modal-open #sidebar {
+    display: none;
+  }
+  
+  body.modal-open #content {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 992px) {
+  /* Button container layout */
+  #profileModal .modal-footer {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: var(--card-bg);
+    border-top: 1px solid var(--border-color);
+  }
+  
+  /* Primary action button */
+  #profileModal #profileSaveBtn {
+    order: 1;
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+  }
+  
+  /* Secondary action buttons container */
+  #profileModal .secondary-actions {
+    display: flex;
+    gap: 0.75rem;
+    width: 100%;
+  }
+  
+  /* Secondary buttons */
+  #profileModal #changePasswordBtn,
+  #profileModal .btn-secondary {
+    flex: 1;
+    padding: 0.75rem;
+    font-size: 1rem;
+  }
+  
+  /* Password change section */
+  #passwordChangeModal {
+    padding: 1rem;
+    margin-top: 1rem;
+    background: rgba(0, 0, 0, 0.03);
+    border-radius: var(--border-radius);
+  }
+  
+  .dark-mode #passwordChangeModal {
+    background: rgba(255, 255, 255, 0.05);
+  }
+  
+  /* Form field spacing */
+  #profileModal .mb-3 {
+    margin-bottom: 1rem !important;
+  }
+}
+
+/* For very small screens */
+@media (max-width: 400px) {
+  #profileModal .secondary-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  #profileModal #changePasswordBtn,
+  #profileModal .btn-secondary {
+    width: 100%;
+  }
+}
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-brand d-flex align-items-center justify-content-center">
+            <img src="EW-white.png" alt="eWings Logo">
+            <span class="ml-2">eWings Papers</span>
+        </div>
+        
+        <div class="sidebar-user text-center">
+            <div class="user-name" id="sidebarUserName">Welcome</div>
+            <div class="user-email" id="sidebarUserEmail">Please login</div>
+        </div>
+        
+        <div class="sidebar-divider"></div>
+        
+<div class="sidebar-heading">Main</div>
+<ul class="nav flex-column">
+    <li class="nav-item" id="dashboardNavItem">
+        <a class="nav-link active" href="#" id="dashboardTab">
+            <i class="bi bi-speedometer2"></i>
+            <span>Dashboard</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#" id="papersTab">
+            <i class="bi bi-file-earmark-text"></i>
+            <span>Papers</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#" id="ranksTab">
+            <i class="bi bi-trophy"></i>
+            <span>My Ranks</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#" id="statsTab">
+            <i class="bi bi-graph-up"></i>
+            <span>My Performance</span>
+        </a>
+    </li>
+</ul>
+
+<div class="sidebar-divider"></div>
+
+<div class="sidebar-heading">Account</div>
+<ul class="nav flex-column" id="accountNavItems">
+    <li class="nav-item">
+        <a class="nav-link" href="#" id="profileBtn">
+            <i class="bi bi-person"></i>
+            <span>My Profile</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#" id="logoutBtn">
+            <i class="bi bi-box-arrow-right"></i>
+            <span>Logout</span>
+        </a>
+    </li>
+</ul>
+    </div>
+
+    <!-- Mobile Menu Button -->
+    <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <i class="bi bi-list"></i>
+    </button>
+
+    <!-- Content Wrapper -->
+    <div id="content">
+        <!-- Top Navigation -->
+        <nav class="navbar navbar-expand topbar mb-4 static-top shadow">
+            <div class="container-fluid">
+                <button id="sidebarToggle" class="btn btn-link d-md-none rounded-circle mr-3">
+                    <i class="bi bi-list"></i>
+                </button>
+                
+                <div class="d-flex align-items-center">
+                    <button class="theme-toggle me-3" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <button class="btn btn-primary" id="authBtn">
+                        <i class="bi bi-box-arrow-in-right me-2"></i> Login
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="container-fluid">
+            <!-- Welcome Banner -->
+            <div class="welcome-banner fade-in">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h2 id="welcomeMessage">Welcome to eWings-papers</h2>
+                        <p id="welcomeSubtext">Please login to access your papers and performance data</p>
+                    </div>
+                    <div class="col-md-4 d-none d-md-block">
+                        <img src="Ukuwela-sir-banner.png" alt="eWings Banner" class="img-fluid rounded">
+                    </div>
+                </div>
+            </div>
+<!--Dashboard-->
+
+<div id="dashboardSection" class="fade-in">
+    <div id="dashboardAuthCheck" class="text-center py-5" style="display: none;">
+        <div class="alert alert-warning">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            Please login to access the dashboard
+        </div>
+        <button class="btn btn-primary mt-3" id="loginFromDashboardBtn">
+            <i class="bi bi-box-arrow-in-right me-2"></i> Login
+        </button>
+    </div>
+    
+    <div id="dashboardContent">
+        <h2 class="section-title">
+        <i class="bi bi-speedometer2 me-2"></i> Dashboard Summary
+    </h2>
+    
+    <div class="row mb-4">
+        <!-- Summary Cards -->
+        <div class="col-md-3">
+            <div class="card stat-card primary">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <div class="stat-value" id="totalPapersTaken">0</div>
+                            <div class="stat-label">Papers Taken</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-file-earmark-text stat-icon"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card stat-card success">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <div class="stat-value" id="averageScore">0%</div>
+                            <div class="stat-label">Average Score</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-graph-up stat-icon"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card stat-card warning">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <div class="stat-value" id="bestRank">N/A</div>
+                            <div class="stat-label">Best Rank</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-trophy stat-icon"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card stat-card info">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <div class="stat-value" id="improvementRate">0%</div>
+                            <div class="stat-label">Improvement</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-arrow-up-right stat-icon"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Performance Overview Chart -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="bi bi-graph-up me-2"></i> Performance Overview
+        </div>
+        <div class="card-body">
+            <div class="chart-container">
+                <canvas id="performanceOverviewChart" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    </div>
+</div>
+
+            <!-- Papers Section -->
+            <div id="papersSection" class="fade-in">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="section-title">
+                        <i class="bi bi-file-earmark-text me-2"></i> Available Papers
+                    </h2>
+                    <div class="filter-container">
+                        <div class="row g-2">
+                            <div class="col-md-4">
+                                <select class="form-select" id="yearFilter">
+                                    <option value="">All Years</option>
+                                    <option value="2025">2025</option>
+                                    <option value="2026">2026</option>
+                                    <option value="2027">2027</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" id="availablePapers">
+                    <div class="col-12 text-center py-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <h2 class="section-title mt-5">
+                    <i class="bi bi-file-earmark-check me-2"></i> View Answers
+                </h2>
+                <div class="row" id="viewAnswers">
+                    <div class="col-12 text-center py-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ranks Section -->
+<!-- Rankings Section -->
+<div id="ranksSection" style="display: none;" class="fade-in">
+  <h2 class="section-title">
+    <i class="bi bi-trophy me-2"></i> Paper Rankings
+  </h2>
+  
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <div class="filter-container">
+        <label for="rankPaperFilter" class="form-label">Select Paper</label>
+        <select class="form-select" id="rankPaperFilter">
+          <option value="">Select Paper</option>
+        </select>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="filter-container">
+        <label for="classFilter" class="form-label">Filter by Class</label>
+        <select class="form-select" id="classFilter">
+          <option value="">All Island</option>
+          <option value="Nugegoda">Nugegoda</option>
+          <option value="Kandy">Kandy</option>
+          <option value="Kegalle">Kegalle</option>
+          <option value="Kurunegala">Kurunegala</option>
+          <option value="Gall">Gall</option>
+          <option value="Onlin">Online</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Schools Section -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <i class="bi bi-trophy-fill me-2"></i> Top Schools
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-header bg-primary text-white">
+              <i class="bi bi-star-fill me-2"></i> Overall Top School
+            </div>
+            <div class="card-body">
+              <div id="overallTopSchool" class="text-center py-3">
+                <div class="spinner-border"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-header bg-success text-white">
+              <i class="bi bi-award-fill me-2"></i> Class Top School
+            </div>
+            <div class="card-body">
+              <div id="classTopSchool" class="text-center py-3">
+                <div class="spinner-border"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="userRankInfo" class="mb-4" style="display: none;">
+    <div class="alert alert-success">
+      <h5><i class="bi bi-trophy-fill me-2"></i> Your Rank</h5>
+      <div id="userRankDetails"></div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <i class="bi bi-trophy-fill me-2"></i> Top 100 Overall
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Rank</th>
+                  <th>Name</th>
+                  <th>Score</th>
+                  <th>School</th>
+                </tr>
+              </thead>
+              <tbody id="overallRankings">
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <i class="bi bi-people-fill me-2"></i> Top 100 by Class
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Rank</th>
+                  <th>Name</th>
+                  <th>Score</th>
+                  <th>School</th>
+                </tr>
+              </thead>
+              <tbody id="classRankings">
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+            <!-- Stats Section -->
+            <div id="statsSection" style="display: none;" class="fade-in">
+                <!-- Dynamic content will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Login to eWings-papers</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="loginForm" onsubmit="event.preventDefault();">
+                        <div class="mb-3">
+                            <label for="loginEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="loginEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="loginPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="loginPassword" required>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <button type="submit" class="btn btn-primary">
+                                <span id="loginSpinner" class="spinner-border spinner-border-sm d-none"></span>
+                                Login
+                            </button>
+                            <a href="registration.html" class="text-decoration-none">Don't have an account? Register</a>
+                        </div>
+                    </form>
+                    <div id="loginError" class="alert alert-danger mt-3 d-none"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+<!-- Profile Modal -->
+<div class="modal fade" id="profileModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">My Profile</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="profileForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="profileName" class="form-label">Full Name</label>
+                                <input type="text" class="form-control" id="profileName" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="profileNic" class="form-label">NIC Number</label>
+                                <input type="text" class="form-control" id="profileNic" disabled>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="profileEmail" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="profileEmail" disabled>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="profileDistrict" class="form-label">District</label>
+                                <select class="form-select" id="profileDistrict" required>
+                                    <option value="">Select District</option>
+                                    <!-- Options will be populated by JavaScript -->
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="profileClass" class="form-label">Class</label>
+                                <select class="form-select" id="profileClass" required>
+                                    <option value="">Select Class</option>
+                                    <option value="Nugegoda">Nugegoda</option>
+                                    <option value="Kandy">Kandy</option>
+                                    <option value="Kegalle">Kegalle</option>
+                                    <option value="Kurunegala">Kurunegala</option>
+                                    <option value="Gall">Gall</option>
+                                    <option value="Onlin">Online</option>
+                                    <option value="All Island">All Island</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="profileSchool" class="form-label">School</label>
+                                <input type="text" class="form-control" id="profileSchool">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="profilePhone" class="form-label">Phone Number</label>
+                                <input type="tel" class="form-control" id="profilePhone" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="profileYear" class="form-label">Registered Year</label>
+                                <select class="form-select" id="profileYear" required>
+                                    <option value="">Select Year</option>
+                                    <option value="2025">2025</option>
+                                    <option value="2026">2026</option>
+                                    <option value="2027">2027</option>
+                                </select>
+                            </div>
+                            
+                            <div id="profileClassTypeContainer" class="mb-3" style="display: none;">
+                                <label class="form-label">Class Types</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="profileTheory" name="profileClassType" value="Theory">
+                                    <label class="form-check-label" for="profileTheory">Theory</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="profilePaperClass" name="profileClassType" value="Paper Class">
+                                    <label class="form-check-label" for="profilePaperClass">Paper Class</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="profileRevision" name="profileClassType" value="Revision">
+                                    <label class="form-check-label" for="profileRevision">Revision</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="profileOther" name="profileClassType" value="Other">
+                                    <label class="form-check-label" for="profileOther">Other</label>
+                                </div>
+                            </div>
+                            
+                            <div id="profileStudentIdContainer" class="mb-3" style="display: none;">
+                                <label for="profileStudentId" class="form-label">Student ID</label>
+                                <input type="text" class="form-control" id="profileStudentId">
+                                <small class="text-muted">Contact admin if you need to change your Student ID</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <!-- Primary action -->
+                        <button type="submit" class="btn btn-primary" id="profileSaveBtn">
+                        <span id="profileSpinner" class="spinner-border spinner-border-sm d-none"></span>
+                            Save Changes
+                        </button>
+  
+                        <!-- Secondary actions container -->
+                        <div class="secondary-actions">
+                            <button type="button" class="btn btn-outline-primary" id="changePasswordBtn">
+                                <i class="bi bi-key me-1"></i> Change Password
+                            </button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                  Cancel
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                
+                <div id="profileError" class="alert alert-danger mt-3 d-none"></div>
+                <div id="profileSuccess" class="alert alert-success mt-3 d-none"></div>
+                
+                <!-- Password Change Modal (hidden by default) -->
+                <div id="passwordChangeModal" class="mt-4" style="display: none;">
+                    <hr>
+                    <h5 class="mb-3"><i class="bi bi-key me-2"></i> Change Password</h5>
+                    <form id="passwordChangeForm">
+                        <div class="mb-3">
+                            <label for="currentPassword" class="form-label">Current Password</label>
+                            <input type="password" class="form-control" id="currentPassword" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="newPassword" class="form-label">New Password</label>
+                            <input type="password" class="form-control" id="newPassword" required minlength="6">
+                            <small class="text-muted">Minimum 6 characters</small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                            <input type="password" class="form-control" id="confirmPassword" required>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <button type="button" class="btn btn-outline-secondary me-2" id="cancelPasswordChange">
+                                Cancel
+                            </button>
+                            <button type="submit" class="btn btn-primary" id="savePasswordBtn">
+                                <span id="passwordSpinner" class="spinner-border spinner-border-sm d-none"></span>
+                                Update Password
+                            </button>
+                        </div>
+                    </form>
+                    <div id="passwordError" class="alert alert-danger mt-3 d-none"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Submission Details Modal -->
+<div class="modal fade" id="submissionDetailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="submissionModalTitle">Submission Details</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6 class="card-subtitle mb-2 text-muted">Score</h6>
+                                <h3 class="card-title" id="submissionScore">-/-</h3>
+                                <div class="progress mt-2" style="height: 10px;">
+                                    <div id="submissionProgress" class="progress-bar bg-success" role="progressbar"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6 class="card-subtitle mb-2 text-muted">Overall Rank</h6>
+                                <h3 class="card-title" id="submissionRank">-</h3>
+                                <p class="card-text small text-muted" id="submissionPercentile">Top -%</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6 class="card-subtitle mb-2 text-muted">Class Rank</h6>
+                                <h3 class="card-title" id="submissionClassRank">-</h3>
+                                <p class="card-text small text-muted" id="submissionClassPercentile">Top -% in class</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6 class="card-subtitle mb-2 text-muted">Date Submitted</h6>
+                                <h3 class="card-title" id="submissionDate">-</h3>
+                                <p class="card-text small text-muted" id="submissionTimeTaken">Time: -</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6 class="card-subtitle mb-2 text-muted">Paper Details</h6>
+                                <h3 class="card-title" id="submissionPaperTitle">-</h3>
+                                <p class="card-text small text-muted" id="submissionPaperYear">Year: -</p>
+                                <p class="card-text small text-muted" id="submissionPaperMarks">Total Marks: -</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="bi bi-check-circle me-2"></i> Answers Analysis
+                            <span class="badge bg-primary ms-2" id="answersSummary">0/0 questions</span>
+                        </div>
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-outline-secondary" id="expandAllAnswers">
+                                <i class="bi bi-arrows-angle-expand me-1"></i> Expand All
+                            </button>
+                            <button class="btn btn-outline-secondary" id="collapseAllAnswers">
+                                <i class="bi bi-arrows-angle-contract me-1"></i> Collapse All
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5 class="mb-3 text-success">
+                                    <i class="bi bi-check-circle-fill me-2"></i>
+                                    <span id="correctAnswersHeader">Correct Answers (0)</span>
+                                </h5>
+                                <div id="correctAnswersList" class="answer-list correct-answers"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <h5 class="mb-3 text-danger">
+                                    <i class="bi bi-x-circle-fill me-2"></i>
+                                    <span id="incorrectAnswersHeader">Incorrect Answers (0)</span>
+                                </h5>
+                                <div id="incorrectAnswersList" class="answer-list incorrect-answers"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <i class="bi bi-bar-chart me-2"></i> Performance Breakdown
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="submissionChart" height="200"></canvas>
+                        </div>
+                        <div class="mt-3">
+                            <div class="d-flex justify-content-between small text-muted">
+                                <span>Your Score</span>
+                                <span>Class Average</span>
+                                <span>Top Score</span>
+                            </div>
+                            <div class="progress mt-1" style="height: 20px;">
+                                <div class="progress-bar bg-primary" id="yourScoreBar" style="width: 0%"></div>
+                                <div class="progress-bar bg-success" id="classAvgBar" style="width: 0%"></div>
+                                <div class="progress-bar bg-warning" id="topScoreBar" style="width: 0%"></div>
+                            </div>
+                            <div class="d-flex justify-content-between mt-1">
+                                <small class="text-primary">0%</small>
+                                <small class="text-success">0%</small>
+                                <small class="text-warning">0%</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="downloadReportBtn">
+                    <i class="bi bi-download me-1"></i> Download Report
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>    
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+// Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyD5SRZWB-QwMg7wmyTjcvHZqP-mEdlll_M",
+    authDomain: "paper-class-1ab19.firebaseapp.com",
+    databaseURL: "https://paper-class-1ab19-default-rtdb.firebaseio.com",
+    projectId: "paper-class-1ab19",
+    storageBucket: "paper-class-1ab19.firebasestorage.app",
+    messagingSenderId: "83634677566",
+    appId: "1:83634677566:web:fb4f7a1fd869c3e82e2e6f"
+  };
+
+// Initialize Firebase
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+const auth = firebase.auth();
+const database = firebase.database();
+const storage = firebase.storage();
+
+// DOM elements
+const authBtn = document.getElementById('authBtn');
+const themeToggle = document.getElementById('themeToggle');
+const yearFilter = document.getElementById('yearFilter');
+const sidebar = document.getElementById('sidebar');
+const content = document.getElementById('content');
+const sidebarToggle = document.getElementById('sidebarToggle');
+const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+const welcomeMessage = document.getElementById('welcomeMessage');
+const welcomeSubtext = document.getElementById('welcomeSubtext');
+const sidebarUserName = document.getElementById('sidebarUserName');
+const sidebarUserEmail = document.getElementById('sidebarUserEmail');
+
+// Tab navigation
+const sections = {
+    dashboard: document.getElementById('dashboardSection'),
+    papers: document.getElementById('papersSection'),
+    ranks: document.getElementById('ranksSection'),
+    stats: document.getElementById('statsSection')
+};
+
+const tabs = {
+    dashboard: document.getElementById('dashboardTab'),
+    papers: document.getElementById('papersTab'),
+    ranks: document.getElementById('ranksTab'),
+    stats: document.getElementById('statsTab')
+};
+
+// Initialize the page
+document.addEventListener('DOMContentLoaded', function() {
+    checkTheme();
+    initAuthState();
+    setupEventListeners();
+    
+    // Mobile menu toggle
+    if (sidebarToggle) {
+        sidebarToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('toggled');
+            content.classList.toggle('toggled');
+        });
+    }
+    
+    if (mobileMenuBtn) {
+        mobileMenuBtn.addEventListener('click', function() {
+            sidebar.classList.toggle('toggled');
+            content.classList.toggle('toggled');
+        });
+    }
+    
+    // Restore last viewed section if authenticated
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    if (user) {
+        const lastSection = localStorage.getItem('currentSection') || 'dashboard';
+        showSection(lastSection);
+    }
+});
+
+// Event listeners setup
+function setupEventListeners() {
+    // Theme toggle
+    if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
+    
+    // Year filter
+    if (yearFilter) {
+        yearFilter.addEventListener('change', function() {
+            loadPapers(this.value);
+        });
+    }
+    
+    // Tab navigation
+    if (tabs.dashboard) tabs.dashboard.addEventListener('click', () => showSection('dashboard'));
+    if (tabs.papers) tabs.papers.addEventListener('click', () => showSection('papers'));
+    if (tabs.ranks) tabs.ranks.addEventListener('click', () => showSection('ranks'));
+    if (tabs.stats) tabs.stats.addEventListener('click', () => {
+        if (checkAuthForStats()) showSection('stats');
+    });
+    
+    // Login form
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            handleLogin();
+        });
+    }
+    
+    // Auth button
+    if (authBtn) {
+        authBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            
+            if (user) {
+                logoutUser();
+            } else {
+                const modal = new bootstrap.Modal(document.getElementById('loginModal'));
+                modal.show();
+            }
+        });
+    }
+
+    const loginFromDashboardBtn = document.getElementById('loginFromDashboardBtn');
+        if (loginFromDashboardBtn) {
+        loginFromDashboardBtn.addEventListener('click', () => {
+            const modal = new bootstrap.Modal(document.getElementById('loginModal'));
+            modal.show();
+        });
+    }
+    
+    // Profile button in sidebar
+    const profileBtn = document.getElementById('profileBtn');
+    if (profileBtn) {
+        profileBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            showProfileModal();
+        });
+    }
+    
+    // Logout button in sidebar
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            logoutUser();
+        });
+    }
+}
+
+// Authentication state management
+function initAuthState() {
+    auth.onAuthStateChanged(async user => {
+        if (user) {
+            try {
+                const snapshot = await database.ref('users/' + user.uid).once('value');
+                let userData = snapshot.val();
+                
+                if (!userData) {
+                    // Initialize default user data if not found
+                    userData = {
+                        name: user.displayName || user.email.split('@')[0],
+                        email: user.email,
+                        nic: '',
+                        class: '',
+                        registeredYear: new Date().getFullYear().toString()
+                    };
+                    await database.ref('users/' + user.uid).set(userData);
+                }
+                
+                localStorage.setItem('currentUser', JSON.stringify({
+                    uid: user.uid,
+                    email: user.email,
+                    ...userData
+                }));
+                
+                updateUserUI(user, userData);
+                loadInitialContent(userData.registeredYear);
+                
+            } catch (error) {
+                console.error("Error handling user data:", error);
+                showToast("Error loading your account", 'danger');
+                logoutUser();
+            }
+        } else {
+            showPublicContent();
+            localStorage.removeItem('currentUser');
+        }
+    });
+}
+
+function updateUserUI(user, userData) {
+    const userObj = {
+        uid: user.uid,
+        email: user.email,
+        name: userData.name,
+        nic: userData.nic,
+        class: userData.class,
+        district: userData.district,
+        school: userData.school,
+        phone: userData.phone,
+        classTypes: userData.classTypes,
+        studentId: userData.studentId,
+        registeredYear: userData.registeredYear
+    };
+    
+    localStorage.setItem('currentUser', JSON.stringify(userObj));
+
+    // Show/hide dashboard and profile sections based on auth state
+    const dashboardNavItem = document.getElementById('dashboardNavItem');
+    const accountNavItems = document.getElementById('accountNavItems');
+    const dashboardTab = document.getElementById('dashboardTab');
+    
+    if (user) {
+        if (dashboardNavItem) dashboardNavItem.style.display = 'block';
+        if (accountNavItems) accountNavItems.style.display = 'block';
+        if (dashboardTab) dashboardTab.classList.add('active');
+    } else {
+        if (dashboardNavItem) dashboardNavItem.style.display = 'none';
+        if (accountNavItems) accountNavItems.style.display = 'none';
+        if (dashboardTab) dashboardTab.classList.remove('active');
+    }
+
+    // Update welcome message
+    if (welcomeMessage) {
+        welcomeMessage.textContent = `Welcome back, ${userData.name || 'Student'}!`;
+    }
+    
+    if (welcomeSubtext) {
+        welcomeSubtext.textContent = `Ready to ace your next paper?`;
+    }
+    
+    // Update sidebar user info
+    if (sidebarUserName) {
+        sidebarUserName.textContent = userData.name || 'User';
+    }
+    
+    if (sidebarUserEmail) {
+        sidebarUserEmail.textContent = user.email;
+    }
+
+    // Replace auth button with profile dropdown
+    if (authBtn && authBtn.parentElement) {
+        authBtn.innerHTML = `
+            <i class="bi bi-person-circle me-2"></i>
+            ${userData.name || 'User'}
+        `;
+        authBtn.classList.remove('btn-outline-light');
+        authBtn.classList.add('btn-success');
+    }
+    
+    // Enable protected sections
+    if (tabs.stats) tabs.stats.classList.remove('disabled');
+    if (tabs.ranks) tabs.ranks.classList.remove('disabled');
+    
+    // Update profile modal fields if it's open
+    if (document.getElementById('profileModal')?.classList.contains('show')) {
+        document.getElementById('profileName').value = userData.name || '';
+        document.getElementById('profileEmail').value = user.email || '';
+        document.getElementById('profileNic').value = userData.nic || '';
+        document.getElementById('profileClass').value = userData.class || '';
+        document.getElementById('profileYear').value = userData.registeredYear || '';
+    }
+}
+
+function showProfileModal() {
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    if (!user) return;
+
+    const profileModal = new bootstrap.Modal(document.getElementById('profileModal'));
+    
+    // Populate form fields
+    document.getElementById('profileName').value = user.name || '';
+    document.getElementById('profileNic').value = user.nic || '';
+    document.getElementById('profileEmail').value = user.email || '';
+    document.getElementById('profileSchool').value = user.school || '';
+    document.getElementById('profilePhone').value = user.phone || '';
+    
+    // Set district
+    const districtSelect = document.getElementById('profileDistrict');
+    districtSelect.innerHTML = '<option value="">Select District</option>';
+    // Add all district options (same as registration form)
+    const districts = ["Ampara", "Anuradhapura", "Badulla", "Batticaloa", "Colombo", 
+                      "Galle", "Gampaha", "Hambantota", "Jaffna", "Kalutara", 
+                      "Kandy", "Kegalle", "Kilinochchi", "Kurunegala", "Mannar", 
+                      "Matale", "Matara", "Monaragala", "Mullaitivu", "Nuwara Eliya", 
+                      "Polonnaruwa", "Puttalam", "Ratnapura", "Trincomalee", "Vavuniya"];
+    
+    districts.forEach(district => {
+        const option = document.createElement('option');
+        option.value = district;
+        option.textContent = district;
+        option.selected = (district === user.district);
+        districtSelect.appendChild(option);
+    });
+    
+    // Set class
+    document.getElementById('profileClass').value = user.class || '';
+    
+    // Set year
+    document.getElementById('profileYear').value = user.registeredYear || '';
+    
+    // Handle class types
+    const classTypeContainer = document.getElementById('profileClassTypeContainer');
+    const studentIdContainer = document.getElementById('profileStudentIdContainer');
+    
+    if (user.class && user.class !== 'All Island') {
+        classTypeContainer.style.display = 'block';
+        
+        // Set class types
+        if (user.classTypes && user.classTypes.length > 0) {
+            user.classTypes.forEach(type => {
+                const checkbox = document.querySelector(`input[name="profileClassType"][value="${type}"]`);
+                if (checkbox) checkbox.checked = true;
+            });
+        }
+        
+        // Set student ID if exists
+        if (user.studentId) {
+            studentIdContainer.style.display = 'block';
+            document.getElementById('profileStudentId').value = user.studentId;
+            document.getElementById('profileStudentId').readOnly = true;
+        } else {
+            // Only show student ID field if Paper Class or Revision is selected
+            const paperClassChecked = document.getElementById('profilePaperClass').checked;
+            const revisionChecked = document.getElementById('profileRevision').checked;
+            studentIdContainer.style.display = (paperClassChecked || revisionChecked) ? 'block' : 'none';
+            document.getElementById('profileStudentId').readOnly = false;
+        }
+    } else {
+        classTypeContainer.style.display = 'none';
+        studentIdContainer.style.display = 'none';
+    }
+    
+    // Show class type container based on class selection
+    document.getElementById('profileClass').addEventListener('change', function() {
+        if (this.value === 'All Island') {
+            classTypeContainer.style.display = 'none';
+            studentIdContainer.style.display = 'none';
+        } else {
+            classTypeContainer.style.display = 'block';
+            
+            // Check if student ID exists - if yes, show it as readonly
+            if (user.studentId) {
+                studentIdContainer.style.display = 'block';
+                document.getElementById('profileStudentId').value = user.studentId;
+                document.getElementById('profileStudentId').readOnly = true;
+            } else {
+                // Show only if Paper Class or Revision is selected
+                const paperClassChecked = document.getElementById('profilePaperClass').checked;
+                const revisionChecked = document.getElementById('profileRevision').checked;
+                studentIdContainer.style.display = (paperClassChecked || revisionChecked) ? 'block' : 'none';
+                document.getElementById('profileStudentId').readOnly = false;
+            }
+        }
+    });
+    
+    // Handle class type checkbox changes
+    document.querySelectorAll('input[name="profileClassType"]').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            if (!user.studentId) {
+                const paperClassChecked = document.getElementById('profilePaperClass').checked;
+                const revisionChecked = document.getElementById('profileRevision').checked;
+                studentIdContainer.style.display = (paperClassChecked || revisionChecked) ? 'block' : 'none';
+            }
+        });
+    });
+    
+    // Reset password change section
+    document.getElementById('passwordChangeModal').style.display = 'none';
+    document.getElementById('passwordChangeForm').reset();
+    document.getElementById('passwordError').classList.add('d-none');
+    
+    // Reset status messages
+    document.getElementById('profileError').classList.add('d-none');
+    document.getElementById('profileSuccess').classList.add('d-none');
+    
+    profileModal.show();
+}
+
+// Handle profile form submission
+document.getElementById('profileForm')?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    if (!user) return;
+    
+    // Show loading state
+    const saveBtn = document.getElementById('profileSaveBtn');
+    const spinner = document.getElementById('profileSpinner');
+    saveBtn.disabled = true;
+    spinner.classList.remove('d-none');
+    
+    // Get form values
+    const name = document.getElementById('profileName').value.trim();
+    const district = document.getElementById('profileDistrict').value;
+    const studentClass = document.getElementById('profileClass').value;
+    const school = document.getElementById('profileSchool').value.trim();
+    const phone = document.getElementById('profilePhone').value.trim();
+    const year = document.getElementById('profileYear').value;
+    
+    // Get class types if applicable
+    const classTypeContainer = document.getElementById('profileClassTypeContainer');
+    const showClassType = classTypeContainer.style.display !== 'none';
+    let classTypes = [];
+    let studentId = '';
+    
+    if (showClassType) {
+        const classTypeCheckboxes = document.querySelectorAll('input[name="profileClassType"]:checked');
+        classTypes = Array.from(classTypeCheckboxes).map(cb => cb.value);
+        
+        // Get student ID if applicable
+        const paperClassChecked = document.getElementById('profilePaperClass').checked;
+        const revisionChecked = document.getElementById('profileRevision').checked;
+        
+        if ((paperClassChecked || revisionChecked) && document.getElementById('profileStudentIdContainer').style.display !== 'none') {
+            studentId = document.getElementById('profileStudentId').value.trim();
+        }
+    }
+    
+    // Validate form
+    let isValid = true;
+    
+    if (name.length < 3) {
+        showProfileError('Name must be at least 3 characters');
+        isValid = false;
+    }
+    
+    if (!district) {
+        showProfileError('Please select a district');
+        isValid = false;
+    }
+    
+    if (!studentClass) {
+        showProfileError('Please select a class');
+        isValid = false;
+    }
+    
+    if (!phone) {
+        showProfileError('Please enter a phone number');
+        isValid = false;
+    }
+    
+    if (!year) {
+        showProfileError('Please select a year');
+        isValid = false;
+    }
+    
+    if (!isValid) {
+        saveBtn.disabled = false;
+        spinner.classList.add('d-none');
+        return;
+    }
+    
+    try {
+        // Prepare updated user data
+        const updatedData = {
+            name: name,
+            district: district,
+            class: studentClass,
+            school: school || '',
+            phone: phone,
+            registeredYear: year,
+            classTypes: showClassType ? classTypes : [],
+            studentId: showClassType ? studentId : (user.studentId || '')
+        };
+        
+        // Update user data in database
+        await database.ref('users/' + user.uid).update(updatedData);
+        
+        // Update local storage
+        const updatedUser = { ...user, ...updatedData };
+        localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+        
+        // Update sidebar display
+        updateUserUI(auth.currentUser, updatedData);
+        
+        // Show success message
+        showProfileSuccess('Profile updated successfully!');
+        
+    } catch (error) {
+        console.error('Error updating profile:', error);
+        showProfileError('Failed to update profile. Please try again.');
+    } finally {
+        saveBtn.disabled = false;
+        spinner.classList.add('d-none');
+    }
+});
+
+// Handle password change
+document.getElementById('changePasswordBtn')?.addEventListener('click', function() {
+    document.getElementById('passwordChangeModal').style.display = 'block';
+    document.getElementById('passwordError').classList.add('d-none');
+});
+
+document.getElementById('cancelPasswordChange')?.addEventListener('click', function() {
+    document.getElementById('passwordChangeModal').style.display = 'none';
+    document.getElementById('passwordChangeForm').reset();
+    document.getElementById('passwordError').classList.add('d-none');
+});
+
+document.getElementById('passwordChangeForm')?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const user = auth.currentUser;
+    if (!user) return;
+    
+    // Show loading state
+    const saveBtn = document.getElementById('savePasswordBtn');
+    const spinner = document.getElementById('passwordSpinner');
+    saveBtn.disabled = true;
+    spinner.classList.remove('d-none');
+    
+    // Get form values
+    const currentPassword = document.getElementById('currentPassword').value;
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    
+    // Validate form
+    let isValid = true;
+    
+    if (newPassword.length < 6) {
+        showPasswordError('New password must be at least 6 characters');
+        isValid = false;
+    }
+    
+    if (newPassword !== confirmPassword) {
+        showPasswordError('Passwords do not match');
+        isValid = false;
+    }
+    
+    if (!isValid) {
+        saveBtn.disabled = false;
+        spinner.classList.add('d-none');
+        return;
+    }
+    
+    try {
+        // Reauthenticate user
+        const credential = firebase.auth.EmailAuthProvider.credential(
+            user.email, 
+            currentPassword
+        );
+        
+        await user.reauthenticateWithCredential(credential);
+        
+        // Update password
+        await user.updatePassword(newPassword);
+        
+        // Show success message
+        showProfileSuccess('Password updated successfully!');
+        
+        // Hide password change form
+        document.getElementById('passwordChangeModal').style.display = 'none';
+        document.getElementById('passwordChangeForm').reset();
+        
+    } catch (error) {
+        console.error('Error changing password:', error);
+        
+        let errorMessage = 'Failed to change password. Please try again.';
+        if (error.code === 'auth/wrong-password') {
+            errorMessage = 'Current password is incorrect';
+        } else if (error.code === 'auth/weak-password') {
+            errorMessage = 'New password is too weak';
+        }
+        
+        showPasswordError(errorMessage);
+    } finally {
+        saveBtn.disabled = false;
+        spinner.classList.add('d-none');
+    }
+});
+
+// Helper functions for showing messages
+function showProfileError(message) {
+    const errorElement = document.getElementById('profileError');
+    errorElement.textContent = message;
+    errorElement.classList.remove('d-none');
+    errorElement.classList.add('show');
+    
+    setTimeout(() => {
+        errorElement.classList.remove('show');
+        setTimeout(() => errorElement.classList.add('d-none'), 300);
+    }, 5000);
+}
+
+function showProfileSuccess(message) {
+    const successElement = document.getElementById('profileSuccess');
+    successElement.textContent = message;
+    successElement.classList.remove('d-none');
+    successElement.classList.add('show');
+    
+    setTimeout(() => {
+        successElement.classList.remove('show');
+        setTimeout(() => successElement.classList.add('d-none'), 300);
+    }, 5000);
+}
+
+function showPasswordError(message) {
+    const errorElement = document.getElementById('passwordError');
+    errorElement.textContent = message;
+    errorElement.classList.remove('d-none');
+    errorElement.classList.add('show');
+    
+    setTimeout(() => {
+        errorElement.classList.remove('show');
+        setTimeout(() => errorElement.classList.add('d-none'), 300);
+    }, 5000);
+}
+
+function logoutUser(e) {
+    if (e) {
+        e.preventDefault();
+        if (!confirm('Are you sure you want to log out?')) return;
+    }
+    
+    // Show loading state
+    const authBtn = document.getElementById('authBtn');
+    if (authBtn) {
+        authBtn.innerHTML = `
+            <span class="spinner-border spinner-border-sm me-2"></span>
+            Logging out...
+        `;
+        authBtn.disabled = true;
+    }
+    
+    auth.signOut().then(() => {
+        localStorage.removeItem('currentUser');
+        showPublicContent();
+        showToast('Logged out successfully', 'success');
+        // Force refresh to ensure clean state
+        setTimeout(() => location.reload(), 1000);
+    }).catch(error => {
+        console.error('Logout error:', error);
+        showToast('Logout failed. Please try again.', 'danger');
+        if (authBtn) {
+            authBtn.innerHTML = '<i class="bi bi-box-arrow-right me-2"></i> Logout';
+            authBtn.disabled = false;
+        }
+    });
+}
+
+function showPublicContent() {
+    // Hide dashboard and profile sections
+    const dashboardNavItem = document.getElementById('dashboardNavItem');
+    const accountNavItems = document.getElementById('accountNavItems');
+    const dashboardTab = document.getElementById('dashboardTab');
+    
+    if (dashboardNavItem) dashboardNavItem.style.display = 'none';
+    if (accountNavItems) accountNavItems.style.display = 'none';
+    if (dashboardTab) dashboardTab.classList.remove('active');
+
+    // Reset auth button
+    if (authBtn) {
+        authBtn.innerHTML = '<i class="bi bi-box-arrow-in-right me-2"></i> Login';
+        authBtn.classList.remove('btn-success');
+        authBtn.classList.add('btn-outline-light');
+        authBtn.disabled = false;
+    }
+
+    // Reset welcome message
+    if (welcomeMessage) {
+        welcomeMessage.textContent = 'Welcome to eWings-papers';
+    }
+    
+    if (welcomeSubtext) {
+        welcomeSubtext.textContent = 'Please login to access your papers and performance data';
+    }
+    
+    // Reset sidebar user info
+    if (sidebarUserName) {
+        sidebarUserName.textContent = 'Welcome';
+    }
+    
+    if (sidebarUserEmail) {
+        sidebarUserEmail.textContent = 'Please login';
+    }
+
+    // Disable protected sections
+    if (tabs.stats) tabs.stats.classList.add('disabled');
+    if (tabs.ranks) tabs.ranks.classList.add('disabled');
+    
+    // Reset dashboard content if it's visible
+    const dashboardContent = document.getElementById('dashboardContent');
+    if (dashboardContent) {
+        dashboardContent.style.display = 'none';
+    }
+    const dashboardAuthCheck = document.getElementById('dashboardAuthCheck');
+    if (dashboardAuthCheck) {
+        dashboardAuthCheck.style.display = 'block';
+    }
+    
+    // Load public content (papers)
+    loadPapers();
+    
+    // Close any open modals
+    const profileModal = bootstrap.Modal.getInstance(document.getElementById('profileModal'));
+    if (profileModal) profileModal.hide();
+    
+    const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+    if (loginModal) loginModal.hide();
+    
+    // Show login prompt if trying to access protected sections
+    if (window.location.hash === '#dashboard' || 
+        window.location.hash === '#stats' || 
+        window.location.hash === '#ranks') {
+        const modal = new bootstrap.Modal(document.getElementById('loginModal'));
+        modal.show();
+    }
+}
+
+function loadInitialContent(userYear) {
+    showSection('dashboard');
+    if (userYear && yearFilter) {
+        yearFilter.value = userYear;
+        // Add small delay to ensure UI is ready
+        setTimeout(() => loadPapers(userYear), 300);
+    } else {
+        loadPapers();
+    }
+}
+
+function showSection(section) {
+    // Hide all sections and remove active class from all tabs
+    Object.values(sections).forEach(sec => {
+        if (sec) {
+            sec.style.display = 'none';
+            sec.classList.remove('fade-in');
+        }
+    });
+    
+    Object.values(tabs).forEach(tab => {
+        if (tab) tab.classList.remove('active');
+    });
+    
+    // Show the selected section and mark tab as active
+    if (sections[section]) {
+        sections[section].style.display = 'block';
+        setTimeout(() => sections[section].classList.add('fade-in'), 10);
+    }
+    if (tabs[section]) tabs[section].classList.add('active');
+    
+    // Always show dashboard tab in sidebar when logged in
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    const dashboardTab = document.getElementById('dashboardTab');
+    if (dashboardTab && user) {
+        dashboardTab.style.display = 'block';
+    }
+    
+    // Store the current section in localStorage
+    localStorage.setItem('currentSection', section);
+    
+    // Load section-specific data
+    if (section === 'dashboard') loadDashboardData();
+    else if (section === 'papers') loadPapers(yearFilter?.value);
+    else if (section === 'ranks') loadPapersForRankings();
+    else if (section === 'stats' && checkAuthForStats()) loadUserStats();
+}
+
+// Dashboard functions
+async function loadDashboardData() {
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    const authCheck = document.getElementById('dashboardAuthCheck');
+    const dashboardContent = document.getElementById('dashboardContent');
+    
+    // Check authentication
+    if (!user) {
+        if (authCheck) authCheck.style.display = 'block';
+        if (dashboardContent) dashboardContent.style.display = 'none';
+        
+        // Login from dashboard button
+        const loginFromDashboardBtn = document.getElementById('loginFromDashboardBtn');
+        if (loginFromDashboardBtn) {
+            loginFromDashboardBtn.addEventListener('click', () => {
+                const modal = new bootstrap.Modal(document.getElementById('loginModal'));
+                modal.show();
+            });
+        }
+        return;
+    }
+    
+    // User is authenticated - show dashboard content
+    if (authCheck) authCheck.style.display = 'none';
+    if (dashboardContent) dashboardContent.style.display = 'block';
+    
+    try {
+        // Show loading state
+        document.getElementById('totalPapersTaken').textContent = '...';
+        document.getElementById('averageScore').textContent = '...';
+        document.getElementById('bestRank').textContent = '...';
+        document.getElementById('improvementRate').textContent = '...';
+        
+        const [papersSnapshot, submissionsSnapshot] = await Promise.all([
+            database.ref('papers').once('value'),
+            database.ref('submissions').once('value')
+        ]);
+        
+        const papers = papersSnapshot.val() || {};
+        const allSubmissions = submissionsSnapshot.val() || {};
+        const userSubmissions = [];
+        
+        // Process all submissions to find the user's submissions using NIC
+        Object.entries(allSubmissions).forEach(([paperId, paperSubmissions]) => {
+            if (paperSubmissions && papers[paperId]) {
+                // Find submission by NIC
+                const submission = paperSubmissions[user.nic];
+                if (submission) {
+                    userSubmissions.push({
+                        paperId,
+                        paperTitle: papers[paperId].title,
+                        paperYear: papers[paperId].year,
+                        score: submission.score || 0,
+                        totalMarks: submission.totalPossible || papers[paperId].totalMarks || 100,
+                        rank: submission.rank || 'N/A',
+                        timestamp: submission.timestamp || Date.now()
+                    });
+                }
+            }
+        });
+        
+        // Sort by timestamp (newest first)
+        userSubmissions.sort((a, b) => b.timestamp - a.timestamp);
+        
+        // Update dashboard stats
+        updateDashboardStats(userSubmissions);
+        
+        // Initialize performance overview chart
+        initializePerformanceOverviewChart(userSubmissions);
+        
+    } catch (error) {
+        console.error('Error loading dashboard data:', error);
+        
+        // Show error state in UI
+        document.getElementById('totalPapersTaken').textContent = 'Error';
+        document.getElementById('averageScore').textContent = 'Error';
+        document.getElementById('bestRank').textContent = 'Error';
+        document.getElementById('improvementRate').textContent = 'Error';
+        
+        showToast('Failed to load dashboard data', 'danger');
+    }
+}
+
+// Helper function to update dashboard stats cards
+function updateDashboardStats(submissions) {
+    // Update stats cards
+    const totalPapersElement = document.getElementById('totalPapersTaken');
+    const averageScoreElement = document.getElementById('averageScore');
+    const bestRankElement = document.getElementById('bestRank');
+    const improvementRateElement = document.getElementById('improvementRate');
+    
+    if (!totalPapersElement || !averageScoreElement || !bestRankElement || !improvementRateElement) {
+        console.error('Dashboard stat elements not found');
+        return;
+    }
+
+    if (submissions.length > 0) {
+        // Total Papers Taken
+        totalPapersElement.textContent = submissions.length;
+        
+        // Average Score
+        const totalScore = submissions.reduce((sum, sub) => sum + sub.score, 0);
+        const totalPossible = submissions.reduce((sum, sub) => sum + (sub.totalMarks || 100), 0);
+        const averagePercentage = totalPossible > 0 ? ((totalScore / totalPossible) * 100).toFixed(1) : 0;
+        averageScoreElement.textContent = `${averagePercentage}%`;
+        
+        // Best Rank
+        const validRanks = submissions.filter(sub => typeof sub.rank === 'number' && !isNaN(sub.rank));
+        const bestRank = validRanks.length > 0 ? Math.min(...validRanks.map(sub => sub.rank)) : 'N/A';
+        bestRankElement.textContent = bestRank;
+        
+        // Improvement Rate (compare first and last 3 papers if available)
+        if (submissions.length >= 6) {
+            const firstThree = submissions.slice(-3); // Oldest submissions
+            const lastThree = submissions.slice(0, 3); // Newest submissions
+            
+            const firstAvg = firstThree.reduce((sum, sub) => sum + (sub.score/(sub.totalMarks || 100)), 0) / 3;
+            const lastAvg = lastThree.reduce((sum, sub) => sum + (sub.score/(sub.totalMarks || 100)), 0) / 3;
+            
+            const improvement = firstAvg > 0 ? ((lastAvg - firstAvg) / firstAvg * 100).toFixed(1) : 'N/A';
+            improvementRateElement.textContent = typeof improvement === 'string' ? improvement : `${improvement}%`;
+        } else {
+            improvementRateElement.textContent = 'N/A';
+        }
+    } else {
+        totalPapersElement.textContent = '0';
+        averageScoreElement.textContent = '0%';
+        bestRankElement.textContent = 'N/A';
+        improvementRateElement.textContent = 'N/A';
+    }
+}
+
+function initializePerformanceOverviewChart(submissions) {
+    const ctx = document.getElementById('performanceOverviewChart');
+    if (!ctx) return;
+    
+    // Destroy previous chart if exists
+    if (ctx.chart) {
+        ctx.chart.destroy();
+    }
+    
+    try {
+        // Sort submissions chronologically for the chart
+        const sortedSubmissions = [...submissions].sort((a, b) => a.timestamp - b.timestamp);
+        
+        ctx.chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: sortedSubmissions.map(sub => {
+                    const date = new Date(sub.timestamp);
+                    return `${date.getDate()}/${date.getMonth()+1}`;
+                }),
+                datasets: [
+                    {
+                        label: 'Your Score (%)',
+                        data: sortedSubmissions.map(sub => 
+                            Math.round((sub.score / (sub.totalMarks || 100)) * 100)
+                        ),
+                        borderColor: 'rgba(78, 115, 223, 1)',
+                        backgroundColor: 'rgba(78, 115, 223, 0.1)',
+                        tension: 0.3,
+                        fill: true,
+                        borderWidth: 2
+                    },
+                    {
+                        label: 'Class Average (%)',
+                        data: sortedSubmissions.map(() => 
+                            Math.round(Math.random() * 20 + 60) // Placeholder - replace with actual data
+                        ),
+                        borderColor: 'rgba(28, 200, 138, 1)',
+                        backgroundColor: 'rgba(28, 200, 138, 0.1)',
+                        tension: 0.3,
+                        borderDash: [5, 5],
+                        borderWidth: 2
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        title: {
+                            display: true,
+                            text: 'Score (%)'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Submission Date'
+                        }
+                    }
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error initializing chart:', error);
+        // You could show an error message or hide the chart here
+    }
+}
+
+function updateRecentActivity(submissions) {
+    const recentActivity = document.getElementById('recentActivity');
+    if (!recentActivity) return;
+    
+    if (submissions.length === 0) {
+        recentActivity.innerHTML = `
+            <tr>
+                <td colspan="5" class="text-center py-4">
+                    <div class="alert alert-info mb-0">
+                        <i class="bi bi-info-circle me-2"></i>
+                        No recent activity found
+                    </div>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    // Show only the 5 most recent submissions
+    const recentSubmissions = submissions.slice(0, 5);
+    
+    recentActivity.innerHTML = recentSubmissions.map(sub => {
+        const percentage = ((sub.score / sub.totalMarks) * 100).toFixed(1);
+        const date = sub.timestamp ? new Date(sub.timestamp).toLocaleDateString() : 'N/A';
+        
+        return `
+            <tr>
+                <td>${sub.paperTitle} (${sub.paperYear})</td>
+                <td>${date}</td>
+                <td>${percentage}%</td>
+                <td>${sub.rank || 'N/A'}</td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary view-submission-btn" data-id="${sub.paperId}">
+                        <i class="bi bi-eye"></i> Details
+                    </button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+    
+    // Add event listeners to view buttons
+    document.querySelectorAll('.view-submission-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const paperId = this.getAttribute('data-id');
+            const submission = submissions.find(sub => sub.paperId === paperId);
+            if (submission) showSubmissionDetails(submission);
+        });
+    });
+}
+
+// Paper management functions
+function loadPapers(selectedYear = '') {
+    const availablePapers = document.getElementById('availablePapers');
+    const viewAnswers = document.getElementById('viewAnswers');
+    
+    if (availablePapers) {
+        availablePapers.innerHTML = `
+            <div class="col-12 text-center py-5">
+                <div class="spinner-border text-primary"></div>
+            </div>
+        `;
+    }
+    
+    if (viewAnswers) {
+        viewAnswers.innerHTML = `
+            <div class="col-12 text-center py-5">
+                <div class="spinner-border text-primary"></div>
+            </div>
+        `;
+    }
+    
+    database.ref('papers').once('value').then(snapshot => {
+        const papers = snapshot.val() || {};
+        const now = Date.now();
+        
+        let availableHtml = '';
+        let answersHtml = '';
+        let hasAvailable = false;
+        let hasAnswers = false;
+        
+        Object.entries(papers).forEach(([id, paper]) => {
+            if (selectedYear && paper.year !== selectedYear) return;
+            
+            const card = createPaperCard(id, paper);
+            const openTime = new Date(paper.openTime).getTime();
+            const closeTime = new Date(paper.closeTime).getTime();
+            
+            if (now >= openTime && now <= closeTime) {
+                availableHtml += card;
+                hasAvailable = true;
+            } else if (now > closeTime) {
+                answersHtml += card;
+                hasAnswers = true;
+            }
+        });
+        
+        if (availablePapers) {
+            availablePapers.innerHTML = hasAvailable ? availableHtml : 
+                '<div class="col-12 text-center py-4">No available papers</div>';
+        }
+        
+        if (viewAnswers) {
+            viewAnswers.innerHTML = hasAnswers ? answersHtml : 
+                '<div class="col-12 text-center py-4">No papers with answers</div>';
+        }
+        
+        addPaperCardEventListeners();
+    }).catch(error => {
+        console.error('Error loading papers:', error);
+        if (availablePapers) {
+            availablePapers.innerHTML = '<div class="col-12 text-center py-4 text-danger">Error loading papers</div>';
+        }
+    });
+}
+
+function createPaperCard(id, paper) {
+    const isAvailable = isPaperAvailable(paper);
+    const isClosed = isPaperClosed(paper);
+    
+    let buttons = '';
+    if (isAvailable) {
+        buttons = `
+            <div class="btn-group w-100 mb-2">
+                <button class="btn btn-outline-primary download-paper-btn" data-id="${id}" data-medium="sinhala">
+                    <i class="bi bi-download me-1"></i> Sinhala
+                </button>
+                <button class="btn btn-outline-primary download-paper-btn" data-id="${id}" data-medium="english">
+                    <i class="bi bi-download me-1"></i> English
+                </button>
+            </div>
+            <a href="student-paper.html?paperId=${id}" class="btn btn-primary w-100">
+                <i class="bi bi-pencil-square me-1"></i> Attend Now
+            </a>
+        `;
+    } else if (isClosed) {
+        buttons = `
+            <div class="btn-group w-100 mb-2">
+                <button class="btn btn-outline-primary download-paper-btn" data-id="${id}" data-medium="sinhala">
+                    <i class="bi bi-download me-1"></i> Sinhala
+                </button>
+                <button class="btn btn-outline-primary download-paper-btn" data-id="${id}" data-medium="english">
+                    <i class="bi bi-download me-1"></i> English
+                </button>
+            </div>
+            <div class="btn-group w-100">
+                <button class="btn btn-outline-success download-answers-btn" data-id="${id}">
+                    <i class="bi bi-file-earmark-text me-1"></i> Answers
+                </button>
+                <button class="btn btn-primary view-ranks-btn" data-id="${id}">
+                    <i class="bi bi-trophy me-1"></i> Ranks
+                </button>
+            </div>
+        `;
+    }
+    
+    return `
+        <div class="col-md-6 col-lg-4">
+            <div class="card paper-card">
+                <div class="card-body">
+                    <h5 class="card-title">${paper.title}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">${paper.year} - ${paper.subject}</h6>
+                    <p class="card-text text-muted small">
+                        ${isAvailable ? 
+                            `Available until ${new Date(paper.closeTime).toLocaleString()}` : 
+                            `Closed on ${new Date(paper.closeTime).toLocaleString()}`}
+                    </p>
+                    ${buttons}
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function isPaperAvailable(paper) {
+    const now = Date.now();
+    return now >= new Date(paper.openTime).getTime() && 
+           now <= new Date(paper.closeTime).getTime();
+}
+
+function isPaperClosed(paper) {
+    return Date.now() > new Date(paper.closeTime).getTime();
+}
+
+function addPaperCardEventListeners() {
+    document.querySelectorAll('.download-paper-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const paperId = this.getAttribute('data-id');
+            const medium = this.getAttribute('data-medium');
+            downloadPaper(paperId, medium);
+        });
+    });
+    
+    document.querySelectorAll('.download-answers-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const paperId = this.getAttribute('data-id');
+            downloadAnswers(paperId);
+        });
+    });
+    
+    document.querySelectorAll('.view-ranks-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            showSection('ranks');
+            const rankFilter = document.getElementById('rankPaperFilter');
+            if (rankFilter) rankFilter.value = this.getAttribute('data-id');
+            loadRankings(this.getAttribute('data-id'));
+        });
+    });
+}
+
+async function checkPaperExists(paperId) {
+  try {
+    const snapshot = await database.ref(`papers/${paperId}`).once('value');
+    return snapshot.exists();
+  } catch (error) {
+    console.error('Error checking paper:', error);
+    return false;
+  }
+}
+
+async function downloadPaper(paperId, medium) {
+  try {
+    console.groupCollapsed(`[Download] Starting download for ${paperId} (${medium})`);
+    
+    // Verify authentication
+    const user = auth.currentUser || JSON.parse(localStorage.getItem('currentUser'));
+    if (!user) {
+      console.log('User not authenticated');
+      showToast('Please login to download papers', 'warning');
+      return;
+    }
+
+    // Verify paper exists in database
+    const paperExists = await checkPaperExists(paperId);
+    if (!paperExists) {
+      console.log('Paper not found in database');
+      showToast('Paper not found in system', 'warning');
+      return;
+    }
+
+    // Get paper details
+    const paperSnapshot = await database.ref(`papers/${paperId}`).once('value');
+    const paper = paperSnapshot.val();
+    console.log('Paper details:', paper);
+
+    // Set loading state
+    setButtonLoadingState(paperId, medium, true);
+
+    // Define possible file locations
+    const possibleFilePaths = [
+      `papers/${paperId}/${medium}.pdf`,
+      `papers/${paperId}/paper-${medium}.pdf`,
+      `papers/${paperId}/${medium}/document.pdf`,
+      `papers/${paper.year}/${paper.subject}/${medium}.pdf`,
+      `${paperId}/${medium}.pdf`
+    ];
+
+    console.log('Trying these file paths:', possibleFilePaths);
+
+    // Try each possible path
+    let downloadUrl = null;
+    for (const path of possibleFilePaths) {
+      try {
+        console.log(`Trying path: ${path}`);
+        const fileRef = storage.ref(path);
+        downloadUrl = await fileRef.getDownloadURL();
+        console.log(`Found file at: ${path}`);
+        break;
+      } catch (error) {
+        console.log(`Not found at ${path}:`, error.message);
+      }
+    }
+
+    if (!downloadUrl) {
+      console.log('File not found in any location');
+      throw new Error('PAPER_NOT_FOUND');
+    }
+
+    // Trigger download
+    triggerFileDownload(
+      downloadUrl, 
+      `${paper.title.replace(/\s+/g, '_')}-${medium}-${paper.year}.pdf`
+    );
+
+    showToast(`${medium} paper downloaded!`, 'success');
+
+  } catch (error) {
+    console.error('Download failed:', error);
+    
+    if (error.message === 'PAPER_NOT_FOUND') {
+      showToast('This paper is not available for download', 'warning');
+    } else if (error.code === 'storage/object-not-found') {
+      showToast('Paper file not found on server', 'warning');
+    } else if (error.code === 'storage/unauthorized') {
+      showToast('You don\'t have download permission', 'warning');
+    } else {
+      showToast('Download failed: ' + error.message, 'danger');
+    }
+    
+  } finally {
+    setButtonLoadingState(paperId, medium, false);
+    console.groupEnd();
+  }
+}
+
+// Helper functions
+function setButtonLoadingState(paperId, medium, isLoading) {
+  const buttons = document.querySelectorAll(
+    `.download-paper-btn[data-id="${paperId}"][data-medium="${medium}"]`
+  );
+  
+  buttons.forEach(btn => {
+    if (isLoading) {
+      btn.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Downloading...`;
+      btn.disabled = true;
+    } else {
+      btn.innerHTML = `<i class="bi bi-download me-1"></i> ${medium === 'sinhala' ? 'Sinhala' : 'English'}`;
+      btn.disabled = false;
+    }
+  });
+}
+
+function triggerFileDownload(url, filename) {
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => {
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  }, 100);
+}
+
+async function downloadAnswers(paperId) {
+    try {
+        // Check authentication
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+        if (!user) {
+            showToast('Please login to download answers', 'warning');
+            return;
+        }
+
+        if (!storage) {
+            console.error("Firebase Storage not initialized");
+            showToast("Download feature not available", "danger");
+            return;
+        }
+
+        // Show loading state on the button
+        const downloadBtns = document.querySelectorAll(`.download-answers-btn[data-id="${paperId}"]`);
+        downloadBtns.forEach(btn => {
+            btn.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Downloading...`;
+            btn.disabled = true;
+        });
+
+        showToast("Preparing answers download...", "info");
+
+        // 1. Get paper details
+        const paperSnapshot = await database.ref(`papers/${paperId}`).once('value');
+        const paper = paperSnapshot.val();
+        
+        if (!paper) {
+            throw new Error("Paper not found in database");
+        }
+
+        // 2. Try multiple possible answer file paths
+        const possiblePaths = [
+            `papers/${paperId}/answers.pdf`,          // Option 1: papers/{paperId}/answers.pdf
+            `papers/${paperId}/answer_sheet.pdf`,     // Option 2: papers/{paperId}/answer_sheet.pdf
+            `answers/${paperId}.pdf`,                 // Option 3: answers/{paperId}.pdf
+            `${paperId}_answers.pdf`                  // Option 4: {paperId}_answers.pdf
+        ];
+
+        let downloadUrl = null;
+        let lastError = null;
+
+        // Try each possible path until we find the file
+        for (const filePath of possiblePaths) {
+            try {
+                console.log("Trying path:", filePath);
+                const fileRef = storage.ref(filePath);
+                downloadUrl = await fileRef.getDownloadURL();
+                console.log("Found file at:", filePath);
+                break; // Exit loop if successful
+            } catch (error) {
+                lastError = error;
+                console.log("File not found at:", filePath);
+                continue; // Try next path
+            }
+        }
+
+        if (!downloadUrl) {
+            throw lastError || new Error("Answer file not found in any expected location");
+        }
+
+        // 3. Create hidden link and trigger download
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        a.download = `${paper.title.replace(/\s+/g, '_')}-answers-${paper.year}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        
+        showToast("Answers downloaded!", "success");
+
+    } catch (error) {
+        console.error("Download error:", error);
+        
+        // User-friendly error messages
+        if (error.code === 'storage/object-not-found') {
+            showToast("Answer sheet not found on server", "warning");
+        } else {
+            showToast("Failed to download answers", "danger");
+        }
+    } finally {
+        // Restore button state
+        const downloadBtns = document.querySelectorAll(`.download-answers-btn[data-id="${paperId}"]`);
+        downloadBtns.forEach(btn => {
+            btn.innerHTML = `<i class="bi bi-file-earmark-text me-1"></i> Answers`;
+            btn.disabled = false;
+        });
+    }
+}
+
+// Rankings functions
+function loadPapersForRankings() {
+    const filter = document.getElementById('rankPaperFilter');
+    if (!filter) return;
+    
+    filter.innerHTML = '<option value="">Select Paper</option>';
+    
+    database.ref('papers').once('value').then(snapshot => {
+        const papers = snapshot.val() || {};
+        const now = Date.now();
+        
+        Object.entries(papers).forEach(([id, paper]) => {
+            if (now > new Date(paper.closeTime).getTime()) {
+                const option = document.createElement('option');
+                option.value = id;
+                option.textContent = `${paper.title} (${paper.year})`;
+                filter.appendChild(option);
+            }
+        });
+        
+        filter.addEventListener('change', function() {
+            if (this.value) loadRankings(this.value);
+        });
+    }).catch(error => {
+        console.error('Error loading papers:', error);
+    });
+}
+
+function loadRankings(paperId) {
+  if (!paperId) return;
+  
+  // Show loading states
+  document.getElementById('overallTopSchool').innerHTML = '<div class="spinner-border"></div>';
+  document.getElementById('classTopSchool').innerHTML = '<div class="spinner-border"></div>';
+  
+  Promise.all([
+    database.ref(`papers/${paperId}`).once('value'),
+    database.ref(`submissions/${paperId}`).once('value')
+  ]).then(([paperSnapshot, submissionsSnapshot]) => {
+    const paper = paperSnapshot.val();
+    const submissions = submissionsSnapshot.val() || {};
+    
+    let submissionsArray = Object.entries(submissions).map(([nic, sub]) => ({ nic, ...sub }));
+    
+    // Sort by score (descending)
+    submissionsArray.sort((a, b) => b.score - a.score);
+    
+    // Calculate ranks
+    let rank = 1;
+    submissionsArray.forEach((sub, i) => {
+      if (i > 0 && sub.score < submissionsArray[i-1].score) rank = i + 1;
+      sub.rank = rank;
+    });
+    
+    // Calculate class ranks separately
+    const classes = {};
+    submissionsArray.forEach(sub => {
+      if (!classes[sub.class]) {
+        classes[sub.class] = [];
+      }
+      classes[sub.class].push(sub);
+    });
+    
+    // Assign class ranks (starting from 1 for each class)
+    Object.values(classes).forEach(classSubs => {
+      classSubs.sort((a, b) => b.score - a.score);
+      let classRank = 1;
+      classSubs.forEach((sub, i) => {
+        if (i > 0 && sub.score < classSubs[i-1].score) classRank = i + 1;
+        sub.classRank = classRank;
+      });
+    });
+    
+    // Calculate top schools
+    const selectedClass = document.getElementById('classFilter')?.value;
+    const { overallTopSchool, classTopSchool } = calculateTopSchools(submissionsArray, selectedClass);
+    displayTopSchools(overallTopSchool, classTopSchool, selectedClass);
+    
+    // Rest of your existing ranking display code...
+    
+  }).catch(error => {
+    console.error('Error loading rankings:', error);
+    // Handle errors
+  });
+}
+
+if (classFilter) {
+  classFilter.addEventListener('change', function() {
+    const selectedClass = this.value;
+    const filtered = selectedClass 
+      ? submissionsArray.filter(sub => sub.class === selectedClass)
+      : submissionsArray;
+    
+    if (classRankings) {
+      displayRankings(classRankings, filtered.slice(0, 100), paper, user);
+    }
+    
+    // Update top schools when class filter changes
+    const { overallTopSchool, classTopSchool } = calculateTopSchools(submissionsArray, selectedClass);
+    displayTopSchools(overallTopSchool, classTopSchool, selectedClass);
+    
+    if (user) {
+      const userSubmission = submissionsArray.find(sub => sub.nic === user.nic);
+      if (userSubmission && userRankInfo) {
+        showUserRank(userSubmission, paper, filtered, selectedClass);
+      }
+    }
+
+    const paperFilter = document.getElementById('rankPaperFilter');
+        if (paperFilter && paperFilter.value) {
+            loadRankings(paperFilter.value);
+        }
+  });
+}
+
+function displayRankings(element, submissions, paper) {
+    if (!element) return;
+    
+    if (submissions.length === 0) {
+        element.innerHTML = '<tr><td colspan="4" class="text-center">No submissions found</td></tr>';
+        return;
+    }
+
+    let html = '';
+    submissions.forEach(sub => {
+        const percentage = paper.totalMarks > 0 
+            ? ((sub.score / paper.totalMarks) * 100).toFixed(1)
+            : '0';
+        
+        html += `
+            <tr>
+                <td>${sub.rank || 'N/A'}</td>
+                <td>${sub.name || 'N/A'}</td>
+                <td>${sub.score}/${paper.totalMarks} (${percentage}%)</td>
+                <td>${sub.school || 'N/A'}</td>
+            </tr>
+        `;
+    });
+    
+    element.innerHTML = html;
+}
+
+function loadRankings(paperId) {
+    if (!paperId) return;
+    
+    // Show loading states
+    document.getElementById('overallTopSchool').innerHTML = '<div class="spinner-border"></div>';
+    document.getElementById('classTopSchool').innerHTML = '<div class="spinner-border"></div>';
+    document.getElementById('overallRankings').innerHTML = '<tr><td colspan="4" class="text-center"><div class="spinner-border"></div></td></tr>';
+    document.getElementById('classRankings').innerHTML = '<tr><td colspan="4" class="text-center"><div class="spinner-border"></div></td></tr>';
+    document.getElementById('userRankInfo').style.display = 'none';
+    
+    Promise.all([
+        database.ref(`papers/${paperId}`).once('value'),
+        database.ref(`submissions/${paperId}`).once('value')
+    ]).then(([paperSnapshot, submissionsSnapshot]) => {
+        const paper = paperSnapshot.val();
+        const submissions = submissionsSnapshot.val() || {};
+        
+        // Convert submissions to array and add rank
+        let submissionsArray = Object.entries(submissions).map(([nic, sub]) => ({ nic, ...sub }));
+        
+        // Sort by score (descending)
+        submissionsArray.sort((a, b) => b.score - a.score);
+        
+        // Calculate ranks
+        let rank = 1;
+        submissionsArray.forEach((sub, i) => {
+            if (i > 0 && sub.score < submissionsArray[i-1].score) rank = i + 1;
+            sub.rank = rank;
+        });
+        
+        // Get current class filter value
+        const classFilter = document.getElementById('classFilter');
+        const selectedClass = classFilter ? classFilter.value : null;
+        
+        // Display top 100 overall (unfiltered)
+        const overallTop100 = submissionsArray.slice(0, 100);
+        displayRankings(document.getElementById('overallRankings'), overallTop100, paper);
+        
+        // Display top 100 by class (filtered if class selected)
+        const classTop100 = selectedClass 
+            ? submissionsArray.filter(sub => sub.class === selectedClass).slice(0, 100)
+            : overallTop100; // Show overall if no class selected
+        
+        displayRankings(document.getElementById('classRankings'), classTop100, paper);
+        
+        // Calculate and display top schools
+        const { overallTopSchool, classTopSchool } = calculateTopSchools(submissionsArray, selectedClass);
+        displayTopSchools(overallTopSchool, classTopSchool, selectedClass);
+        
+        // Show user rank if available
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+        if (user) {
+            const userSubmission = submissionsArray.find(sub => sub.nic === user.nic);
+            if (userSubmission) {
+                showUserRank(userSubmission, paper, selectedClass ? classTop100 : overallTop100, selectedClass);
+            }
+        }
+    }).catch(error => {
+        console.error('Error loading rankings:', error);
+        document.getElementById('overallRankings').innerHTML = '<tr><td colspan="4" class="text-center text-danger">Error loading rankings</td></tr>';
+        document.getElementById('classRankings').innerHTML = '<tr><td colspan="4" class="text-center text-danger">Error loading rankings</td></tr>';
+    });
+}
+
+function showUserRank(submission, paper, filteredSubmissions, selectedClass) {
+    const percentage = ((submission.score / paper.totalMarks) * 100).toFixed(1);
+    const userRankInfo = document.getElementById('userRankInfo');
+    const userRankDetails = document.getElementById('userRankDetails');
+    
+    if (!userRankInfo || !userRankDetails) return;
+    
+    // Find the user's rank in the filtered submissions
+    const userRankInFiltered = filteredSubmissions.findIndex(sub => sub.nic === submission.nic) + 1;
+    
+    userRankDetails.innerHTML = `
+        <p><strong>Paper:</strong> ${paper.title} (${paper.year})</p>
+        <p><strong>Score:</strong> ${submission.score}/${paper.totalMarks} (${percentage}%)</p>
+        <p><strong>Overall Rank:</strong> ${submission.rank}</p>
+        ${selectedClass ? `<p><strong>${selectedClass} Class Rank:</strong> ${userRankInFiltered}</p>` : ''}
+    `;
+    userRankInfo.style.display = 'block';
+}
+
+// Class filter change event
+const classFilter = document.getElementById('classFilter');
+if (classFilter) {
+    classFilter.addEventListener('change', function() {
+        const paperFilter = document.getElementById('rankPaperFilter');
+        if (paperFilter && paperFilter.value) {
+            loadRankings(paperFilter.value);
+        }
+    });
+}
+
+// Stats section functions - UPDATED
+async function loadUserStats() {
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    if (!user) {
+        showToast('Please login to view stats', 'warning');
+        return;
+    }
+
+    const statsSection = document.getElementById('statsSection');
+    if (!statsSection) return;
+
+    // Show loading state
+    statsSection.innerHTML = `
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary"></div>
+            <p class="mt-2">Loading your statistics...</p>
+        </div>
+    `;
+
+    try {
+        const [papersSnapshot, submissionsSnapshot] = await Promise.all([
+            database.ref('papers').once('value'),
+            database.ref('submissions').once('value')
+        ]);
+
+        const papers = papersSnapshot.val() || {};
+        const allSubmissions = submissionsSnapshot.val() || {};
+        let userSubmissions = [];
+
+        // Process all submissions to find the user's submissions
+        for (const [paperId, paperSubmissions] of Object.entries(allSubmissions)) {
+            if (paperSubmissions && papers[paperId]) {
+                const userSubmission = paperSubmissions[user.nic];
+                if (userSubmission) {
+                    // Get all submissions for this paper to calculate ranks
+                    const paperSubsArray = Object.entries(paperSubmissions).map(([nic, sub]) => ({
+                        nic,
+                        ...sub,
+                        class: sub.class || 'Unknown'
+                    }));
+                    
+                    // Sort by score (descending)
+                    paperSubsArray.sort((a, b) => b.score - a.score);
+                    
+                    // Calculate overall rank
+                    let rank = 1;
+                    paperSubsArray.forEach((sub, i) => {
+                        if (i > 0 && sub.score < paperSubsArray[i-1].score) rank = i + 1;
+                        sub.rank = rank;
+                    });
+                    
+                    // Calculate class rank
+                    const classSubmissions = paperSubsArray.filter(sub => sub.class === user.class);
+                    let classRank = 1;
+                    classSubmissions.forEach((sub, i) => {
+                        if (i > 0 && sub.score < classSubmissions[i-1].score) classRank = i + 1;
+                        sub.classRank = classRank;
+                    });
+                    
+                    // Find user's submission
+                    const userSub = paperSubsArray.find(sub => sub.nic === user.nic);
+                    
+                    if (userSub) {
+                        userSubmissions.push({
+                            paperId,
+                            paperTitle: papers[paperId].title,
+                            paperYear: papers[paperId].year,
+                            paperSubject: papers[paperId].subject,
+                            score: userSub.score,
+                            totalMarks: papers[paperId].totalMarks,
+                            rank: userSub.rank,
+                            classRank: userSub.classRank,
+                            timestamp: userSub.timestamp || 0,
+                            answers: userSub.answers || {}
+                        });
+                    }
+                }
+            }
+        }
+
+        // Store submissions for filtering
+        userSubmissions = userSubmissions.sort((a, b) => b.timestamp - a.timestamp);
+        
+        // Build the stats UI with the enhanced table
+        statsSection.innerHTML = `
+            <h2 class="section-title">
+                <i class="bi bi-graph-up me-2"></i> My Performance
+            </h2>
+            
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card stat-card primary">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <div class="stat-value" id="totalPapersTaken">${userSubmissions.length}</div>
+                                    <div class="stat-label">Papers Taken</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="bi bi-file-earmark-text stat-icon"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card stat-card success">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <div class="stat-value" id="averageScore">${
+                                        userSubmissions.length > 0 ? 
+                                        (userSubmissions.reduce((sum, sub) => sum + (sub.score/sub.totalMarks), 0) / 
+                                        userSubmissions.length * 100).toFixed(1) + '%' : '0%'
+                                    }</div>
+                                    <div class="stat-label">Average Score</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="bi bi-graph-up stat-icon"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card stat-card warning">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <div class="stat-value" id="bestRank">${
+                                        userSubmissions.length > 0 ? 
+                                        Math.min(...userSubmissions.map(sub => sub.rank)) : 'N/A'
+                                    }</div>
+                                    <div class="stat-label">Best Rank</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="bi bi-trophy stat-icon"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <i class="bi bi-graph-up me-2"></i> Performance Trend
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="performanceChart" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="bi bi-list-check me-2"></i> My Submissions
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="submissionsFilter" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-funnel me-1"></i> Filter
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="submissionsFilter">
+                            <li><a class="dropdown-item active" href="#" data-filter="all">All Submissions</a></li>
+                            <li><a class="dropdown-item" href="#" data-filter="recent">Last 30 Days</a></li>
+                            <li><a class="dropdown-item" href="#" data-filter="top">Top Scores</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" data-filter="subject">By Subject</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Paper</th>
+                                    <th>Year</th>
+                                    <th>Score</th>
+                                    <th>Date</th>
+                                    <th>Class Rank</th>
+                                    <th>Overall Rank</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="mySubmissions"></tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="7" class="small text-muted">
+                                        Showing <span id="showingCount">0</span> of <span id="totalCount">0</span> submissions
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Store submissions in a variable accessible to filter functions
+        statsSection.dataset.submissions = JSON.stringify(userSubmissions);
+        
+        // Update the UI with the collected data
+        updateStatsUI(userSubmissions);
+
+        // Initialize filter functionality
+        setupSubmissionFilters();
+
+    } catch (error) {
+        console.error('Error loading stats:', error);
+        showStatsError(error.message || 'Failed to load stats data');
+    }
+}
+
+function setupSubmissionFilters() {
+    const filterItems = document.querySelectorAll('[data-filter]');
+    
+    filterItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Update active state
+            filterItems.forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Get filter type
+            const filterType = this.getAttribute('data-filter');
+            
+            // Get the submissions data
+            const statsSection = document.getElementById('statsSection');
+            let submissions = JSON.parse(statsSection.dataset.submissions || '[]');
+            
+            // Apply filter
+            let filteredSubmissions = [...submissions];
+            
+            switch(filterType) {
+                case 'recent':
+                    const thirtyDaysAgo = new Date();
+                    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+                    filteredSubmissions = submissions.filter(sub => 
+                        new Date(sub.timestamp) >= thirtyDaysAgo
+                    );
+                    break;
+                    
+                case 'top':
+                    filteredSubmissions = [...submissions].sort((a, b) => 
+                        (b.score / b.totalMarks) - (a.score / a.totalMarks)
+                    ).slice(0, 5);
+                    break;
+                    
+                case 'subject':
+                    // Group by subject and get top submission for each
+                    const subjects = {};
+                    submissions.forEach(sub => {
+                        if (!subjects[sub.paperSubject]) {
+                            subjects[sub.paperSubject] = sub;
+                        } else {
+                            const currentScore = subjects[sub.paperSubject].score / subjects[sub.paperSubject].totalMarks;
+                            const newScore = sub.score / sub.totalMarks;
+                            if (newScore > currentScore) {
+                                subjects[sub.paperSubject] = sub;
+                            }
+                        }
+                    });
+                    filteredSubmissions = Object.values(subjects);
+                    break;
+                    
+                // 'all' filter - no changes needed
+            }
+            
+            // Update the table
+            updateStatsUI(filteredSubmissions);
+        });
+    });
+}
+
+function updateStatsUI(submissions) {
+    const tableBody = document.getElementById('mySubmissions');
+    if (!tableBody) return;
+
+    const showingCount = document.getElementById('showingCount');
+    const totalCount = document.getElementById('totalCount');
+    const statsSection = document.getElementById('statsSection');
+    const allSubmissions = JSON.parse(statsSection.dataset.submissions || '[]');
+
+    showingCount.textContent = submissions.length;
+    totalCount.textContent = allSubmissions.length;
+
+    if (submissions.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="7" class="text-center py-4">No submissions found</td></tr>`;
+        return;
+    }
+
+    tableBody.innerHTML = submissions.map(sub => {
+    const percentage = ((sub.score / sub.totalMarks) * 100).toFixed(1);
+    const date = sub.timestamp ? new Date(sub.timestamp).toLocaleDateString() : 'N/A';
+    return `
+        <tr>
+            <td>${sub.paperTitle}</td>
+            <td>${sub.paperYear}</td>
+            <td>${sub.score}/${sub.totalMarks} (${percentage}%)</td>
+            <td>${date}</td>
+            <td>${sub.classRank || 'N/A'}</td>
+            <td>${sub.rank || 'N/A'}</td>
+            <td>
+                <button class="btn btn-sm btn-outline-primary view-submission-btn" 
+                        data-paperid="${sub.paperId}">
+                    <i class="bi bi-eye"></i> View
+                </button>
+            </td>
+        </tr>
+    `;
+    }).join('');
+
+    // Initialize performance chart
+    initializePerformanceChart(allSubmissions);
+}
+
+// event listener for view buttons
+document.addEventListener('click', function(e) {
+    const viewBtn = e.target.closest('.view-submission-btn');
+    if (viewBtn) {
+        try {
+            const submissionData = viewBtn.getAttribute('data-submission');
+            if (submissionData) {
+                const submission = JSON.parse(submissionData);
+                showSubmissionDetails(submission);
+            }
+        } catch (error) {
+            console.error('Error parsing submission data:', error);
+            showToast('Failed to load submission details', 'danger');
+        }
+    }
+});
+
+// Initialize the modal on page load
+document.addEventListener('DOMContentLoaded', function() {
+    if (document.getElementById('submissionDetailsModal')) {
+        window.submissionModal = new bootstrap.Modal(
+            document.getElementById('submissionDetailsModal')
+        );
+    }
+});
+
+document.addEventListener('click', function(e) {
+    const viewBtn = e.target.closest('.view-submission-btn');
+    if (viewBtn) {
+        const paperId = viewBtn.getAttribute('data-paperid');
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+        
+        console.log('View button clicked - Paper ID:', paperId);
+        console.log('Current user:', user);
+
+        if (!user || !user.nic) {
+            console.error('No user or NIC found');
+            showToast('Please login to view submission details', 'warning');
+            return;
+        }
+
+        showToast('Loading submission details...', 'info');
+        
+        // First get submission data
+        database.ref(`submissions/${paperId}/${user.nic}`).once('value')
+            .then(submissionSnapshot => {
+                console.log('Submission snapshot:', submissionSnapshot.val());
+                
+                if (!submissionSnapshot.exists()) {
+                    console.error('No submission found for NIC:', user.nic);
+                    showToast('Submission not found', 'warning');
+                    return;
+                }
+                
+                const submission = submissionSnapshot.val();
+                
+                // Then get paper data
+                return database.ref(`papers/${paperId}`).once('value')
+                    .then(paperSnapshot => {
+                        console.log('Paper snapshot:', paperSnapshot.val());
+                        
+                        if (!paperSnapshot.exists()) {
+                            console.error('No paper found with ID:', paperId);
+                            showToast('Paper not found', 'warning');
+                            return;
+                        }
+                        
+                        const paper = paperSnapshot.val();
+                        
+                        // Construct complete submission data
+                        const submissionData = {
+                            paperId: paperId,
+                            paperTitle: paper.title || 'Unknown Paper',
+                            paperYear: paper.year || 'Unknown Year',
+                            paperSubject: paper.subject || 'Unknown Subject',
+                            score: submission.score || 0,
+                            totalMarks: submission.totalPossible || paper.totalMarks || 100,
+                            rank: submission.rank || 'N/A',
+                            classRank: submission.classRank || 'N/A',
+                            timestamp: submission.timestamp || Date.now(),
+                            answers: submission.answers || {}
+                        };
+                        
+                        console.log('Submission data prepared:', submissionData);
+                        showSubmissionDetails(submissionData);
+                    });
+            })
+            .catch(error => {
+                console.error('Full error details:', {
+                    message: error.message,
+                    stack: error.stack,
+                    paperId: paperId,
+                    userNIC: user?.nic,
+                    time: new Date().toISOString()
+                });
+                showToast('Failed to load submission details', 'danger');
+            });
+    }
+});
+
+function initializePerformanceChart(submissions) {
+    const ctx = document.getElementById('performanceChart');
+    if (!ctx) return;
+
+    // Sort submissions by date
+    const sortedSubmissions = [...submissions].sort((a, b) => a.timestamp - b.timestamp);
+    
+    // Destroy previous chart if exists
+    if (ctx.chart) {
+        ctx.chart.destroy();
+    }
+    
+    ctx.chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: sortedSubmissions.map(sub => {
+                const date = new Date(sub.timestamp);
+                return `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()}`;
+            }),
+            datasets: [
+                {
+                    label: 'Your Score (%)',
+                    data: sortedSubmissions.map(sub => Math.round((sub.score / sub.totalMarks) * 100)),
+                    borderColor: 'rgba(78, 115, 223, 1)',
+                    backgroundColor: 'rgba(78, 115, 223, 0.1)',
+                    tension: 0.3,
+                    fill: true,
+                    borderWidth: 2
+                },
+                {
+                    label: 'Class Average (%)',
+                    data: sortedSubmissions.map(sub => Math.round(Math.random() * 20 + 60)), // Replace with actual class average data
+                    borderColor: 'rgba(28, 200, 138, 1)',
+                    backgroundColor: 'rgba(28, 200, 138, 0.1)',
+                    tension: 0.3,
+                    borderDash: [5, 5],
+                    borderWidth: 2
+                },
+                {
+                    label: 'Top Rank Score (%)',
+                    data: sortedSubmissions.map(sub => Math.round(Math.random() * 10 + 85)), // Replace with actual top rank data
+                    borderColor: 'rgba(246, 194, 62, 1)',
+                    backgroundColor: 'rgba(246, 194, 62, 0.1)',
+                    tension: 0.3,
+                    borderWidth: 2
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    title: {
+                        display: true,
+                        text: 'Score (%)'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Submission Date'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const datasetLabel = context.dataset.label || '';
+                            const submission = sortedSubmissions[context.dataIndex];
+                            let label = `${datasetLabel}: ${context.raw}%`;
+                            
+                            if (context.datasetIndex === 0) {
+                                label += ` (Rank: ${submission.rank})`;
+                            }
+                            return label;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function showStatsError(message) {
+    const statsSection = document.getElementById('statsSection');
+    if (!statsSection) return;
+    
+    statsSection.innerHTML = `
+        <div class="alert alert-danger">
+            <h4><i class="bi bi-exclamation-triangle me-2"></i> Error Loading Stats</h4>
+            <p>${message}</p>
+            <button onclick="loadUserStats()" class="btn btn-sm btn-primary mt-2">
+                <i class="bi bi-arrow-repeat me-1"></i> Try Again
+            </button>
+        </div>
+    `;
+}
+
+// Submission details functions
+function showSubmissionDetails(submission) {
+    try {
+        // Validate submission data
+        if (!submission || typeof submission !== 'object') {
+            console.error('Invalid submission data:', submission);
+            showToast('Invalid submission data provided', 'danger');
+            return;
+        }
+
+        console.log('Processing submission:', submission);
+
+        // Initialize modal if not already done
+        if (!window.submissionModal) {
+            window.submissionModal = new bootstrap.Modal(
+                document.getElementById('submissionDetailsModal')
+            );
+        }
+
+        // Calculate percentage with fallback values
+        const totalMarks = submission.totalMarks || 100;
+        const score = submission.score || 0;
+        const percentage = totalMarks > 0 
+            ? ((score / totalMarks) * 100).toFixed(1)
+            : '0';
+
+        // Set modal title
+        document.getElementById('submissionModalTitle').textContent = 
+            `${submission.paperTitle || 'Unknown Paper'} (${submission.paperYear || 'N/A'})`;
+
+        // Set score information
+        document.getElementById('submissionScore').textContent = 
+            `${score}/${totalMarks} (${percentage}%)`;
+
+        const progressBar = document.getElementById('submissionProgress');
+        progressBar.style.width = `${percentage}%`;
+        progressBar.setAttribute('aria-valuenow', percentage);
+
+        // Set rank information
+        document.getElementById('submissionRank').textContent = 
+            submission.rank || 'N/A';
+        document.getElementById('submissionClassRank').textContent = 
+            submission.classRank || 'N/A';
+
+        // Calculate percentiles
+        if (typeof submission.rank === 'number') {
+            const percentile = ((1 - (submission.rank / 100)) * 100).toFixed(1);
+            document.getElementById('submissionPercentile').textContent = 
+                `Top ${percentile}%`;
+        } else {
+            document.getElementById('submissionPercentile').textContent = 'N/A';
+        }
+
+        if (typeof submission.classRank === 'number') {
+            const classPercentile = ((1 - (submission.classRank / 50)) * 100).toFixed(1);
+            document.getElementById('submissionClassPercentile').textContent = 
+                `Top ${classPercentile}% in class`;
+        } else {
+            document.getElementById('submissionClassPercentile').textContent = 'N/A';
+        }
+
+        // Set date information
+        const date = submission.timestamp 
+            ? new Date(submission.timestamp) 
+            : new Date();
+        document.getElementById('submissionDate').textContent = 
+            date.toLocaleDateString();
+        document.getElementById('submissionTimeTaken').textContent = 
+            `Submitted at ${date.toLocaleTimeString()}`;
+
+        // Set paper information
+        document.getElementById('submissionPaperTitle').textContent = 
+            submission.paperTitle || 'N/A';
+        document.getElementById('submissionPaperYear').textContent = 
+            `Year: ${submission.paperYear || 'N/A'}`;
+        document.getElementById('submissionPaperMarks').textContent = 
+            `Total Marks: ${totalMarks}`;
+
+        // Display answers analysis
+        displayAnswersAnalysis(submission.answers || {});
+
+        // Initialize submission chart
+        try {
+            initializeSubmissionChart(submission);
+        } catch (chartError) {
+            console.error('Error initializing chart:', chartError);
+        }
+
+        // Set up download button
+        const downloadBtn = document.getElementById('downloadReportBtn');
+        if (downloadBtn) {
+            downloadBtn.onclick = () => {
+                downloadSubmissionReport(submission);
+            };
+        }
+
+        // Add expand/collapse functionality
+        setupAnswerItemInteractivity();
+
+        // Show the modal
+        window.submissionModal.show();
+
+    } catch (error) {
+        console.error('Error in showSubmissionDetails:', {
+            error: error.message,
+            stack: error.stack,
+            submissionData: submission,
+            time: new Date().toISOString()
+        });
+        showToast('Failed to display submission details', 'danger');
+    }
+}
+
+function displayAnswersAnalysis(answers) {
+    try {
+        console.log('Displaying answers analysis:', answers);
+
+        const correctList = document.getElementById('correctAnswersList');
+        const incorrectList = document.getElementById('incorrectAnswersList');
+        
+        // Clear previous content
+        correctList.innerHTML = '';
+        incorrectList.innerHTML = '';
+        
+        // Validate answers data
+        if (!answers || typeof answers !== 'object' || Object.keys(answers).length === 0) {
+            console.warn('No valid answers data provided');
+            correctList.innerHTML = '<div class="text-muted">No answer data available</div>';
+            incorrectList.innerHTML = '<div class="text-muted">No answer data available</div>';
+            document.getElementById('answersSummary').textContent = '0/0 questions';
+            document.getElementById('correctAnswersHeader').textContent = 'Correct Answers (0)';
+            document.getElementById('incorrectAnswersHeader').textContent = 'Incorrect Answers (0)';
+            return;
+        }
+        
+        let correctCount = 0;
+        let incorrectCount = 0;
+        const questionIds = Object.keys(answers).sort((a, b) => parseInt(a) - parseInt(b));
+        
+        questionIds.forEach(questionId => {
+            const answer = answers[questionId];
+            
+            // Validate answer structure
+            if (!answer || typeof answer !== 'object') {
+                console.warn(`Invalid answer structure for question ${questionId}:`, answer);
+                return;
+            }
+            
+            const isCorrect = answer.isCorrect === true;
+            const marksAwarded = typeof answer.marksAwarded === 'number' ? answer.marksAwarded : 0;
+            const maxMarks = typeof answer.maxMarks === 'number' ? answer.maxMarks : 1;
+            
+            const answerItem = document.createElement('div');
+            answerItem.className = 'answer-item';
+            answerItem.innerHTML = `
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>Question ${questionId}:</strong>
+                        <span class="ms-2 badge ${isCorrect ? 'bg-success' : 'bg-danger'}">
+                            ${isCorrect ? 'Correct' : 'Incorrect'}
+                        </span>
+                    </div>
+                    <span>${marksAwarded}/${maxMarks} marks</span>
+                </div>
+                <div class="answer-details">
+                    ${answer.feedback ? `<div class="mt-2"><strong>Feedback:</strong> ${answer.feedback}</div>` : ''}
+                    ${answer.correctAnswer ? `<div class="mt-1"><strong>Correct Answer:</strong> ${answer.correctAnswer}</div>` : ''}
+                    ${answer.yourAnswer ? `<div class="mt-1"><strong>Your Answer:</strong> ${answer.yourAnswer}</div>` : ''}
+                </div>
+            `;
+            
+            if (isCorrect) {
+                correctList.appendChild(answerItem);
+                correctCount++;
+            } else {
+                incorrectList.appendChild(answerItem);
+                incorrectCount++;
+            }
+        });
+        
+        // Update headers with counts
+        const totalQuestions = questionIds.length;
+        document.getElementById('answersSummary').textContent = 
+            `${correctCount}/${totalQuestions} questions`;
+        document.getElementById('correctAnswersHeader').textContent = 
+            `Correct Answers (${correctCount})`;
+        document.getElementById('incorrectAnswersHeader').textContent = 
+            `Incorrect Answers (${incorrectCount})`;
+        
+        // Handle empty states
+        if (correctCount === 0) {
+            correctList.innerHTML = '<div class="text-muted">No correct answers</div>';
+        }
+        if (incorrectCount === 0) {
+            incorrectList.innerHTML = '<div class="text-muted">No incorrect answers</div>';
+        }
+
+    } catch (error) {
+        console.error('Error in displayAnswersAnalysis:', {
+            error: error.message,
+            stack: error.stack,
+            answersData: answers,
+            time: new Date().toISOString()
+        });
+        
+        // Fallback UI
+        const correctList = document.getElementById('correctAnswersList');
+        const incorrectList = document.getElementById('incorrectAnswersList');
+        correctList.innerHTML = '<div class="text-danger">Error loading answers</div>';
+        incorrectList.innerHTML = '<div class="text-danger">Error loading answers</div>';
+    }
+}
+
+function setupAnswerItemInteractivity() {
+    // Toggle answer details on click
+    document.querySelectorAll('.answer-item').forEach(item => {
+        item.addEventListener('click', function() {
+            this.classList.toggle('expanded');
+        });
+    });
+    
+    // Expand all button
+    document.getElementById('expandAllAnswers').addEventListener('click', function() {
+        document.querySelectorAll('.answer-item').forEach(item => {
+            item.classList.add('expanded');
+        });
+    });
+    
+    // Collapse all button
+    document.getElementById('collapseAllAnswers').addEventListener('click', function() {
+        document.querySelectorAll('.answer-item').forEach(item => {
+            item.classList.remove('expanded');
+        });
+    });
+}
+
+function initializeSubmissionChart(submission) {
+    const ctx = document.getElementById('submissionChart');
+    if (!ctx) return;
+    
+    // Destroy previous chart if exists
+    if (ctx.chart) {
+        ctx.chart.destroy();
+    }
+    
+    // Calculate scores
+    const yourScore = Math.round((submission.score / submission.totalMarks) * 100);
+    const classAverage = Math.min(100, Math.max(50, yourScore - 10 + Math.floor(Math.random() * 20)));
+    const topScore = Math.min(100, yourScore + 10 + Math.floor(Math.random() * 10));
+    
+    // Update progress bars
+    document.getElementById('yourScoreBar').style.width = `${yourScore}%`;
+    document.getElementById('classAvgBar').style.width = `${classAverage}%`;
+    document.getElementById('topScoreBar').style.width = `${topScore}%`;
+    
+    // Update percentage labels
+    document.querySelector('.progress').previousElementSibling.children[0].textContent = `${yourScore}%`;
+    document.querySelector('.progress').previousElementSibling.children[1].textContent = `${classAverage}%`;
+    document.querySelector('.progress').previousElementSibling.children[2].textContent = `${topScore}%`;
+    
+    // Create chart
+    ctx.chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Knowledge', 'Application', 'Analysis', 'Evaluation'],
+            datasets: [
+                {
+                    label: 'Your Score',
+                    data: [
+                        Math.floor(Math.random() * 20) + 60,
+                        Math.floor(Math.random() * 20) + 60,
+                        Math.floor(Math.random() * 20) + 60,
+                        Math.floor(Math.random() * 20) + 60
+                    ],
+                    backgroundColor: 'rgba(78, 115, 223, 0.7)',
+                    borderColor: 'rgba(78, 115, 223, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Class Average',
+                    data: [
+                        Math.floor(Math.random() * 20) + 50,
+                        Math.floor(Math.random() * 20) + 50,
+                        Math.floor(Math.random() * 20) + 50,
+                        Math.floor(Math.random() * 20) + 50
+                    ],
+                    backgroundColor: 'rgba(28, 200, 138, 0.7)',
+                    borderColor: 'rgba(28, 200, 138, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Top Score',
+                    data: [
+                        Math.floor(Math.random() * 10) + 85,
+                        Math.floor(Math.random() * 10) + 85,
+                        Math.floor(Math.random() * 10) + 85,
+                        Math.floor(Math.random() * 10) + 85
+                    ],
+                    backgroundColor: 'rgba(246, 194, 62, 0.7)',
+                    borderColor: 'rgba(246, 194, 62, 1)',
+                    borderWidth: 1
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    title: {
+                        display: true,
+                        text: 'Score (%)'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Skill Category'
+                    }
+                }
+            }
+        }
+    });
+}
+
+function downloadSubmissionReport(submission) {
+    // In a real implementation, this would generate a PDF report
+    showToast('Report download will be available soon', 'info');
+}
+
+// Utility functions
+function checkAuthForStats() {
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    if (!user) {
+        showToast('Please login to view stats', 'warning');
+        return false;
+    }
+    return true;
+}
+
+function toggleTheme() {
+    document.body.classList.toggle('dark-mode');
+    const icon = themeToggle.querySelector('i');
+    if (document.body.classList.contains('dark-mode')) {
+        icon.classList.replace('fa-moon', 'fa-sun');
+        localStorage.setItem('theme', 'dark');
+    } else {
+        icon.classList.replace('fa-sun', 'fa-moon');
+        localStorage.setItem('theme', 'light');
+    }
+}
+
+function checkTheme() {
+    if (localStorage.getItem('theme') === 'dark') {
+        document.body.classList.add('dark-mode');
+        const icon = themeToggle.querySelector('i');
+        if (icon) {
+            icon.classList.replace('fa-moon', 'fa-sun');
+        }
+    }
+}
+
+function showToast(message, type = 'info') {
+    const toastContainer = document.createElement('div');
+    toastContainer.className = `toast-container position-fixed top-0 end-0 p-3`;
+    toastContainer.style.zIndex = '1100';
+    
+    const toast = document.createElement('div');
+    toast.className = `toast show align-items-center text-white bg-${type} border-0`;
+    toast.role = 'alert';
+    toast.ariaLive = 'assertive';
+    toast.ariaAtomic = 'true';
+    
+    toast.innerHTML = `
+        <div class="d-flex">
+            <div class="toast-body">
+                ${message}
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    `;
+    
+    toastContainer.appendChild(toast);
+    document.body.appendChild(toastContainer);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toastContainer.remove(), 300);
+    }, 5000);
+}
+
+function handleLogin() {
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    const loginSpinner = document.getElementById('loginSpinner');
+    const loginError = document.getElementById('loginError');
+    
+    // Validate inputs
+    if (!email || !password) {
+        showError(loginError, 'Please enter both email and password');
+        return;
+    }
+    
+    // Show loading state
+    loginSpinner?.classList.remove('d-none');
+    loginError?.classList.add('d-none');
+    
+    auth.signInWithEmailAndPassword(email, password)
+        .then(userCredential => {
+            // Get user data from database
+            return database.ref('users/' + userCredential.user.uid).once('value')
+                .then(snapshot => {
+                    let userData = snapshot.val();
+                    
+                    if (!userData) {
+                        // Initialize user data if not found
+                        userData = {
+                            name: email.split('@')[0], // Default name
+                            email: email,
+                            nic: '',
+                            class: '',
+                            registeredYear: new Date().getFullYear().toString()
+                        };
+                        return database.ref('users/' + userCredential.user.uid).set(userData)
+                            .then(() => userData);
+                    }
+                    return userData;
+                })
+                .then(userData => {
+                    // Store user data in localStorage
+                    localStorage.setItem('currentUser', JSON.stringify({
+                        uid: userCredential.user.uid,
+                        email: userCredential.user.email,
+                        ...userData
+                    }));
+                    
+                    // Hide modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+                    modal?.hide();
+                    
+                    // Show welcome message
+                    showToast(`Welcome, ${userData.name || 'User'}!`, 'success');
+                    
+                    // Update UI
+                    updateUserUI(userCredential.user, userData);
+                    
+                    // Load user-specific content
+                    loadInitialContent(userData.registeredYear);
+                });
+        })
+        .catch(error => {
+            console.error('Login failed:', error);
+            showError(loginError, getAuthErrorMessage(error));
+        })
+        .finally(() => {
+            loginSpinner?.classList.add('d-none');
+        });
+}
+
+function showError(element, message) {
+    if (!element) return;
+    element.textContent = message;
+    element.classList.remove('d-none');
+    element.classList.add('show');
+    
+    // Auto-hide after 5 seconds
+    setTimeout(() => {
+        element.classList.remove('show');
+        setTimeout(() => element.classList.add('d-none'), 300);
+    }, 5000);
+}
+
+function getAuthErrorMessage(error) {
+    switch(error.code) {
+        case 'auth/invalid-email': return 'Invalid email address';
+        case 'auth/user-disabled': return 'Account disabled';
+        case 'auth/user-not-found': return 'No account found with this email';
+        case 'auth/wrong-password': return 'Incorrect password';
+        case 'auth/too-many-requests': return 'Too many attempts. Try again later';
+        case 'auth/operation-not-allowed': return 'Email/password login disabled';
+        case 'auth/email-already-in-use': return 'Email already in use';
+        case 'auth/weak-password': return 'Password should be at least 6 characters';
+        default: return error.message.replace('Firebase: ', '');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize modal if it exists
+    if (document.getElementById('submissionDetailsModal')) {
+        window.submissionModal = new bootstrap.Modal(
+            document.getElementById('submissionDetailsModal')
+        );
+    }
+});
+
+// In your view button event listener:
+console.log('View button clicked');
+console.log('Paper ID:', paperId);
+console.log('Submissions data:', submissions);
+console.log('Found submission:', submission);
+
+// In your showSubmissionDetails function:
+console.log('Showing submission details:', submission);
+
+if (!window.submissionModal && document.getElementById('submissionDetailsModal')) {
+    window.submissionModal = new bootstrap.Modal(
+        document.getElementById('submissionDetailsModal')
+    );
+}
+
+
+document.addEventListener('DOMContentLoaded', function() {
+  const profileModal = document.getElementById('profileModal');
+  if (profileModal) {
+    profileModal.addEventListener('show.bs.modal', function() {
+      if (window.innerWidth < 992) {
+        // Close sidebar if open
+        document.getElementById('sidebar').classList.remove('toggled');
+        document.getElementById('content').classList.remove('toggled');
+      }
+    });
+  }
+  
+  // Handle mobile menu button when modal is open
+  const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+  if (mobileMenuBtn) {
+    mobileMenuBtn.addEventListener('click', function() {
+      if (document.querySelector('.modal.show')) {
+        // If modal is open, close it first
+        bootstrap.Modal.getInstance(document.querySelector('.modal.show')).hide();
+      }
+    });
+  }
+});
+
+function calculateTopSchools(submissionsArray, selectedClass = null) {
+  // Count school occurrences in top submissions
+  const schoolCounts = {};
+  const classSchoolCounts = {};
+  
+  // Process top 100 overall submissions for overall top school
+  const topOverall = submissionsArray.slice(0, 100);
+  topOverall.forEach(sub => {
+    if (sub.school) {
+      schoolCounts[sub.school] = (schoolCounts[sub.school] || 0) + 1;
+    }
+  });
+  
+  // Process top 50 class submissions for class top school
+  const topClass = selectedClass 
+    ? submissionsArray.filter(sub => sub.class === selectedClass).slice(0, 50)
+    : [];
+    
+  topClass.forEach(sub => {
+    if (sub.school) {
+      classSchoolCounts[sub.school] = (classSchoolCounts[sub.school] || 0) + 1;
+    }
+  });
+  
+  // Find overall top school
+  let overallTopSchool = "N/A";
+  let maxCount = 0;
+  for (const [school, count] of Object.entries(schoolCounts)) {
+    if (count > maxCount) {
+      maxCount = count;
+      overallTopSchool = school;
+    }
+  }
+  
+  // Find class top school
+  let classTopSchool = "N/A";
+  let classMaxCount = 0;
+  for (const [school, count] of Object.entries(classSchoolCounts)) {
+    if (count > classMaxCount) {
+      classMaxCount = count;
+      classTopSchool = school;
+    }
+  }
+  
+  return { overallTopSchool, classTopSchool };
+}
+
+function displayTopSchools(overallTopSchool, classTopSchool, selectedClass = null) {
+  const overallElement = document.getElementById('overallTopSchool');
+  const classElement = document.getElementById('classTopSchool');
+  
+  if (overallElement) {
+    overallElement.innerHTML = `
+      <h3 class="mb-2">${overallTopSchool || 'N/A'}</h3>
+      <p class="text-muted small">Top performing school in overall rankings</p>
+    `;
+  }
+  
+  if (classElement) {
+    classElement.innerHTML = `
+      <h3 class="mb-2">${classTopSchool || 'N/A'}</h3>
+      <p class="text-muted small">Top performing school in ${selectedClass || 'selected class'}</p>
+    `;
+  }
+}
+    </script>
+</body>
+</html>

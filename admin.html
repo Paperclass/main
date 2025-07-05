@@ -1,0 +1,3217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="admin.css">
+    <!-- Other meta tags and links -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h4>Paper Class Admin</h4>
+        </div>
+        <div class="sidebar-menu">
+            <a href="#" class="active" id="dashboardTab"><i class="bi bi-speedometer2"></i> Dashboard</a>
+            <a href="#" id="userManagementTab"><i class="bi bi-people"></i> User Management</a>
+            <a href="#" id="createPaperTab"><i class="bi bi-file-earmark-plus"></i> Online Paper</a>
+            <a href="#" id="viewPapersTab"><i class="bi bi-collection"></i> View Online Papers</a>
+            <a href="#" id="viewSubmissionsTab"><i class="bi bi-list-check"></i> View Online Submissions</a>
+            <a href="#" id="viewRankingsTab"><i class="bi bi-trophy"></i> View Rankings</a>
+            <div class="mt-4 px-3">
+                <button class="logout-btn" id="logoutBtn"><i class="bi bi-box-arrow-left"></i> Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <!-- Dashboard Section -->
+        <div id="dashboardSection">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3>Dashboard Overview</h3>
+                <div class="text-muted" id="currentDate"></div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-muted">Total Papers</h6>
+                                    <h3 id="totalPapers">0</h3>
+                                </div>
+                                <div class="bg-light p-3 rounded">
+                                    <i class="bi bi-collection text-primary" style="font-size: 1.5rem;"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-muted">Total Submissions</h6>
+                                    <h3 id="totalSubmissions">0</h3>
+                                </div>
+                                <div class="bg-light p-3 rounded">
+                                    <i class="bi bi-list-check text-success" style="font-size: 1.5rem;"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-muted">Active Papers</h6>
+                                    <h3 id="activePapers">0</h3>
+                                </div>
+                                <div class="bg-light p-3 rounded">
+                                    <i class="bi bi-hourglass-split text-warning" style="font-size: 1.5rem;"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-header">Recent Submissions</div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Paper</th>
+                                    <th>Student</th>
+                                    <th>NIC</th>
+                                    <th>Score</th>
+                                    <th>Rank</th>
+                                    <th>Submitted At</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentSubmissions">
+                                <!-- Recent submissions will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Management Section -->
+        <div id="userManagementSection" style="display: none;">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3>User Management</h3>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#" id="addUsersTab">Add Users</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" id="accountActivationTab">Account Activation</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" id="manageUsersTab">Manage Users</a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="card-body">
+                    <!-- Add Users Tab Content -->
+                    <div id="addUsersContent">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5>Add Single User</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <form id="addSingleUserForm">
+                                            <div class="mb-3">
+                                                <label class="form-label">Full Name*</label>
+                                                <input type="text" class="form-control" id="addUserName" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">NIC Number*</label>
+                                                <input type="text" class="form-control" id="addUserNIC" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Email*</label>
+                                                <input type="email" class="form-control" id="addUserEmail" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">District*</label>
+                                                <select class="form-select" id="addUserDistrict" required>
+                                                    <option value="">Select District</option>
+                                                    <option value="Ampara">Ampara</option>
+                                                    <option value="Anuradhapura">Anuradhapura</option>
+                                                    <option value="Badulla">Badulla</option>
+                                                    <option value="Batticaloa">Batticaloa</option>
+                                                    <option value="Colombo">Colombo</option>
+                                                    <option value="Galle">Galle</option>
+                                                    <option value="Gampaha">Gampaha</option>
+                                                    <option value="Hambantota">Hambantota</option>
+                                                    <option value="Jaffna">Jaffna</option>
+                                                    <option value="Kalutara">Kalutara</option>
+                                                    <option value="Kandy">Kandy</option>
+                                                    <option value="Kegalle">Kegalle</option>
+                                                    <option value="Kilinochchi">Kilinochchi</option>
+                                                    <option value="Kurunegala">Kurunegala</option>
+                                                    <option value="Mannar">Mannar</option>
+                                                    <option value="Matale">Matale</option>
+                                                    <option value="Matara">Matara</option>
+                                                    <option value="Monaragala">Monaragala</option>
+                                                    <option value="Mullaitivu">Mullaitivu</option>
+                                                    <option value="Nuwara Eliya">Nuwara Eliya</option>
+                                                    <option value="Polonnaruwa">Polonnaruwa</option>
+                                                    <option value="Puttalam">Puttalam</option>
+                                                    <option value="Ratnapura">Ratnapura</option>
+                                                    <option value="Trincomalee">Trincomalee</option>
+                                                    <option value="Vavuniya">Vavuniya</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Class*</label>
+                                                <select class="form-select" id="addUserClass" required>
+                                                    <option value="Nugegoda">Nugegoda</option>
+                                                    <option value="Kandy">Kandy</option>
+                                                    <option value="Kegalle">Kegalle</option>
+                                                    <option value="Kurunegala">Kurunegala</option>
+                                                    <option value="Gall">Gall</option>
+                                                    <option value="Onlin">Onlin</option>
+                                                    <option value="All Island">All Island</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Class Type*</label>
+                                                <div class="class-type-options">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="addUserTheory" value="Theory">
+                                                        <label class="form-check-label" for="addUserTheory">Theory</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="addUserPaperClass" value="Paper Class">
+                                                        <label class="form-check-label" for="addUserPaperClass">Paper Class</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="addUserRevision" value="Revision">
+                                                        <label class="form-check-label" for="addUserRevision">Revision</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3" id="addUserStudentIdContainer" style="display: none;">
+                                                <label class="form-label">Student ID*</label>
+                                                <input type="text" class="form-control" id="addUserStudentId">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">School</label>
+                                                <input type="text" class="form-control" id="addUserSchool">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Phone*</label>
+                                                <input type="tel" class="form-control" id="addUserPhone" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Year*</label>
+                                                <select class="form-select" id="addUserYear" required>
+                                                    <option value="">Select Year</option>
+                                                    <option value="2025">2025</option>
+                                                    <option value="2026">2026</option>
+                                                    <option value="2027">2027</option>
+                                                </select>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Add User</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5>Bulk Add Users</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <form id="bulkAddUsersForm">
+                                            <div class="mb-3">
+                                                <label class="form-label">Year*</label>
+                                                <select class="form-select" id="bulkAddYear" required>
+                                                    <option value="">Select Year</option>
+                                                    <option value="2025">2025</option>
+                                                    <option value="2026">2026</option>
+                                                    <option value="2027">2027</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Class*</label>
+                                                <select class="form-select" id="bulkAddClass" required>
+                                                    <option value="Nugegoda">Nugegoda</option>
+                                                    <option value="Kandy">Kandy</option>
+                                                    <option value="Kegalle">Kegalle</option>
+                                                    <option value="Kurunegala">Kurunegala</option>
+                                                    <option value="Gall">Gall</option>
+                                                    <option value="Onlin">Onlin</option>
+                                                    <option value="All Island">All Island</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Class Type*</label>
+                                                <select class="form-select" id="bulkAddClassType" required>
+                                                    <option value="">Select Class Type</option>
+                                                    <option value="Theory">Theory</option>
+                                                    <option value="Paper Class">Paper Class</option>
+                                                    <option value="Revision">Revision</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3" id="bulkAddStudentIdRequired" style="display: none;">
+                                                <div class="alert alert-info">
+                                                    Note: Your Excel file must include a "Student ID" column
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Excel File*</label>
+                                                <input type="file" class="form-control" id="bulkAddExcelFile" accept=".xlsx, .xls" required>
+                                                <div class="form-text">
+                                                    Excel file should contain columns: Name, Email, NIC (and Student ID if required)
+                                                </div>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Upload and Add Users</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Account Activation Tab Content -->
+                    <div id="accountActivationContent" style="display: none;">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span>Pending Accounts</span>
+                                    <input type="text" class="form-control w-25" id="pendingAccountsSearch" placeholder="Search...">
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Student ID</th>
+                                                <th>Class</th>
+                                                <th>Class Type</th>
+                                                <th>Email</th>
+                                                <th>NIC</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="pendingAccountsList">
+                                            <!-- Pending accounts will be loaded here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Manage Users Tab Content -->
+                    <div id="manageUsersContent" style="display: none;">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span>All Users</span>
+                                    <div class="input-group w-50">
+                                        <input type="text" class="form-control" id="userSearch" placeholder="Search by Student ID or Email">
+                                        <button class="btn btn-outline-secondary" type="button" id="searchUserBtn">Search</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Student ID</th>
+                                                <th>Class</th>
+                                                <th>Class Type</th>
+                                                <th>Email</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="usersList">
+                                            <!-- Users will be loaded here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<!-- Create Paper Section -->
+<div id="createPaperSection" style="display: none;">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3>Create New Paper</h3>
+        <div class="btn-group">
+            <button type="button" class="btn btn-outline-secondary" id="useTemplateBtn">Use Template</button>
+            <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">
+                <span class="visually-hidden">Toggle Dropdown</span>
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#" id="template15Btn">15 MCQ Template</a></li>
+                <li><a class="dropdown-item" href="#" id="template25Btn">25 MCQ Template</a></li>
+                <li><a class="dropdown-item" href="#" id="template50Btn">50 MCQ Template</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">Paper Details</div>
+        <div class="card-body">
+            <form id="createPaperForm">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="paperTitle" class="form-label">Paper Title*</label>
+                        <input type="text" class="form-control" id="paperTitle" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="paperYear" class="form-label">Year*</label>
+                        <input type="number" class="form-control" id="paperYear" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="paperNumber" class="form-label">Paper Number*</label>
+                        <input type="number" class="form-control" id="paperNumber" required>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="paperSubject" class="form-label">Subject*</label>
+                        <input type="text" class="form-control" id="paperSubject" value="Physics" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="paperMedium" class="form-label">Medium*</label>
+                        <select class="form-select" id="paperMedium" required>
+                            <option value="All Mediums">All Mediums</option>
+                            <option value="Sinhala">Sinhala</option>
+                            <option value="English">English</option>
+                            <option value="Tamil">Tamil</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="openTime" class="form-label">Open Date & Time*</label>
+                        <input type="datetime-local" class="form-control" id="openTime" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="closeTime" class="form-label">Close Date & Time*</label>
+                        <input type="datetime-local" class="form-control" id="closeTime" required>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="paperPdf" class="form-label">Upload Paper PDF (Sinhala)*</label>
+                    <input type="file" class="form-control" id="paperPdfSinhala" accept=".pdf" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="paperPdf" class="form-label">Upload Paper PDF (English)*</label>
+                    <input type="file" class="form-control" id="paperPdfEnglish" accept=".pdf" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="answerKeyPdf" class="form-label">Upload Answer Key PDF*</label>
+                    <input type="file" class="form-control" id="answerKeyPdf" accept=".pdf" required>
+                </div>
+
+                <div class="mb-4">
+                    <h5 class="border-bottom pb-2">MCQ Questions & Answers</h5>
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> Just enter the question numbers and correct answers. 
+                        The options will be taken from the uploaded PDF.
+                    </div>
+                    <div id="questionsContainer">
+                        <!-- Questions will be loaded here -->
+                    </div>
+                    <button type="button" class="btn btn-outline-primary mt-2" id="addQuestionBtn">
+                        <i class="bi bi-plus-circle"></i> Add Question
+                    </button>
+                </div>
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary btn-lg" id="createPaperBtn">
+                        <span id="createPaperBtnText">Create Paper</span>
+                        <span id="createPaperSpinner" class="loading-spinner" style="display: none;"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- View Papers Section -->
+<div id="viewPapersSection" style="display: none;">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3>All Papers</h3>
+        <div class="input-group" style="width: 200px;">
+            <select class="form-select" id="paperYearFilter">
+                <option value="">All Years</option>
+                <option value="2025">2025</option>
+                <option value="2026">2026</option>
+                <option value="2027">2027</option>
+            </select>
+        </div>
+    </div>
+
+    <ul class="nav nav-tabs mb-4" id="paperTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="active-tab" data-bs-toggle="tab" data-bs-target="#active-papers" type="button" role="tab">Active</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="upcoming-tab" data-bs-toggle="tab" data-bs-target="#upcoming-papers" type="button" role="tab">Upcoming</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="closed-tab" data-bs-toggle="tab" data-bs-target="#closed-papers" type="button" role="tab">Closed</button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="paperTabsContent">
+        <div class="tab-pane fade show active" id="active-papers" role="tabpanel">
+            <div class="row" id="activePapersContainer">
+                <!-- Active papers will be loaded here -->
+                <div class="col-12 text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="upcoming-papers" role="tabpanel">
+            <div class="row" id="upcomingPapersContainer">
+                <!-- Upcoming papers will be loaded here -->
+                <div class="col-12 text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="closed-papers" role="tabpanel">
+            <div class="row" id="closedPapersContainer">
+                <!-- Closed papers will be loaded here -->
+                <div class="col-12 text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- View Submissions Section -->
+<div id="viewSubmissionsSection" style="display: none;">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3>Paper Submissions</h3>
+        <div>
+            <div class="input-group">
+                <select class="form-select" id="submissionYearFilter" style="width: 120px;">
+                    <option value="">All Years</option>
+                    <option value="2025">2025</option>
+                    <option value="2026">2026</option>
+                    <option value="2027">2027</option>
+                </select>
+                <select class="form-select" id="submissionMonthFilter" style="width: 120px;">
+                    <option value="">All Months</option>
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+                <button class="btn btn-outline-secondary" type="button" id="submissionFilterBtn">
+                    <i class="bi bi-funnel"></i> Filter
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <div id="submissionPaperCards" class="row">
+                <!-- Paper cards will be loaded here -->
+                <div class="col-12 text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" id="submissionsListCard" style="display: none;">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 id="selectedPaperTitle">Submissions</h5>
+            <button class="btn btn-sm btn-outline-secondary" id="backToPapersBtn">
+                <i class="bi bi-arrow-left"></i> Back to Papers
+            </button>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>NIC</th>
+                            <th>District</th>
+                            <th>Class</th>
+                            <th>Score</th>
+                            <th>Submitted At</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="submissionsList">
+                        <!-- Submissions will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- View Rankings Section -->
+<div id="viewRankingsSection" style="display: none;">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3>Paper Rankings</h3>
+        <div class="input-group" style="width: 300px;">
+            <select class="form-select" id="rankingYearFilter">
+                <option value="">All Years</option>
+                <option value="2025">2025</option>
+                <option value="2026">2026</option>
+                <option value="2027">2027</option>
+            </select>
+            <select class="form-select" id="rankingMonthFilter">
+                <option value="">All Months</option>
+                <option value="1">January</option>
+                <option value="2">February</option>
+                <option value="3">March</option>
+                <option value="4">April</option>
+                <option value="5">May</option>
+                <option value="6">June</option>
+                <option value="7">July</option>
+                <option value="8">August</option>
+                <option value="9">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+            </select>
+            <button class="btn btn-outline-secondary" type="button" id="rankingFilterBtn">
+                <i class="bi bi-funnel"></i> Filter
+            </button>
+        </div>
+    </div>
+
+    <div class="row" id="rankingPaperCards">
+        <!-- Paper cards will be loaded here -->
+        <div class="col-12 text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mt-4" id="rankingsListCard" style="display: none;">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h4 id="selectedRankingPaperTitle">Rankings</h4>
+            <div>
+                <button class="btn btn-sm btn-outline-primary" id="backToRankingPapersBtn">
+                    <i class="bi bi-arrow-left"></i> Back to Papers
+                </button>
+                <button class="btn btn-sm btn-primary ms-2" id="downloadRankingPdfBtn">
+                    <i class="bi bi-file-earmark-pdf"></i> Download PDF
+                </button>
+                <button class="btn btn-sm btn-success ms-2" id="classRankingsBtn">
+                    <i class="bi bi-people"></i> Class Rankings
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Student</th>
+                            <th>NIC</th>
+                            <th>District</th>
+                            <th>Class</th>
+                            <th>School</th>
+                            <th>Score</th>
+                            <th>Percentage</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rankingsList">
+                        <tr id="rankingsLoading">
+                            <td colspan="8" class="text-center">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Class Rankings Modal -->
+<div class="modal fade" id="classRankingsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Class Rankings</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="classRankingsContent">
+                <!-- Class rankings will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="downloadAllClassRankingsBtn">
+                    <i class="bi bi-download"></i> Download All as PDF
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- Modals -->
+    <!-- Submission Details Modal -->
+    <div class="modal fade" id="submissionModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Submission Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="submissionDetails">
+                    <!-- Submission details will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- Paper Details Modal -->
+<div class="modal fade" id="paperModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Paper Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="paperDetails">
+                <!-- Paper details will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="copyPaperLinkBtn">
+                    <i class="bi bi-link-45deg"></i> Copy Paper Link
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- Edit User Modal -->
+    <div class="modal fade" id="editUserModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editUserForm">
+                        <input type="hidden" id="editUserId">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Full Name*</label>
+                                <input type="text" class="form-control" id="editUserName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Email*</label>
+                                <input type="email" class="form-control" id="editUserEmail" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">NIC Number*</label>
+                                <input type="text" class="form-control" id="editUserNIC" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Student ID</label>
+                                <input type="text" class="form-control" id="editUserStudentId">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label class="form-label">Class*</label>
+                                <select class="form-select" id="editUserClass" required>
+                                    <option value="Nugegoda">Nugegoda</option>
+                                    <option value="Kandy">Kandy</option>
+                                    <option value="Kegalle">Kegalle</option>
+                                    <option value="Kurunegala">Kurunegala</option>
+                                    <option value="Gall">Gall</option>
+                                    <option value="Onlin">Onlin</option>
+                                    <option value="All Island">All Island</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">District*</label>
+                                <select class="form-select" id="editUserDistrict" required>
+                                    <option value="">Select District</option>
+                                    <option value="Ampara">Ampara</option>
+                                    <option value="Anuradhapura">Anuradhapura</option>
+                                    <option value="Badulla">Badulla</option>
+                                    <option value="Batticaloa">Batticaloa</option>
+                                    <option value="Colombo">Colombo</option>
+                                    <option value="Galle">Galle</option>
+                                    <option value="Gampaha">Gampaha</option>
+                                    <option value="Hambantota">Hambantota</option>
+                                    <option value="Jaffna">Jaffna</option>
+                                    <option value="Kalutara">Kalutara</option>
+                                    <option value="Kandy">Kandy</option>
+                                    <option value="Kegalle">Kegalle</option>
+                                    <option value="Kilinochchi">Kilinochchi</option>
+                                    <option value="Kurunegala">Kurunegala</option>
+                                    <option value="Mannar">Mannar</option>
+                                    <option value="Matale">Matale</option>
+                                    <option value="Matara">Matara</option>
+                                    <option value="Monaragala">Monaragala</option>
+                                    <option value="Mullaitivu">Mullaitivu</option>
+                                    <option value="Nuwara Eliya">Nuwara Eliya</option>
+                                    <option value="Polonnaruwa">Polonnaruwa</option>
+                                    <option value="Puttalam">Puttalam</option>
+                                    <option value="Ratnapura">Ratnapura</option>
+                                    <option value="Trincomalee">Trincomalee</option>
+                                    <option value="Vavuniya">Vavuniya</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Year*</label>
+                                <select class="form-select" id="editUserYear" required>
+                                    <option value="">Select Year</option>
+                                    <option value="2023">2025</option>
+                                    <option value="2024">2026</option>
+                                    <option value="2025">2027</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">School</label>
+                                <input type="text" class="form-control" id="editUserSchool">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Phone*</label>
+                                <input type="tel" class="form-control" id="editUserPhone" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Class Types*</label>
+                            <div class="class-type-options">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="editUserTheory" value="Theory">
+                                    <label class="form-check-label" for="editUserTheory">Theory</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="editUserPaperClass" value="Paper Class">
+                                    <label class="form-check-label" for="editUserPaperClass">Paper Class</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="editUserRevision" value="Revision">
+                                    <label class="form-check-label" for="editUserRevision">Revision</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Account Status</label>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="editUserActive">
+                                <label class="form-check-label" for="editUserActive">Active</label>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="editUserVerified">
+                                <label class="form-check-label" for="editUserVerified">Verified</label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveUserChanges">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- Load jsPDF library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <!-- Optional: jsPDF AutoTable plugin for tables -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// Firebase configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyD5SRZWB-QwMg7wmyTjcvHZqP-mEdlll_M",
+    authDomain: "paper-class-1ab19.firebaseapp.com",
+    databaseURL: "https://paper-class-1ab19-default-rtdb.firebaseio.com",
+    projectId: "paper-class-1ab19",
+    storageBucket: "paper-class-1ab19.firebasestorage.app",
+    messagingSenderId: "83634677566",
+    appId: "1:83634677566:web:fb4f7a1fd869c3e82e2e6f"
+};
+
+// Initialize Firebase
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+const auth = firebase.auth();
+const database = firebase.database();
+const storage = firebase.storage();
+
+// DOM elements
+const sections = {
+    dashboard: document.getElementById('dashboardSection'),
+    createPaper: document.getElementById('createPaperSection'),
+    viewPapers: document.getElementById('viewPapersSection'),
+    viewSubmissions: document.getElementById('viewSubmissionsSection'),
+    viewRankings: document.getElementById('viewRankingsSection'),
+    userManagement: document.getElementById('userManagementSection')
+};
+
+// Tab navigation
+document.getElementById('dashboardTab').addEventListener('click', () => showSection('dashboard'));
+document.getElementById('createPaperTab').addEventListener('click', () => showSection('createPaper'));
+document.getElementById('viewPapersTab').addEventListener('click', () => {
+    showSection('viewPapers');
+    loadPapers();
+});
+document.getElementById('viewSubmissionsTab').addEventListener('click', () => {
+    showSection('viewSubmissions');
+    loadSubmissionPapers();
+});
+document.getElementById('viewRankingsTab').addEventListener('click', () => {
+    showSection('viewRankings');
+    loadRankingPapers();
+});
+
+// Logout
+document.getElementById('logoutBtn').addEventListener('click', () => {
+    auth.signOut().then(() => {
+        window.location.href = 'admin-login.html';
+    });
+});
+
+// Show section function
+function showSection(section) {
+    Object.values(sections).forEach(sec => sec.style.display = 'none');
+    sections[section].style.display = 'block';
+    document.querySelectorAll('.sidebar-menu a').forEach(tab => tab.classList.remove('active'));
+    document.getElementById(`${section}Tab`).classList.add('active');
+    
+    // Special handling for user management to show the first tab
+    if (section === 'userManagement') {
+        showUserManagementTab('addUsers');
+    }
+}
+
+// Initialize dashboard
+function initDashboard() {
+    // Load counts
+    database.ref('papers').once('value').then(snapshot => {
+        const papers = snapshot.val() || {};
+        document.getElementById('totalPapers').textContent = Object.keys(papers).length;
+        
+        const now = new Date().getTime();
+        const activePapers = Object.values(papers).filter(paper => {
+            return now >= new Date(paper.openTime).getTime() && 
+                   now <= new Date(paper.closeTime).getTime();
+        });
+        document.getElementById('activePapers').textContent = activePapers.length;
+    });
+
+    // Load total submissions
+    database.ref('submissions').once('value').then(snapshot => {
+        const submissions = snapshot.val() || {};
+        let total = 0;
+        Object.values(submissions).forEach(paper => {
+            total += Object.keys(paper).length;
+        });
+        document.getElementById('totalSubmissions').textContent = total;
+    });
+
+    // Load recent submissions
+    database.ref('submissions').once('value').then(snapshot => {
+        const submissionsData = snapshot.val() || {};
+        const recentSubmissions = [];
+        
+        for (const [paperId, paperSubmissions] of Object.entries(submissionsData)) {
+            for (const [nic, submission] of Object.entries(paperSubmissions)) {
+                recentSubmissions.push({ paperId, nic, ...submission });
+            }
+        }
+        
+        recentSubmissions.sort((a, b) => b.timestamp - a.timestamp);
+        
+        const tbody = document.getElementById('recentSubmissions');
+        tbody.innerHTML = '';
+        
+        recentSubmissions.slice(0, 5).forEach(sub => {
+            database.ref(`papers/${sub.paperId}/title`).once('value').then(paperSnapshot => {
+                const paperTitle = paperSnapshot.val() || 'Unknown Paper';
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${paperTitle}</td>
+                    <td>${sub.name}</td>
+                    <td>${sub.nic}</td>
+                    <td>${sub.score}</td>
+                    <td>${sub.rank || '-'}</td>
+                    <td>${new Date(sub.timestamp).toLocaleString()}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        });
+    });
+}
+
+// Paper templates
+const paperTemplates = {
+    template15: {
+        name: "15 MCQ Template",
+        count: 15,
+        questions: Array.from({length: 15}, (_, i) => ({
+            number: i + 1,
+            marks: 1,
+            answer: "1" // Default answer
+        }))
+    },
+    template25: {
+        name: "25 MCQ Template",
+        count: 25,
+        questions: Array.from({length: 25}, (_, i) => ({
+            number: i + 1,
+            marks: 1,
+            answer: "1" // Default answer
+        }))
+    },
+    template50: {
+        name: "50 MCQ Template",
+        count: 50,
+        questions: Array.from({length: 50}, (_, i) => ({
+            number: i + 1,
+            marks: 1,
+            answer: "1" // Default answer
+        }))
+    }
+};
+
+// Apply template
+function applyTemplate(template) {
+    const container = document.getElementById('questionsContainer');
+    container.innerHTML = '';
+    
+    template.questions.forEach((q, index) => {
+        const questionDiv = document.createElement('div');
+        questionDiv.className = 'question-item mb-3 p-3 border rounded';
+        questionDiv.innerHTML = `
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Question ${q.number}</label>
+                    <input type="number" class="form-control question-number" value="${q.number}" readonly>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Marks</label>
+                    <input type="number" class="form-control question-marks" value="${q.marks}" min="1" required>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Correct Answer</label>
+                    <select class="form-select question-answer" required>
+                        <option value="1" ${q.answer === "1" ? "selected" : ""}>1</option>
+                        <option value="2" ${q.answer === "2" ? "selected" : ""}>2</option>
+                        <option value="3" ${q.answer === "3" ? "selected" : ""}>3</option>
+                        <option value="4" ${q.answer === "4" ? "selected" : ""}>4</option>
+                        <option value="5" ${q.answer === "5" ? "selected" : ""}>5</option>
+                    </select>
+                </div>
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-danger mt-2 remove-question">
+                <i class="bi bi-trash"></i> Remove
+            </button>
+        `;
+        container.appendChild(questionDiv);
+    });
+    
+    // Update question count
+    questionCount = template.count;
+}
+
+// Template buttons
+document.getElementById('template15Btn').addEventListener('click', (e) => {
+    e.preventDefault();
+    applyTemplate(paperTemplates.template15);
+});
+
+document.getElementById('template25Btn').addEventListener('click', (e) => {
+    e.preventDefault();
+    applyTemplate(paperTemplates.template25);
+});
+
+document.getElementById('template50Btn').addEventListener('click', (e) => {
+    e.preventDefault();
+    applyTemplate(paperTemplates.template50);
+});
+
+// Paper creation functionality
+let questionCount = 1;
+let isProcessingForm = false;
+
+// Add question button
+document.getElementById('addQuestionBtn').addEventListener('click', () => {
+    questionCount++;
+    const container = document.getElementById('questionsContainer');
+    const questionDiv = document.createElement('div');
+    questionDiv.className = 'question-item mb-3 p-3 border rounded';
+    questionDiv.innerHTML = `
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label class="form-label">Question ${questionCount}</label>
+                <input type="number" class="form-control question-number" value="${questionCount}" readonly>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label class="form-label">Marks</label>
+                <input type="number" class="form-control question-marks" placeholder="Marks" min="1" required>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label class="form-label">Correct Answer</label>
+                <select class="form-select question-answer" required>
+                    <option value="">Select</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+            </div>
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-danger mt-2 remove-question">
+            <i class="bi bi-trash"></i> Remove
+        </button>
+    `;
+    container.appendChild(questionDiv);
+});
+
+// Remove question event delegation
+document.getElementById('questionsContainer').addEventListener('click', (e) => {
+    if (e.target.classList.contains('remove-question') || e.target.closest('.remove-question')) {
+        e.target.closest('.question-item').remove();
+        questionCount--;
+        const questions = document.querySelectorAll('.question-item');
+        questions.forEach((q, index) => {
+            q.querySelector('.form-label').textContent = `Question ${index + 1}`;
+        });
+    }
+});
+
+document.getElementById('createPaperForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    if (isProcessingForm) return;
+    isProcessingForm = true;
+    
+    try {
+        const createPaperBtn = document.getElementById('createPaperBtn');
+        createPaperBtn.disabled = true;
+        createPaperBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Creating...';
+
+        const title = document.getElementById('paperTitle').value.trim();
+        const year = document.getElementById('paperYear').value.trim();
+        const paperNumber = document.getElementById('paperNumber').value.trim();
+        const subject = document.getElementById('paperSubject').value.trim();
+        const medium = document.getElementById('paperMedium').value;
+        const openTime = document.getElementById('openTime').value;
+        const closeTime = document.getElementById('closeTime').value;
+        const pdfFileSinhala = document.getElementById('paperPdfSinhala').files[0];
+        const pdfFileEnglish = document.getElementById('paperPdfEnglish').files[0];
+        const answerKeyFile = document.getElementById('answerKeyPdf').files[0];
+        
+        // Validate inputs
+        if (!title || !year || !paperNumber || !subject || !medium || !openTime || !closeTime) {
+            throw new Error('Please fill in all required fields');
+        }
+
+        // Get questions with answers
+        const questions = {};
+        const questionItems = document.querySelectorAll('.question-item');
+        
+        questionItems.forEach((item, index) => {
+            const number = item.querySelector('.question-number').value.trim();
+            const marks = parseInt(item.querySelector('.question-marks').value) || 0;
+            const answer = item.querySelector('.question-answer').value;
+            
+            if (number && !isNaN(marks) && answer) {
+                questions[number] = {
+                    questionText: `Question ${number}`,
+                    marks: marks,
+                    answer: answer,
+                    options: ["Option 1", "Option 2", "Option 3", "Option 4", "Option 5"] // Placeholder
+                };
+            }
+        });
+        
+        if (Object.keys(questions).length === 0) {
+            throw new Error('Please add at least one valid question');
+        }
+        
+        if (!pdfFileSinhala || !pdfFileEnglish || !answerKeyFile) {
+            throw new Error('Please upload all required PDF files');
+        }
+
+        // Date validation
+        const openDate = new Date(openTime);
+        const closeDate = new Date(closeTime);
+        const now = new Date();
+        
+        if (openDate < now) {
+            throw new Error('Open time cannot be in the past');
+        }
+        
+        if (closeDate <= openDate) {
+            throw new Error('Close time must be after open time');
+        }
+        
+        if ((closeDate - openDate) < (30 * 60 * 1000)) {
+            throw new Error('The paper should be available for at least 30 minutes');
+        }
+        
+        // Generate paper ID
+        const paperId = `${subject.toLowerCase()}-${year}-${paperNumber}-${Date.now()}`;
+        
+        // Upload files to storage
+        const storageRef = storage.ref();
+        const uploadTasks = [
+            storageRef.child(`papers/${paperId}/paper-sinhala.pdf`).put(pdfFileSinhala),
+            storageRef.child(`papers/${paperId}/paper-english.pdf`).put(pdfFileEnglish),
+            storageRef.child(`papers/${paperId}/answers.pdf`).put(answerKeyFile)
+        ];
+        
+        await Promise.all(uploadTasks);
+        
+        // Get download URLs
+        const [sinhalaUrl, englishUrl, answerKeyUrl] = await Promise.all([
+            storageRef.child(`papers/${paperId}/paper-sinhala.pdf`).getDownloadURL(),
+            storageRef.child(`papers/${paperId}/paper-english.pdf`).getDownloadURL(),
+            storageRef.child(`papers/${paperId}/answers.pdf`).getDownloadURL()
+        ]);
+
+        // Calculate total marks
+        const totalMarks = Object.values(questions).reduce((sum, q) => sum + q.marks, 0);
+
+        // Save paper data
+        await database.ref(`papers/${paperId}`).set({
+            title,
+            year,
+            paperNumber,
+            subject,
+            medium,
+            openTime: new Date(openTime).toISOString(),
+            closeTime: new Date(closeTime).toISOString(),
+            pdfUrlSinhala: sinhalaUrl,
+            pdfUrlEnglish: englishUrl,
+            answerKeyUrl,
+            questions,
+            totalMarks,
+            type: "online",
+            createdAt: firebase.database.ServerValue.TIMESTAMP
+        });
+
+        alert('Paper created successfully!');
+        document.getElementById('createPaperForm').reset();
+        
+        // Reset questions container
+        document.getElementById('questionsContainer').innerHTML = '';
+        questionCount = 0;
+
+    } catch (error) {
+        console.error('Error creating paper:', error);
+        alert(`Error: ${error.message}`);
+    } finally {
+        isProcessingForm = false;
+        const createPaperBtn = document.getElementById('createPaperBtn');
+        createPaperBtn.disabled = false;
+        createPaperBtn.textContent = 'Create Paper';
+    }
+});
+
+// Load papers for viewing
+async function loadPapers() {
+    try {
+        const yearFilter = document.getElementById('paperYearFilter').value;
+        const snapshot = await database.ref('papers').once('value');
+        const papers = snapshot.val() || {};
+        const now = new Date().getTime();
+
+        // Clear containers properly
+        const clearContainer = (id) => {
+            const container = document.getElementById(id);
+            while (container.firstChild) {
+                container.removeChild(container.firstChild);
+            }
+        };
+        
+        clearContainer('activePapersContainer');
+        clearContainer('upcomingPapersContainer');
+        clearContainer('closedPapersContainer');
+
+        let activeCount = 0;
+        let upcomingCount = 0;
+        let closedCount = 0;
+
+        // Process each paper
+        for (const [id, paper] of Object.entries(papers)) {
+            // Apply year filter if set
+            if (yearFilter && paper.year !== yearFilter) continue;
+
+            const openTime = new Date(paper.openTime).getTime();
+            const closeTime = new Date(paper.closeTime).getTime();
+            
+            // Get submission count
+            const submissionsSnapshot = await database.ref(`submissions/${id}`).once('value');
+            const submissionCount = submissionsSnapshot.exists() ? Object.keys(submissionsSnapshot.val()).length : 0;
+
+            // Create paper card
+            const card = createPaperCard(id, paper, submissionCount);
+
+            // Categorize paper
+            if (now >= openTime && now <= closeTime) {
+                document.getElementById('activePapersContainer').appendChild(card);
+                activeCount++;
+            } else if (now < openTime) {
+                document.getElementById('upcomingPapersContainer').appendChild(card);
+                upcomingCount++;
+            } else {
+                document.getElementById('closedPapersContainer').appendChild(card);
+                closedCount++;
+            }
+        }
+
+        // Update tab badges
+        updateTabBadges(activeCount, upcomingCount, closedCount);
+
+        // Show empty state if no papers
+        showEmptyState('activePapersContainer', activeCount);
+        showEmptyState('upcomingPapersContainer', upcomingCount);
+        showEmptyState('closedPapersContainer', closedCount);
+
+    } catch (error) {
+        console.error('Error loading papers:', error);
+        // Show error in all containers
+        const errorHtml = '<div class="col-12 text-center text-danger py-5">Error loading papers</div>';
+        document.getElementById('activePapersContainer').innerHTML = errorHtml;
+        document.getElementById('upcomingPapersContainer').innerHTML = errorHtml;
+        document.getElementById('closedPapersContainer').innerHTML = errorHtml;
+    }
+}
+
+// Helper function to create paper card
+function createPaperCard(id, paper, submissionCount) {
+    const card = document.createElement('div');
+    card.className = 'col-md-4 mb-4 submission-paper-card';
+    card.setAttribute('data-paper-id', id);
+    
+    const now = new Date().getTime();
+    const openTime = new Date(paper.openTime).getTime();
+    const closeTime = new Date(paper.closeTime).getTime();
+    const isActive = now >= openTime && now <= closeTime;
+    
+    card.innerHTML = `
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">${paper.title}</h5>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Year: ${paper.year}</span>
+                    <span class="text-muted">Paper: ${paper.paperNumber}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-3">
+                    <span class="badge bg-primary">
+                        ${submissionCount} submission${submissionCount !== 1 ? 's' : ''}
+                    </span>
+                    <small class="text-muted">
+                        ${new Date(paper.createdAt || paper.openTime).toLocaleDateString()}
+                    </small>
+                </div>
+            </div>
+            <div class="card-footer bg-transparent">
+                <button class="btn btn-sm btn-outline-primary view-submissions-btn">
+                    <i class="bi bi-list-check"></i> View Submissions
+                </button>
+            </div>
+        </div>
+    `;
+    
+    // Add event listener for view submissions
+    card.querySelector('.view-submissions-btn').addEventListener('click', () => {
+        loadPaperSubmissions(id, paper.title);
+    });
+    
+    return card;
+}
+
+// Update tab badges with counts
+function updateTabBadges(active, upcoming, closed) {
+    document.getElementById('active-tab').innerHTML = `Active ${active > 0 ? `<span class="badge bg-primary ms-2">${active}</span>` : ''}`;
+    document.getElementById('upcoming-tab').innerHTML = `Upcoming ${upcoming > 0 ? `<span class="badge bg-primary ms-2">${upcoming}</span>` : ''}`;
+    document.getElementById('closed-tab').innerHTML = `Closed ${closed > 0 ? `<span class="badge bg-primary ms-2">${closed}</span>` : ''}`;
+}
+
+// Show empty state message
+function showEmptyState(containerId, count) {
+    if (count === 0) {
+        document.getElementById(containerId).innerHTML = `
+            <div class="col-12 text-center py-5">
+                <i class="bi bi-file-earmark-text display-5 text-muted mb-3"></i>
+                <p class="text-muted">No papers found</p>
+            </div>
+        `;
+    }
+}
+
+// Add year filter event listener
+document.getElementById('paperYearFilter').addEventListener('change', loadPapers);
+
+// View paper details
+async function viewPaperDetails(paperId) {
+    try {
+        const [paperSnapshot, isAvailable] = await Promise.all([
+            database.ref(`papers/${paperId}`).once('value'),
+            checkPaperAvailability(paperId)
+        ]);
+        
+        const paper = paperSnapshot.val();
+        if (!paper) throw new Error('Paper not found');
+
+        const openTime = new Date(paper.openTime);
+        const closeTime = new Date(paper.closeTime);
+        const now = new Date();
+        let status = now < openTime ? 'Upcoming' : now > closeTime ? 'Closed' : 'Active';
+
+        let html = `
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <h4>${paper.title}</h4>
+                    <p class="mb-1"><strong>Status:</strong> 
+                        <span class="badge ${status === 'Active' ? 'bg-success' : status === 'Upcoming' ? 'bg-warning' : 'bg-secondary'}">
+                            ${status}
+                        </span>
+                    </p>
+                    <p class="mb-1"><strong>Available:</strong> ${openTime.toLocaleString()} to ${closeTime.toLocaleString()}</p>
+        `;
+
+        if (status !== 'Active') {
+            html += `
+                <div class="alert alert-warning mt-3">
+                    <i class="bi bi-exclamation-triangle"></i> This paper is not currently available for access.
+                    ${status === 'Upcoming' ? 'It will become available at the specified open time.' : 'The submission period has ended.'}
+                </div>
+            `;
+        }
+
+        html += `
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-title">Time Remaining</h6>
+                            <div id="timeRemaining"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Only show access buttons if paper is active
+        if (status === 'Active') {
+            html += `
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header"><h5 class="mb-0">Paper PDF (Sinhala)</h5></div>
+                        <div class="card-body text-center">
+                            <a href="${paper.pdfUrlSinhala}" target="_blank" class="btn btn-primary">
+                                <i class="bi bi-download"></i> Download Sinhala Paper
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header"><h5 class="mb-0">Paper PDF (English)</h5></div>
+                        <div class="card-body text-center">
+                            <a href="${paper.pdfUrlEnglish}" target="_blank" class="btn btn-primary">
+                                <i class="bi bi-download"></i> Download English Paper
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header"><h5 class="mb-0">Answer Key</h5></div>
+                        <div class="card-body text-center">
+                            <a href="${paper.answerKeyUrl}" target="_blank" class="btn btn-primary">
+                                <i class="bi bi-download"></i> Download Answer Key
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            `;
+        }
+
+        html += `
+            <div class="mt-4">
+                <h5>Paper Details</h5>
+                <table class="table table-bordered">
+                    <tr><th>Year</th><td>${paper.year}</td></tr>
+                    <tr><th>Paper Number</th><td>${paper.paperNumber}</td></tr>
+                    <tr><th>Subject</th><td>${paper.subject}</td></tr>
+                    <tr><th>Medium</th><td>${paper.medium}</td></tr>
+                    <tr><th>Total Marks</th><td>${paper.totalMarks}</td></tr>
+                    <tr><th>Total Questions</th><td>${Object.keys(paper.questions).length}</td></tr>
+                </table>
+            </div>
+        `;
+
+        document.getElementById('paperDetails').innerHTML = html;
+        
+        // Store paperId for copy link function
+        document.getElementById('copyPaperLinkBtn').setAttribute('data-paper-id', paperId);
+        
+        // Update time remaining counter if paper is active
+        if (status === 'Active') {
+            updateTimeRemaining(closeTime);
+            const timer = setInterval(() => updateTimeRemaining(closeTime), 1000);
+            
+            // Clear interval when modal is closed
+            document.getElementById('paperModal').addEventListener('hidden.bs.modal', () => {
+                clearInterval(timer);
+            });
+        }
+
+        const modal = new bootstrap.Modal(document.getElementById('paperModal'));
+        modal.show();
+
+    } catch (error) {
+        console.error('Error viewing paper:', error);
+        alert(`Error: ${error.message}`);
+    }
+}
+
+function checkPaperAvailability(paperId) {
+    return database.ref(`papers/${paperId}`).once('value').then(snapshot => {
+        const paper = snapshot.val();
+        if (!paper) return false;
+        
+        const now = new Date().getTime();
+        const openTime = new Date(paper.openTime).getTime();
+        const closeTime = new Date(paper.closeTime).getTime();
+        
+        return now >= openTime && now <= closeTime;
+    });
+}
+
+function updateTimeRemaining(closeTime) {
+    const now = new Date();
+    const end = new Date(closeTime);
+    const diff = end - now;
+    
+    if (diff <= 0) {
+        document.getElementById('timeRemaining').innerHTML = 'Time expired';
+        return;
+    }
+    
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+    
+    document.getElementById('timeRemaining').innerHTML = `
+        ${hours}h ${minutes}m ${seconds}s remaining
+    `;
+}
+
+// Copy paper link
+document.getElementById('copyPaperLinkBtn').addEventListener('click', function() {
+    const paperId = this.getAttribute('data-paper-id');
+    if (!paperId) {
+        alert('Paper ID not found');
+        return;
+    }
+    
+    const paperLink = `${window.location.origin}/student-paper.html?paperId=${paperId}`;
+    
+    navigator.clipboard.writeText(paperLink).then(() => {
+        // Show feedback
+        const originalText = this.innerHTML;
+        this.innerHTML = '<i class="bi bi-check-circle"></i> Copied!';
+        
+        // Revert after 2 seconds
+        setTimeout(() => {
+            this.innerHTML = originalText;
+        }, 2000);
+    }).catch(err => {
+        console.error('Failed to copy link:', err);
+        
+        // Fallback for browsers that don't support clipboard API
+        const textArea = document.createElement('textarea');
+        textArea.value = paperLink;
+        document.body.appendChild(textArea);
+        textArea.select();
+        
+        try {
+            document.execCommand('copy');
+            const originalText = this.innerHTML;
+            this.innerHTML = '<i class="bi bi-check-circle"></i> Copied!';
+            
+            // Revert after 2 seconds
+            setTimeout(() => {
+                this.innerHTML = originalText;
+            }, 2000);
+        } catch (err) {
+            alert('Failed to copy link. Please try again or copy manually.');
+        }
+        
+        document.body.removeChild(textArea);
+    });
+});
+
+// Load papers for submissions view
+async function loadSubmissionPapers() {
+    const yearFilter = document.getElementById('submissionYearFilter').value;
+    const monthFilter = document.getElementById('submissionMonthFilter').value;
+    
+    try {
+        const snapshot = await database.ref('papers').once('value');
+        const papers = snapshot.val() || {};
+        const container = document.getElementById('submissionPaperCards');
+        
+        // Clear container properly
+        container.innerHTML = '';
+        
+        let papersArray = Object.entries(papers).map(([id, paper]) => ({ id, ...paper }));
+        
+        // Apply filters
+        if (yearFilter) {
+            papersArray = papersArray.filter(paper => paper.year === yearFilter);
+        }
+        
+        if (monthFilter) {
+            papersArray = papersArray.filter(paper => {
+                const paperDate = new Date(paper.createdAt || paper.openTime);
+                return (paperDate.getMonth() + 1) === parseInt(monthFilter);
+            });
+        }
+        
+        if (papersArray.length === 0) {
+            container.innerHTML = `
+                <div class="col-12 text-center py-5">
+                    <i class="bi bi-file-earmark-text display-5 text-muted mb-3"></i>
+                    <p class="text-muted">No papers found</p>
+                </div>
+            `;
+            return;
+        }
+        
+        // Sort by creation date (newest first)
+        papersArray.sort((a, b) => {
+            const dateA = new Date(a.createdAt || a.openTime).getTime();
+            const dateB = new Date(b.createdAt || b.openTime).getTime();
+            return dateB - dateA;
+        });
+        
+        // Create paper cards
+        for (const paper of papersArray) {
+            // Get submission count
+            const submissionsSnapshot = await database.ref(`submissions/${paper.id}`).once('value');
+            const submissionCount = submissionsSnapshot.exists() ? Object.keys(submissionsSnapshot.val()).length : 0;
+            
+            const card = createSubmissionPaperCard(paper.id, paper, submissionCount);
+            container.appendChild(card);
+        }
+        
+    } catch (error) {
+        console.error('Error loading submission papers:', error);
+        document.getElementById('submissionPaperCards').innerHTML = `
+            <div class="col-12 text-center py-5 text-danger">
+                Error loading papers
+            </div>
+        `;
+    }
+}
+
+// Create a card for submission papers (different from view papers cards)
+function createSubmissionPaperCard(id, paper, submissionCount) {
+    const card = document.createElement('div');
+    card.className = 'col-md-4 mb-4 submission-paper-card';
+    card.setAttribute('data-paper-id', id);
+    
+    card.innerHTML = `
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">${paper.title}</h5>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Year: ${paper.year}</span>
+                    <span class="text-muted">Paper: ${paper.paperNumber}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-3">
+                    <span class="badge bg-primary">
+                        ${submissionCount} submission${submissionCount !== 1 ? 's' : ''}
+                    </span>
+                    <small class="text-muted">
+                        ${new Date(paper.createdAt || paper.openTime).toLocaleDateString()}
+                    </small>
+                </div>
+            </div>
+            <div class="card-footer bg-transparent">
+                <button class="btn btn-sm btn-outline-primary view-submissions-btn">
+                    <i class="bi bi-list-check"></i> View Submissions
+                </button>
+            </div>
+        </div>
+    `;
+    
+    // Add event listener for view submissions
+    card.querySelector('.view-submissions-btn').addEventListener('click', () => {
+        loadPaperSubmissions(id, paper.title);
+    });
+    
+    return card;
+}
+
+// Load submissions for a specific paper
+async function loadPaperSubmissions(paperId, paperTitle) {
+    try {
+        // Show loading state
+        const tbody = document.getElementById('submissionsList');
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center"><div class="spinner-border"></div></td></tr>';
+        
+        // Set paper title
+        document.getElementById('selectedPaperTitle').textContent = `Submissions: ${paperTitle}`;
+        
+        // Show submissions list and hide paper cards
+        document.getElementById('submissionPaperCards').style.display = 'none';
+        document.getElementById('submissionsListCard').style.display = 'block';
+        
+        // Load submissions
+        const snapshot = await database.ref(`submissions/${paperId}`).once('value');
+        const submissions = snapshot.val() || {};
+        
+        tbody.innerHTML = '';
+        
+        if (Object.keys(submissions).length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" class="text-center">No submissions found</td></tr>';
+            return;
+        }
+        
+        // Convert to array and sort by timestamp (newest first)
+        const submissionsArray = Object.entries(submissions).map(([nic, submission]) => ({
+            nic, ...submission
+        })).sort((a, b) => b.timestamp - a.timestamp);
+        
+        // Display submissions
+        submissionsArray.forEach(sub => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${sub.name}</td>
+                <td>${sub.nic}</td>
+                <td>${sub.district}</td>
+                <td>${sub.class}</td>
+                <td>${sub.score}</td>
+                <td>${new Date(sub.timestamp).toLocaleString()}</td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary view-submission" 
+                            data-paper="${paperId}" data-nic="${sub.nic}">
+                        <i class="bi bi-eye"></i> View
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(row);
+            
+            // Add click event to view submission details
+            row.querySelector('.view-submission').addEventListener('click', () => {
+                viewSubmissionDetails(paperId, sub.nic);
+            });
+        });
+        
+    } catch (error) {
+        console.error('Error loading paper submissions:', error);
+        document.getElementById('submissionsList').innerHTML = `
+            <tr><td colspan="7" class="text-center text-danger">Error loading submissions</td></tr>
+        `;
+        
+        // Make sure back button is still visible
+        document.getElementById('submissionsListCard').style.display = 'block';
+    }
+}
+
+// Back to papers button
+document.getElementById('backToPapersBtn').addEventListener('click', function() {
+    // Show the paper cards container
+    document.getElementById('submissionPaperCards').style.display = 'flex';
+    
+    // Hide the submissions table
+    document.getElementById('submissionsListCard').style.display = 'none';
+    
+    // Reset any scroll positions
+    window.scrollTo(0, 0);
+});
+
+// Filter submissions button
+document.getElementById('submissionFilterBtn').addEventListener('click', loadSubmissionPapers);
+
+// View submission details
+async function viewSubmissionDetails(paperId, nic) {
+    try {
+        const [paperSnapshot, submissionSnapshot] = await Promise.all([
+            database.ref(`papers/${paperId}`).once('value'),
+            database.ref(`submissions/${paperId}/${nic}`).once('value')
+        ]);
+        
+        const paper = paperSnapshot.val();
+        const submission = submissionSnapshot.val();
+        
+        if (!paper || !submission) throw new Error('Submission details not found');
+        
+        let html = `
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h6>Paper: ${paper.title}</h6>
+                    <h6>Student: ${submission.name} (${nic})</h6>
+                </div>
+                <div class="col-md-6 text-end">
+                    <h5>Score: ${submission.score} / ${paper.totalMarks}</h5>
+                    <h6>Submitted: ${new Date(submission.timestamp).toLocaleString()}</h6>
+                </div>
+            </div>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Question</th>
+                        <th>Options</th>
+                        <th>Correct Answer</th>
+                        <th>Student's Answer</th>
+                        <th>Marks</th>
+                        <th>Result</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+        
+        for (const [qNum, question] of Object.entries(paper.questions)) {
+            const studentAnswer = submission.answers[qNum] || '-';
+            const isCorrect = studentAnswer === question.answer;
+            const marksEarned = isCorrect ? question.marks : 0;
+            
+            // Format options
+            let optionsHtml = '<ol>';
+            if (question.options) {
+                question.options.forEach((opt, idx) => {
+                    optionsHtml += `<li>${opt}</li>`;
+                });
+            } else {
+                optionsHtml += '<li>Option data not available</li>';
+            }
+            optionsHtml += '</ol>';
+            
+            html += `
+                <tr>
+                    <td>${question.questionText}</td>
+                    <td>${optionsHtml}</td>
+                    <td>${question.answer}</td>
+                    <td>${studentAnswer}</td>
+                    <td>${question.marks}</td>
+                    <td class="${isCorrect ? 'text-success' : 'text-danger'}">
+                        ${isCorrect ? 'Correct' : 'Incorrect'} (${marksEarned}/${question.marks})
+                    </td>
+                </tr>
+            `;
+        }
+        
+        html += `</tbody></table>`;
+        document.getElementById('submissionDetails').innerHTML = html;
+        new bootstrap.Modal(document.getElementById('submissionModal')).show();
+
+    } catch (error) {
+        console.error('Error viewing submission:', error);
+        alert(`Error: ${error.message}`);
+    }
+}
+
+
+// User Management Tab
+document.getElementById('userManagementTab').addEventListener('click', () => {
+    showSection('userManagement');
+    showUserManagementTab('addUsers');
+});
+
+// User Management Tabs
+document.getElementById('addUsersTab').addEventListener('click', () => showUserManagementTab('addUsers'));
+document.getElementById('accountActivationTab').addEventListener('click', () => {
+    showUserManagementTab('accountActivation');
+    loadPendingAccounts();
+});
+document.getElementById('manageUsersTab').addEventListener('click', () => {
+    showUserManagementTab('manageUsers');
+    loadAllUsers();
+});
+
+function showUserManagementTab(tab) {
+    document.getElementById('addUsersContent').style.display = 'none';
+    document.getElementById('accountActivationContent').style.display = 'none';
+    document.getElementById('manageUsersContent').style.display = 'none';
+    
+    document.getElementById(tab + 'Content').style.display = 'block';
+    
+    // Update active tab styling
+    document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+    document.getElementById(tab + 'Tab').classList.add('active');
+}
+
+// Show/hide student ID field based on class type selection
+document.getElementById('addUserPaperClass').addEventListener('change', toggleStudentIdField);
+document.getElementById('addUserRevision').addEventListener('change', toggleStudentIdField);
+document.getElementById('bulkAddClassType').addEventListener('change', function() {
+    const showStudentId = this.value === 'Paper Class' || this.value === 'Revision';
+    document.getElementById('bulkAddStudentIdRequired').style.display = showStudentId ? 'block' : 'none';
+});
+
+function toggleStudentIdField() {
+    const paperClassChecked = document.getElementById('addUserPaperClass').checked;
+    const revisionChecked = document.getElementById('addUserRevision').checked;
+    document.getElementById('addUserStudentIdContainer').style.display = 
+        (paperClassChecked || revisionChecked) ? 'block' : 'none';
+}
+
+// Add Single User Form
+document.getElementById('addSingleUserForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const form = this;
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const originalBtnText = submitBtn.innerHTML;
+    
+    // Disable form during submission
+    form.querySelectorAll('input, select, button').forEach(el => el.disabled = true);
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Adding User...';
+    
+    try {
+        const name = document.getElementById('addUserName').value.trim();
+        const nic = document.getElementById('addUserNIC').value.trim();
+        const email = document.getElementById('addUserEmail').value.trim();
+        const district = document.getElementById('addUserDistrict').value;
+        const studentClass = document.getElementById('addUserClass').value;
+        const school = document.getElementById('addUserSchool').value.trim();
+        const phone = document.getElementById('addUserPhone').value.trim();
+        const year = document.getElementById('addUserYear').value;
+        
+        // Get class types
+        const classTypes = [];
+        if (document.getElementById('addUserTheory').checked) classTypes.push('Theory');
+        if (document.getElementById('addUserPaperClass').checked) classTypes.push('Paper Class');
+        if (document.getElementById('addUserRevision').checked) classTypes.push('Revision');
+        
+        let studentId = '';
+        if (document.getElementById('addUserStudentIdContainer').style.display === 'block') {
+            studentId = document.getElementById('addUserStudentId').value.trim();
+            if (!studentId) {
+                throw new Error('Please enter Student ID for Paper Class/Revision');
+            }
+        }
+        
+        if (!name || !nic || !email || !district || !studentClass || !phone || !year || classTypes.length === 0) {
+            throw new Error('Please fill all required fields');
+        }
+        
+        // Check if NIC or email already exists
+        const [nicExists, emailExists] = await Promise.all([
+            checkNICExists(nic),
+            checkEmailExists(email)
+        ]);
+        
+        if (nicExists) throw new Error('This NIC is already registered');
+        if (emailExists) throw new Error('This email is already registered');
+        
+        // Create user with email and password (password = NIC by default)
+        const userCredential = await auth.createUserWithEmailAndPassword(email, nic);
+        const user = userCredential.user;
+        
+        // Prepare user data
+        const userData = {
+            name,
+            email,
+            nic,
+            class: studentClass,
+            registeredYear: year,
+            verified: true,
+            district,
+            school: school || '',
+            phone,
+            classTypes,
+            studentId,
+            isActive: true,
+            addedByAdmin: true,
+            createdAt: firebase.database.ServerValue.TIMESTAMP
+        };
+        
+        // Save user data to Realtime Database
+        await database.ref('users/' + user.uid).set(userData);
+        
+        // Create NIC to UID mapping
+        await database.ref('userAuthMap/' + nic).set(user.uid);
+        
+        alert('User added successfully!');
+        form.reset();
+        
+    } catch (error) {
+        console.error('Error adding user:', error);
+        alert(`Error: ${error.message}`);
+    } finally {
+        // Re-enable form
+        form.querySelectorAll('input, select, button').forEach(el => el.disabled = false);
+        submitBtn.innerHTML = originalBtnText;
+    }
+});
+
+//User bulk
+document.getElementById('bulkAddUsersForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const year = document.getElementById('bulkAddYear').value;
+    const studentClass = document.getElementById('bulkAddClass').value;
+    const classType = document.getElementById('bulkAddClassType').value;
+    const excelFile = document.getElementById('bulkAddExcelFile').files[0];
+    
+    if (!year || !studentClass || !classType || !excelFile) {
+        alert('Please fill all required fields');
+        return;
+    }
+
+    try {
+        // Read and parse the Excel file
+        const data = await readExcelFile(excelFile);
+        console.log("Raw parsed data:", data);
+
+        if (data.length === 0) {
+            alert('Excel file is empty or not formatted correctly');
+            return;
+        }
+
+        // Process all rows sequentially to avoid Firebase rate limits
+        let successCount = 0;
+        let errorCount = 0;
+        const errors = [];
+        
+        // Create a progress indicator
+        const progress = document.createElement('div');
+        progress.style.position = 'fixed';
+        progress.style.top = '20px';
+        progress.style.right = '20px';
+        progress.style.padding = '10px';
+        progress.style.background = 'white';
+        progress.style.border = '1px solid #ccc';
+        progress.style.borderRadius = '5px';
+        progress.style.zIndex = '1000';
+        document.body.appendChild(progress);
+
+        for (let i = 0; i < data.length; i++) {
+            const row = data[i];
+            progress.textContent = `Processing ${i+1} of ${data.length}...`;
+            
+            try {
+                // Skip empty rows
+                if (!row.name && !row.email && !row.nic) continue;
+
+                // Validate required fields
+                if (!row.name) throw new Error('Missing Name');
+                if (!row.email) throw new Error('Missing Email');
+                if (!row.nic) throw new Error('Missing NIC');
+                if (!row.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) throw new Error('Invalid email format');
+                if ((classType === 'Paper Class' || classType === 'Revision') && !row.studentId) {
+                    throw new Error('Student ID required for selected class type');
+                }
+
+                // Check for existing users
+                const [nicExists, emailExists] = await Promise.all([
+                    checkNICExists(row.nic),
+                    checkEmailExists(row.email)
+                ]);
+
+                if (nicExists) throw new Error('NIC already registered');
+                if (emailExists) throw new Error('Email already registered');
+
+                // Create user account with a small delay between creations
+                await new Promise(resolve => setTimeout(resolve, 300)); // 300ms delay
+                const userCredential = await auth.createUserWithEmailAndPassword(row.email, row.nic);
+                const user = userCredential.user;
+
+                // Prepare user data
+                const userData = {
+                    name: row.name,
+                    email: row.email,
+                    nic: row.nic,
+                    class: studentClass,
+                    registeredYear: year,
+                    verified: true,
+                    classTypes: [classType],
+                    studentId: row.studentId || '',
+                    isActive: true,
+                    addedByAdmin: true,
+                    createdAt: firebase.database.ServerValue.TIMESTAMP
+                };
+
+                // Save to database
+                await database.ref('users/' + user.uid).set(userData);
+                await database.ref('userAuthMap/' + row.nic).set(user.uid);
+
+                successCount++;
+            } catch (error) {
+                errorCount++;
+                errors.push(`Row ${i+1}: ${error.message}`);
+                console.error(`Error in row ${i+1}:`, error);
+            }
+        }
+
+        // Remove progress indicator
+        document.body.removeChild(progress);
+
+        // Show results
+        let message = `Bulk import completed.\nSuccess: ${successCount}\nErrors: ${errorCount}`;
+        if (errors.length > 0) {
+            message += '\n\nFirst 5 errors:\n' + errors.slice(0, 5).join('\n');
+            if (errors.length > 5) {
+                message += `\n...and ${errors.length - 5} more errors`;
+            }
+        }
+
+        alert(message);
+        
+        // Reset form if successful
+        if (successCount > 0) {
+            document.getElementById('bulkAddUsersForm').reset();
+            loadAllUsers(); // Refresh the user list
+        }
+
+    } catch (error) {
+        console.error('Bulk import error:', error);
+        alert('Error processing file: ' + error.message);
+    }
+});
+
+// Load pending accounts (with student IDs)
+async function loadPendingAccounts() {
+    const tbody = document.getElementById('pendingAccountsList');
+    tbody.innerHTML = '<tr><td colspan="7" class="text-center"><div class="spinner-border"></div></td></tr>';
+    
+    try {
+        // Verify admin status first
+        await verifyAdmin();
+        
+        // Get ALL users first (since we can't do complex queries with Firebase rules)
+        const snapshot = await database.ref('users').once('value');
+        const users = snapshot.val() || {};
+        
+        tbody.innerHTML = '';
+        
+        // Filter for pending accounts
+        const pendingUsers = Object.entries(users)
+            .filter(([uid, user]) => {
+                // Check if account is pending (using whatever field indicates pending status)
+                // This could be: verified === false, isApproved === false, status === 'pending', etc.
+                // Adjust based on your actual database structure
+                return (
+                    (user.verified === false || !user.verified) && // Either false or undefined
+                    (user.studentId || user.nic) // Has some identifier
+                );
+            })
+            .map(([uid, user]) => ({ uid, ...user }));
+        
+        if (pendingUsers.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" class="text-center">No pending accounts found</td></tr>';
+            return;
+        }
+        
+        // Display pending users
+        pendingUsers.forEach(user => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${user.name || 'N/A'}</td>
+                <td>${user.studentId || user.nic || '-'}</td>
+                <td>${user.class || '-'}</td>
+                <td>${user.classTypes ? user.classTypes.join(', ') : '-'}</td>
+                <td>${user.email || 'N/A'}</td>
+                <td>${user.nic || 'N/A'}</td>
+                <td>
+                    <button class="btn btn-sm btn-success approve-account" data-uid="${user.uid}">
+                        <i class="bi bi-check-circle"></i> Approve
+                    </button>
+                    <button class="btn btn-sm btn-danger reject-account" data-uid="${user.uid}">
+                        <i class="bi bi-x-circle"></i> Reject
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(row);
+            
+            // Add event listeners
+            row.querySelector('.approve-account').addEventListener('click', () => approveAccount(user.uid));
+            row.querySelector('.reject-account').addEventListener('click', () => rejectAccount(user.uid));
+        });
+        
+    } catch (error) {
+        console.error('Error loading pending accounts:', error);
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" class="text-center text-danger">
+                    Error: ${error.message || 'Failed to load pending accounts'}
+                </td>
+            </tr>
+        `;
+    }
+}
+
+// Approve account
+async function approveAccount(uid) {
+    if (!confirm('Are you sure you want to approve this account?')) return;
+    
+    try {
+        await database.ref(`users/${uid}`).update({
+            verified: true,
+            isActive: true
+        });
+        
+        alert('Account approved successfully');
+        loadPendingAccounts();
+    } catch (error) {
+        console.error('Error approving account:', error);
+        alert('Error approving account: ' + error.message);
+    }
+}
+
+// Reject account
+async function rejectAccount(uid) {
+    if (!confirm('Are you sure you want to reject this account? This cannot be undone.')) return;
+    
+    try {
+        // First get the user's auth data
+        const userSnapshot = await database.ref(`users/${uid}`).once('value');
+        const user = userSnapshot.val();
+        
+        if (!user) {
+            alert('User not found');
+            return;
+        }
+
+        // Delete from Realtime Database first
+        await database.ref(`users/${uid}`).remove();
+        await database.ref(`userAuthMap/${user.nic}`).remove();
+        
+        // Then delete the auth account (using client SDK method)
+        const currentUser = auth.currentUser;
+        
+        if (currentUser && currentUser.uid === uid) {
+            // If admin is trying to delete themselves
+            await auth.signOut();
+            await currentUser.delete();
+        } else {
+            // For other users, you'll need to implement Option 2 (Cloud Function)
+            alert('User account deletion requires a server-side function. User data has been removed but auth account remains.');
+            // Alternatively, you could implement Option 2 below
+        }
+        
+        alert('Account rejected successfully');
+        loadPendingAccounts();
+    } catch (error) {
+        console.error('Error rejecting account:', error);
+        alert(`Error rejecting account: ${error.message}`);
+    }
+}
+
+// Load all users
+async function loadAllUsers(searchTerm = '') {
+    const tbody = document.getElementById('usersList');
+    tbody.innerHTML = '<tr><td colspan="7" class="text-center"><div class="spinner-border"></div></td></tr>';
+    
+    try {
+        const snapshot = await database.ref('users').once('value');
+        const users = snapshot.val() || {};
+        
+        tbody.innerHTML = '';
+        
+        const usersArray = Object.entries(users).map(([uid, user]) => ({ 
+            uid, 
+            ...user,
+            // Ensure default values
+            isActive: user.hasOwnProperty('isActive') ? user.isActive : true,
+            verified: user.hasOwnProperty('verified') ? user.verified : false
+        }));
+        
+        // Filter if search term provided
+        const filteredUsers = searchTerm 
+            ? usersArray.filter(user => 
+                (user.studentId && user.studentId.toLowerCase().includes(searchTerm.toLowerCase())) || 
+                (user.email && user.email.toLowerCase().includes(searchTerm.toLowerCase())))
+            : usersArray;
+        
+        if (filteredUsers.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" class="text-center">No users found</td></tr>';
+            return;
+        }
+        
+        filteredUsers.forEach(user => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${user.name || 'N/A'}</td>
+                <td>${user.studentId || '-'}</td>
+                <td>${user.class || '-'}</td>
+                <td>${user.classTypes ? user.classTypes.join(', ') : '-'}</td>
+                <td>${user.email || 'N/A'}</td>
+                <td>
+                    <span class="badge ${user.isActive ? 'bg-success' : 'bg-secondary'}">
+                        ${user.isActive ? 'Active' : 'Inactive'}
+                    </span>
+                    ${user.verified ? '' : '<span class="badge bg-warning ms-1">Pending</span>'}
+                </td>
+                <td>
+                    <button class="btn btn-sm btn-primary edit-user" data-uid="${user.uid}">
+                        <i class="bi bi-pencil"></i> Edit
+                    </button>
+                    <button class="btn btn-sm btn-danger delete-user" data-uid="${user.uid}">
+                        <i class="bi bi-trash"></i> Delete
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(row);
+            
+            // Add event listeners
+            row.querySelector('.edit-user').addEventListener('click', () => showEditUserModal(user));
+            row.querySelector('.delete-user').addEventListener('click', () => deleteUser(user.uid));
+        });
+        
+    } catch (error) {
+        console.error('Error loading users:', error);
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center text-danger">Error loading users</td></tr>';
+    }
+}
+
+// Search users
+document.getElementById('searchUserBtn').addEventListener('click', () => {
+    const searchTerm = document.getElementById('userSearch').value.trim();
+    loadAllUsers(searchTerm);
+});
+
+// Show edit modal with user data
+async function showEditUserModal(user) {
+    try {
+        // Load user data
+        const userSnapshot = await database.ref(`users/${user.uid}`).once('value');
+        const userData = userSnapshot.val();
+        
+        if (!userData) {
+            throw new Error('User data not found');
+        }
+        
+        // Populate form
+        document.getElementById('editUserId').value = user.uid;
+        document.getElementById('editUserName').value = userData.name || '';
+        document.getElementById('editUserEmail').value = userData.email || '';
+        document.getElementById('editUserNIC').value = userData.nic || '';
+        document.getElementById('editUserStudentId').value = userData.studentId || '';
+        document.getElementById('editUserClass').value = userData.class || '';
+        document.getElementById('editUserDistrict').value = userData.district || '';
+        document.getElementById('editUserYear').value = userData.registeredYear || '';
+        document.getElementById('editUserSchool').value = userData.school || '';
+        document.getElementById('editUserPhone').value = userData.phone || '';
+        
+        // Set class types
+        if (userData.classTypes) {
+            document.getElementById('editUserTheory').checked = userData.classTypes.includes('Theory');
+            document.getElementById('editUserPaperClass').checked = userData.classTypes.includes('Paper Class');
+            document.getElementById('editUserRevision').checked = userData.classTypes.includes('Revision');
+        }
+        
+        // Set status toggles
+        document.getElementById('editUserActive').checked = userData.isActive !== false;
+        document.getElementById('editUserVerified').checked = userData.verified === true;
+        
+        // Show modal
+        const modal = new bootstrap.Modal(document.getElementById('editUserModal'));
+        modal.show();
+        
+    } catch (error) {
+        console.error('Error loading user for editing:', error);
+        alert(`Error: ${error.message}`);
+    }
+}
+
+// Save user changes
+document.getElementById('saveUserChanges').addEventListener('click', async function() {
+    const form = document.getElementById('editUserForm');
+    const saveBtn = this;
+    const originalBtnText = saveBtn.innerHTML;
+    
+    // Disable button during save
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Saving...';
+    
+    try {
+        const uid = document.getElementById('editUserId').value;
+        const updates = {
+            name: document.getElementById('editUserName').value.trim(),
+            email: document.getElementById('editUserEmail').value.trim(),
+            nic: document.getElementById('editUserNIC').value.trim(),
+            studentId: document.getElementById('editUserStudentId').value.trim(),
+            class: document.getElementById('editUserClass').value,
+            district: document.getElementById('editUserDistrict').value,
+            registeredYear: document.getElementById('editUserYear').value,
+            school: document.getElementById('editUserSchool').value.trim(),
+            phone: document.getElementById('editUserPhone').value.trim(),
+            isActive: document.getElementById('editUserActive').checked,
+            verified: document.getElementById('editUserVerified').checked,
+            classTypes: []
+        };
+        
+        // Get selected class types
+        if (document.getElementById('editUserTheory').checked) {
+            updates.classTypes.push('Theory');
+        }
+        if (document.getElementById('editUserPaperClass').checked) {
+            updates.classTypes.push('Paper Class');
+        }
+        if (document.getElementById('editUserRevision').checked) {
+            updates.classTypes.push('Revision');
+        }
+        
+        // Validate required fields
+        if (!updates.name || !updates.email || !updates.nic || !updates.class || !updates.district || !updates.registeredYear || !updates.phone) {
+            throw new Error('Please fill all required fields');
+        }
+        
+        // Save updates
+        await database.ref(`users/${uid}`).update(updates);
+        
+        // Close modal and refresh
+        bootstrap.Modal.getInstance(document.getElementById('editUserModal')).hide();
+        loadAllUsers();
+        
+        alert('User updated successfully');
+        
+    } catch (error) {
+        console.error('Error saving user changes:', error);
+        alert(`Error: ${error.message}`);
+    } finally {
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = originalBtnText;
+    }
+});
+
+// Delete user
+async function deleteUser(uid) {
+    if (!confirm('Are you sure you want to delete this user? This cannot be undone.')) return;
+    
+    try {
+        // First get user data
+        const userSnapshot = await database.ref(`users/${uid}`).once('value');
+        const user = userSnapshot.val();
+        
+        if (!user) {
+            alert('User not found');
+            return;
+        }
+        
+        // Delete from Realtime Database
+        await database.ref(`users/${uid}`).remove();
+        
+        // If userAuthMap exists, delete that too
+        if (user.nic) {
+            await database.ref(`userAuthMap/${user.nic}`).remove();
+        }
+        
+        // Note: Can't delete auth user from client-side - need a Cloud Function
+        alert('User data deleted. Note: Auth account remains (requires server-side deletion).');
+        loadAllUsers();
+        
+    } catch (error) {
+        console.error('Error deleting user:', error);
+        alert(`Error deleting user: ${error.message}`);
+    }
+}
+
+// Helper function to check if NIC exists
+async function checkNICExists(nic) {
+    const snapshot = await database.ref('userAuthMap/' + nic).once('value');
+    return snapshot.exists();
+}
+
+// Helper function to check if email exists
+async function checkEmailExists(email) {
+    try {
+        const methods = await auth.fetchSignInMethodsForEmail(email);
+        return methods && methods.length > 0;
+    } catch (error) {
+        if (error.code === 'auth/invalid-email') return false;
+        throw error;
+    }
+}
+
+// Helper function to verify admin status
+async function verifyAdmin() {
+    const user = auth.currentUser;
+    if (!user) {
+        throw new Error('User not authenticated');
+    }
+    
+    const adminSnapshot = await database.ref(`admins/${user.uid}`).once('value');
+    if (!adminSnapshot.exists()) {
+        throw new Error('Unauthorized: User is not an admin');
+    }
+    return true;
+}
+
+// Improved Excel file reader function
+async function readExcelFile(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            try {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                
+                // Get the first worksheet
+                const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                
+                // Convert to JSON using the first row as headers
+                const jsonData = XLSX.utils.sheet_to_json(worksheet, {
+                    header: 1, // Use first row as headers
+                    defval: '', // Default empty string for empty cells
+                    raw: false // Get formatted strings
+                });
+
+                // Convert array of arrays to array of objects
+                if (jsonData.length < 2) {
+                    resolve([]);
+                    return;
+                }
+
+                const headers = jsonData[0].map(h => h.toString().toLowerCase().trim());
+                const result = [];
+
+                for (let i = 1; i < jsonData.length; i++) {
+                    const row = {};
+                    for (let j = 0; j < headers.length; j++) {
+                        if (headers[j]) { // Skip empty headers
+                            row[headers[j]] = jsonData[i][j] ? jsonData[i][j].toString().trim() : '';
+                        }
+                    }
+                    if (Object.values(row).some(val => val)) { // Skip empty rows
+                        result.push(row);
+                    }
+                }
+
+                resolve(result);
+            } catch (error) {
+                reject(error);
+            }
+        };
+
+        reader.onerror = reject;
+        reader.readAsArrayBuffer(file);
+    });
+}
+
+// Check authentication on load
+auth.onAuthStateChanged((user) => {
+    if (user) {
+        database.ref('admins/' + user.uid).once('value').then((snapshot) => {
+            if (snapshot.exists()) {
+                // User is admin, initialize dashboard
+                initDashboard();
+            } else {
+                // User is not admin, sign out
+                auth.signOut().then(() => {
+                    window.location.href = 'admin-login.html';
+                });
+            }
+        }).catch(error => {
+            console.error("Error checking admin status:", error);
+            // Don't redirect on error - just log it
+        });
+    } else {
+        // No user is signed in, redirect to login
+        window.location.href = 'admin-login.html';
+    }
+});
+
+// Load ranking papers with filters
+async function loadRankingPapers() {
+    const yearFilter = document.getElementById('rankingYearFilter').value;
+    const monthFilter = document.getElementById('rankingMonthFilter').value;
+    const container = document.getElementById('rankingPaperCards');
+    
+    try {
+        // Show loading state
+        container.innerHTML = '<div class="col-12 text-center py-5"><div class="spinner-border text-primary"></div></div>';
+        
+        const snapshot = await database.ref('papers').once('value');
+        const papers = snapshot.val() || {};
+        
+        console.log('Papers data:', papers); // Debug log
+        
+        // Clear container
+        container.innerHTML = '';
+        
+        let papersArray = Object.entries(papers).map(([id, paper]) => ({ 
+            id, 
+            ...paper,
+            createdAt: paper.createdAt || paper.openTime // Ensure we have a date
+        }));
+        
+        // Apply filters
+        if (yearFilter) {
+            papersArray = papersArray.filter(paper => paper.year === yearFilter);
+        }
+        
+        if (monthFilter) {
+            papersArray = papersArray.filter(paper => {
+                const paperDate = new Date(paper.createdAt);
+                return (paperDate.getMonth() + 1) === parseInt(monthFilter);
+            });
+        }
+        
+        console.log('Filtered papers:', papersArray); // Debug log
+        
+        if (papersArray.length === 0) {
+            container.innerHTML = `
+                <div class="col-12 text-center py-5">
+                    <i class="bi bi-file-earmark-text display-5 text-muted mb-3"></i>
+                    <p class="text-muted">No papers found matching your criteria</p>
+                </div>
+            `;
+            return;
+        }
+        
+        // Sort by date (newest first)
+        papersArray.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        
+        // Create cards
+        for (const paper of papersArray) {
+            try {
+                // Get submission count
+                const submissionsSnapshot = await database.ref(`submissions/${paper.id}`).once('value');
+                const submissionCount = submissionsSnapshot.exists() ? Object.keys(submissionsSnapshot.val()).length : 0;
+                
+                const card = createRankingPaperCard(paper.id, paper, submissionCount);
+                container.appendChild(card);
+            } catch (error) {
+                console.error(`Error processing paper ${paper.id}:`, error);
+                // Continue with next paper even if one fails
+            }
+        }
+        
+    } catch (error) {
+        console.error('Error loading ranking papers:', error);
+        container.innerHTML = `
+            <div class="col-12 text-center py-5 text-danger">
+                <i class="bi bi-exclamation-triangle display-5 mb-3"></i>
+                <p>Error loading papers. Please try again.</p>
+                ${error.message ? `<small>${error.message}</small>` : ''}
+            </div>
+        `;
+    }
+}
+
+// Create a card for ranking papers
+function createRankingPaperCard(id, paper, submissionCount) {
+    const card = document.createElement('div');
+    card.className = 'col-md-4 mb-4 ranking-paper-card';
+    card.setAttribute('data-paper-id', id);
+    
+    // Format date
+    const paperDate = new Date(paper.createdAt || paper.openTime);
+    const formattedDate = paperDate.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+    });
+    
+    card.innerHTML = `
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">${paper.title || 'Untitled Paper'}</h5>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Year: ${paper.year || 'N/A'}</span>
+                    <span class="text-muted">Paper: ${paper.paperNumber || 'N/A'}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-3">
+                    <span class="badge bg-primary">
+                        ${submissionCount} submission${submissionCount !== 1 ? 's' : ''}
+                    </span>
+                    <small class="text-muted">${formattedDate}</small>
+                </div>
+            </div>
+            <div class="card-footer bg-transparent">
+                <button class="btn btn-sm btn-outline-primary view-rankings-btn">
+                    <i class="bi bi-trophy"></i> View Rankings
+                </button>
+                <button class="btn btn-sm btn-outline-secondary ms-2 download-rankings-btn">
+                    <i class="bi bi-download"></i> PDF
+                </button>
+            </div>
+        </div>
+    `;
+    
+    // Add event listeners
+    card.querySelector('.view-rankings-btn').addEventListener('click', () => {
+        viewPaperRankings(id, paper.title);
+    });
+    
+    card.querySelector('.download-rankings-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        generateRankingPdf(id, paper);
+    });
+    
+    return card;
+}
+
+// View paper rankings
+function viewPaperRankings(paperId, paperTitle) {
+    document.getElementById('selectedRankingPaperTitle').textContent = `Rankings: ${paperTitle}`;
+    document.getElementById('rankingPaperCards').style.display = 'none';
+    document.getElementById('rankingsListCard').style.display = 'block';
+    document.getElementById('downloadRankingPdfBtn').setAttribute('data-paper-id', paperId);
+    loadRankings(paperId);
+}
+
+// Back to papers button - Fixed implementation
+document.getElementById('backToRankingPapersBtn').addEventListener('click', function() {
+    document.getElementById('rankingPaperCards').style.display = 'flex';
+    document.getElementById('rankingsListCard').style.display = 'none';
+    window.scrollTo(0, 0);
+});
+
+// Filter rankings button
+document.getElementById('rankingFilterBtn').addEventListener('click', loadRankingPapers);
+
+// Load rankings for a paper
+async function loadRankings(paperId) {
+    const tbody = document.getElementById('rankingsList');
+    tbody.innerHTML = '<tr><td colspan="8" class="text-center"><div class="spinner-border text-primary"></div></td></tr>';
+    
+    try {
+        const [paperSnapshot, submissionsSnapshot] = await Promise.all([
+            database.ref(`papers/${paperId}`).once('value'),
+            database.ref(`submissions/${paperId}`).once('value')
+        ]);
+        
+        const paper = paperSnapshot.val();
+        const submissions = submissionsSnapshot.val() || {};
+        
+        if (!paper) throw new Error('Paper not found');
+        
+        const submissionsArray = Object.entries(submissions).map(([nic, submission]) => ({
+            nic, ...submission
+        }));
+        
+        submissionsArray.sort((a, b) => b.score - a.score);
+        
+        let currentRank = 1;
+        submissionsArray.forEach((sub, index) => {
+            if (index > 0 && sub.score < submissionsArray[index - 1].score) {
+                currentRank = index + 1;
+            }
+            sub.rank = currentRank;
+        });
+        
+        tbody.innerHTML = '';
+        if (submissionsArray.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="8" class="text-center">No submissions found</td></tr>';
+            return;
+        }
+        
+        submissionsArray.forEach(sub => {
+            const percentage = ((sub.score / paper.totalMarks) * 100).toFixed(1);
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${sub.rank}</td>
+                <td>${sub.name}</td>
+                <td>${sub.nic}</td>
+                <td>${sub.district}</td>
+                <td>${sub.class}</td>
+                <td>${sub.school || '-'}</td>
+                <td>${sub.score}</td>
+                <td>${percentage}%</td>
+            `;
+            tbody.appendChild(row);
+        });
+        
+        const updates = {};
+        submissionsArray.forEach(sub => {
+            updates[`submissions/${paperId}/${sub.nic}/rank`] = sub.rank;
+        });
+        await database.ref().update(updates);
+
+    } catch (error) {
+        console.error('Error loading rankings:', error);
+        tbody.innerHTML = '<tr><td colspan="8" class="text-center text-danger">Error loading rankings</td></tr>';
+    }
+}
+
+// Enhanced PDF generation function
+async function generateRankingPdf(paperId, paperData) {
+    try {
+        
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        
+        // Add banner (make sure Ukuwela-sir-banner.png is in the correct path)
+        try {
+            const bannerImg = await loadImage('Ukuwela-sir-banner.png');
+            doc.addImage(bannerImg, 'PNG', 15, 10, 180, 30);
+        } catch (e) {
+            console.warn('Could not load banner image:', e);
+            doc.setFontSize(20);
+            doc.setTextColor(40, 80, 150);
+            doc.text('eWings Papers', 105, 25, { align: 'center' });
+        }
+        
+        // Add paper title and info
+        doc.setFontSize(16);
+        doc.setTextColor(0, 0, 0);
+        doc.text(`${paperData.title} - Top Rankings`, 105, 50, { align: 'center' });
+        
+        doc.setFontSize(12);
+        doc.text(`Year: ${paperData.year} | Paper: ${paperData.paperNumber}`, 105, 60, { align: 'center' });
+        
+        // Get submissions data
+        const submissionsSnapshot = await database.ref(`submissions/${paperId}`).once('value');
+        const submissions = submissionsSnapshot.val() || {};
+        const submissionsArray = Object.entries(submissions).map(([nic, sub]) => ({ nic, ...sub }));
+        
+        // Sort by score
+        submissionsArray.sort((a, b) => b.score - a.score);
+        
+        // Calculate ranks
+        let currentRank = 1;
+        submissionsArray.forEach((sub, index) => {
+            if (index > 0 && sub.score < submissionsArray[index - 1].score) {
+                currentRank = index + 1;
+            }
+            sub.rank = currentRank;
+        });
+        
+        // Top schools analysis
+        const schoolCounts = {};
+        submissionsArray.slice(0, 100).forEach(sub => {
+            if (sub.school) {
+                schoolCounts[sub.school] = (schoolCounts[sub.school] || 0) + 1;
+            }
+        });
+        
+        const topSchools = Object.entries(schoolCounts)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 5);
+        
+        // Add top schools section
+        doc.setFontSize(14);
+        doc.setTextColor(0, 100, 0);
+        doc.text('Top Performing Schools:', 20, 80);
+        
+        doc.setFontSize(12);
+        doc.setTextColor(0, 0, 0);
+        if (topSchools.length > 0) {
+            topSchools.forEach(([school, count], index) => {
+                doc.text(`${index + 1}. ${school} (${count} top students)`, 25, 90 + (index * 7));
+            });
+        } else {
+            doc.text('No school data available', 25, 90);
+        }
+        
+        // Add overall rankings table
+        doc.setFontSize(14);
+        doc.setTextColor(40, 40, 40);
+        doc.text('Overall Rankings (Top 100)', 105, 130, { align: 'center' });
+        
+        doc.autoTable({
+            startY: 140,
+            head: [['Rank', 'Name', 'Class', 'Score', 'Percentage', 'School']],
+            body: submissionsArray.slice(0, 100).map(sub => [
+                sub.rank,
+                sub.name,
+                sub.class || '-',
+                `${sub.score}/${paperData.totalMarks}`,
+                `${((sub.score / paperData.totalMarks) * 100).toFixed(1)}%`,
+                sub.school || '-'
+            ]),
+            headStyles: {
+                fillColor: [41, 128, 185],
+                textColor: 255,
+                fontStyle: 'bold'
+            },
+            alternateRowStyles: {
+                fillColor: [245, 245, 245]
+            },
+            styles: {
+                fontSize: 8,
+                cellPadding: 3
+            },
+            columnStyles: {
+                0: { cellWidth: 15 },
+                1: { cellWidth: 40 },
+                2: { cellWidth: 25 },
+                3: { cellWidth: 20 },
+                4: { cellWidth: 25 },
+                5: { cellWidth: 40 }
+            }
+        });
+        
+        // Save the PDF
+        doc.save(`Rankings_${paperData.title.replace(/[^a-z0-9]/gi, '_')}_${paperData.year}_${paperData.paperNumber}.pdf`);
+        
+    } catch (error) {
+        console.error('Error in PDF generation:', error);
+        throw error;
+    }
+}
+
+// Helper function to load scripts dynamically
+function loadScript(src) {
+    return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = src;
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+    });
+}
+
+// Helper function to load images
+function loadImage(src) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = src;
+    });
+}
+
+// Helper function to add rankings table to PDF
+function addRankingsTable(doc, rankings, startY) {
+    doc.autoTable({
+        startY: startY,
+        head: [['Rank', 'Name', 'NIC', 'District', 'School', 'Score', 'Percentage']],
+        body: rankings.map(sub => [
+            sub.rank,
+            sub.name,
+            sub.nic,
+            sub.district,
+            sub.school || '-',
+            sub.score,
+            ((sub.score / paper.totalMarks) * 100).toFixed(1) + '%'
+        ]),
+        headStyles: {
+            fillColor: [41, 128, 185],
+            textColor: 255,
+            fontStyle: 'bold'
+        },
+        alternateRowStyles: {
+            fillColor: [245, 245, 245]
+        },
+        margin: { top: 10 },
+        styles: {
+            fontSize: 8,
+            cellPadding: 3,
+            overflow: 'linebreak'
+        },
+        columnStyles: {
+            0: { cellWidth: 15 }, // Rank
+            1: { cellWidth: 40 }, // Name
+            2: { cellWidth: 30 }, // NIC
+            3: { cellWidth: 30 }, // District
+            4: { cellWidth: 40 }, // School
+            5: { cellWidth: 20 }, // Score
+            6: { cellWidth: 25 }  // Percentage
+        }
+    });
+}
+
+// Download ranking PDF button - Fixed implementation
+document.getElementById('downloadRankingPdfBtn').addEventListener('click', async function() {
+    const paperId = this.getAttribute('data-paper-id');
+    if (!paperId) {
+        alert('No paper selected');
+        return;
+    }
+    
+    try {
+        // Show loading state
+        const originalText = this.innerHTML;
+        this.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Preparing PDF...';
+        this.disabled = true;
+        
+        // Check if jsPDF is available
+        if (typeof window.jspdf === 'undefined') {
+            await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+            await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js');
+        }
+        
+        // Get paper data
+        const paperSnapshot = await database.ref(`papers/${paperId}`).once('value');
+        const paperData = paperSnapshot.val();
+        
+        if (!paperData) {
+            throw new Error('Paper not found');
+        }
+        
+        // Generate PDF
+        await generateRankingPdf(paperId, paperData);
+        
+    } catch (error) {
+        console.error('PDF generation error:', error);
+        alert(`Error generating PDF: ${error.message}`);
+    } finally {
+        this.innerHTML = originalText;
+        this.disabled = false;
+    }
+});
+
+// Class rankings button - Fixed implementation
+document.getElementById('classRankingsBtn').addEventListener('click', async function() {
+    const paperId = document.getElementById('downloadRankingPdfBtn').getAttribute('data-paper-id');
+    if (!paperId) {
+        alert('Please view rankings for a paper first');
+        return;
+    }
+    
+    try {
+        // Show loading state
+        const originalText = this.innerHTML;
+        this.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Loading...';
+        this.disabled = true;
+        
+        const [paperSnapshot, submissionsSnapshot] = await Promise.all([
+            database.ref(`papers/${paperId}`).once('value'),
+            database.ref(`submissions/${paperId}`).once('value')
+        ]);
+        
+        const paper = paperSnapshot.val();
+        const submissions = submissionsSnapshot.val() || {};
+        
+        if (!paper) {
+            throw new Error('Paper not found');
+        }
+        
+        // Process submissions
+        const submissionsArray = Object.entries(submissions).map(([nic, submission]) => ({
+            nic, 
+            ...submission,
+            class: submission.class || 'Unknown' // Ensure class exists
+        }));
+        
+        // Group by class
+        const classGroups = {};
+        submissionsArray.forEach(sub => {
+            if (!classGroups[sub.class]) {
+                classGroups[sub.class] = [];
+            }
+            classGroups[sub.class].push(sub);
+        });
+        
+        // Sort each class group
+        Object.values(classGroups).forEach(group => {
+            group.sort((a, b) => b.score - a.score);
+            
+            // Calculate class ranks
+            let currentRank = 1;
+            group.forEach((student, index) => {
+                if (index > 0 && student.score < group[index - 1].score) {
+                    currentRank = index + 1;
+                }
+                student.classRank = currentRank;
+            });
+        });
+        
+        // Generate HTML for modal
+        let html = '';
+        for (const [className, students] of Object.entries(classGroups)) {
+            html += `
+                <div class="mb-5">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4>${className} Class</h4>
+                        <button class="btn btn-sm btn-primary download-class-pdf" 
+                                data-class="${className}">
+                            <i class="bi bi-file-earmark-pdf"></i> Download
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Name</th>
+                                    <th>Score</th>
+                                    <th>Percentage</th>
+                                    <th>School</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+            `;
+            
+            students.slice(0, 50).forEach(student => {
+                const percentage = ((student.score / paper.totalMarks) * 100).toFixed(1);
+                html += `
+                    <tr>
+                        <td>${student.classRank}</td>
+                        <td>${student.name}</td>
+                        <td>${student.score}/${paper.totalMarks}</td>
+                        <td>${percentage}%</td>
+                        <td>${student.school || '-'}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `</tbody></table></div></div>`;
+        }
+        
+        document.getElementById('classRankingsContent').innerHTML = html;
+        
+        // Add event listeners to class PDF buttons
+        document.querySelectorAll('.download-class-pdf').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const className = btn.getAttribute('data-class');
+                generateClassRankingPdf(paperId, paper, classGroups[className], className);
+            });
+        });
+        
+        // Show modal
+        const modal = new bootstrap.Modal(document.getElementById('classRankingsModal'));
+        modal.show();
+        
+    } catch (error) {
+        console.error('Error loading class rankings:', error);
+        alert(`Error: ${error.message}`);
+    } finally {
+        this.innerHTML = '<i class="bi bi-people"></i> Class Rankings';
+        this.disabled = false;
+    }
+});
+
+// Generate PDF for a single class ranking
+async function generateClassRankingPdf(paperId, paperData, students, className) {
+    try {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        
+        // Add banner image
+        doc.addImage('Ukuwela-sir-banner.png', 'PNG', 10, 10, 190, 30);
+        
+        // Add paper info
+        doc.setFontSize(16);
+        doc.setTextColor(40, 40, 40);
+        doc.text(`${paperData.title} - Class Rankings`, 105, 50, { align: 'center' });
+        doc.setFontSize(14);
+        doc.text(`Class: ${className}`, 105, 60, { align: 'center' });
+        doc.setFontSize(12);
+        doc.text(`Year: ${paperData.year} | Paper: ${paperData.number}`, 105, 70, { align: 'center' });
+        
+        // Find top schools for this class
+        const schoolCounts = {};
+        students.slice(0, 50).forEach(sub => {
+            if (sub.school) {
+                schoolCounts[sub.school] = (schoolCounts[sub.school] || 0) + 1;
+            }
+        });
+        
+        const topSchools = Object.entries(schoolCounts)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 3)
+            .map(([school]) => school);
+        
+        doc.setFontSize(14);
+        doc.setTextColor(0, 100, 0);
+        doc.text('Top Performing Schools:', 15, 80);
+        doc.setFontSize(12);
+        doc.setTextColor(0, 0, 0);
+        doc.text(topSchools.join(', ') || 'No school data available', 15, 90);
+        
+        // Add rankings table
+        doc.setFontSize(14);
+        doc.setTextColor(40, 40, 40);
+        doc.text(`${className} Class Rankings (Top 50)`, 105, 100, { align: 'center' });
+        addRankingsTable(doc, students.slice(0, 50), 105);
+        
+        // Save the PDF
+        doc.save(`rankings_${paperData.title.replace(/\s+/g, '_')}_${className}_${paperData.year}_${paperData.paperNumber}.pdf`);
+        
+    } catch (error) {
+        console.error('Error generating class PDF:', error);
+        alert(`Error generating PDF: ${error.message}`);
+    }
+}
+</script>
+<script src="main.js"></script>
+</body>
+</html>

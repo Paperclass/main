@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCQ Paper Submission</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="paper-styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Banner Section -->
+        <div class="banner mb-4">
+            <div class="banner-image">
+                <img src="Ukuwela-sir-banner.png" alt="Education Banner" class="img-fluid rounded">
+            </div>
+        </div>
+
+        <div class="header text-center mb-4">
+            <h1>MCQ Paper Submission</h1>
+            <p class="mb-0">Submit your answers before the time expires</p>
+            <button id="themeToggle" class="theme-toggle btn btn-sm btn-outline-secondary mt-2">
+                <i class="fas fa-moon"></i> Toggle Theme
+            </button>
+        </div>
+
+        <div id="timerSection" class="timer alert alert-warning">
+            <i class="fas fa-clock me-2"></i> Time remaining: <span id="timeRemaining">--:--:--</span>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="form-container shadow">
+                    <form id="answerForm">
+                        <input type="hidden" id="paperId" value="">
+                        <input type="hidden" id="selectedMedium" value="">
+                        
+                        <!-- Paper Information Header -->
+                        <div class="paper-header bg-light p-3 rounded mb-4">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h5 id="paperTitle" class="text-primary">Paper Title</h5>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <span class="text-muted">Year:</span>
+                                            <span id="paperYear" class="fw-bold">----</span>
+                                        </div>
+                                        <div class="col-6">
+                                            <span class="text-muted">Paper No:</span>
+                                            <span id="paperNumber" class="fw-bold">--</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 text-md-end">
+                                    <div>
+                                        <span class="text-muted">Subject:</span>
+                                        <span id="paperSubject" class="fw-bold">--------</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-muted">Available Mediums:</span>
+                                        <span id="paperMediums" class="fw-bold">-----</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Medium Selection -->
+                        <div id="mediumSelection" class="mb-4" style="display: none;">
+                            <h5 class="border-bottom pb-2 mb-3 text-primary">Select Medium</h5>
+                            <div class="medium-selector" id="mediumOptions">
+                                <!-- Medium options will be added dynamically -->
+                            </div>
+                        </div>
+                        
+                        <!-- Personal Information Section -->
+                        <div class="personal-info bg-light p-3 rounded mb-4">
+                            <h5 class="border-bottom pb-2 mb-3 text-primary">Personal Information</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="nic" class="form-label">NIC Number*</label>
+                                    <input type="text" class="form-control" id="nic" required>
+                                    <div class="form-text">Your National Identity Card Number</div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="name" class="form-label">Full Name*</label>
+                                    <input type="text" class="form-control" id="name" required>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="district" class="form-label">District*</label>
+                                    <select class="form-select" id="district" required>
+                                        <option value="">Select District</option>
+                                        <option value="Ampara">Ampara</option>
+                                        <option value="Anuradhapura">Anuradhapura</option>
+                                        <option value="Badulla">Badulla</option>
+                                        <option value="Batticaloa">Batticaloa</option>
+                                        <option value="Colombo">Colombo</option>
+                                        <option value="Galle">Galle</option>
+                                        <option value="Gampaha">Gampaha</option>
+                                        <option value="Hambantota">Hambantota</option>
+                                        <option value="Jaffna">Jaffna</option>
+                                        <option value="Kalutara">Kalutara</option>
+                                        <option value="Kandy">Kandy</option>
+                                        <option value="Kegalle">Kegalle</option>
+                                        <option value="Kilinochchi">Kilinochchi</option>
+                                        <option value="Kurunegala">Kurunegala</option>
+                                        <option value="Mannar">Mannar</option>
+                                        <option value="Matale">Matale</option>
+                                        <option value="Matara">Matara</option>
+                                        <option value="Monaragala">Monaragala</option>
+                                        <option value="Mullaitivu">Mullaitivu</option>
+                                        <option value="Nuwara Eliya">Nuwara Eliya</option>
+                                        <option value="Polonnaruwa">Polonnaruwa</option>
+                                        <option value="Puttalam">Puttalam</option>
+                                        <option value="Ratnapura">Ratnapura</option>
+                                        <option value="Trincomalee">Trincomalee</option>
+                                        <option value="Vavuniya">Vavuniya</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="class" class="form-label">Class*</label>
+                                    <select class="form-select" id="class" required>
+                                        <option value="">Select Class</option>
+                                        <option value="Nugegoda">Nugegoda</option>
+                                        <option value="Kandy">Kandy</option>
+                                        <option value="Kegalle">Kegalle</option>
+                                        <option value="Kurunegala">Kurunegala</option>
+                                        <option value="Gall">Gall</option>
+                                        <option value="Onlin">Onlin</option>
+                                        <option value="All Island">All Island</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="school" class="form-label">School</label>
+                                    <input type="text" class="form-control" id="school">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="phone" class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-control" id="phone">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4" id="answerSection" style="display: none;">
+                            <h5 class="border-bottom pb-2 mb-3 text-primary">Answer Sheet</h5>
+                            <div class="table-responsive">
+                                <table class="answer-table w-100">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 15%">Question No</th>
+                                            <th style="width: 17%">1</th>
+                                            <th style="width: 17%">2</th>
+                                            <th style="width: 17%">3</th>
+                                            <th style="width: 17%">4</th>
+                                            <th style="width: 17%">5</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="questionsContainer">
+                                        <!-- Questions will be dynamically added here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg" id="submitBtn" style="display: none;">
+                                <i class="fas fa-paper-plane me-2"></i> Submit Answers
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="paper-script.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
